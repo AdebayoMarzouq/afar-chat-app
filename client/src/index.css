@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&display=swap');
+@import 'react-toastify/dist/ReactToastify.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --toastify-font-family: 'Work Sans', sans-serif;
+  }
+
+  html,
+  body {
+    font-family: 'Work Sans', sans-serif;
+    box-sizing: border-box;
+    background-image: url('./assets/images/circle-scatter-haikei.svg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  body {
+    @apply bg-white;
+  }
+
+  /* #root {
+    max-width: 1536px;
+    margin: 0 auto;
+  } */
+  #root {
+    @apply min-h-screen;
+  }
+  .sub-container {
+    @apply max-w-7xl mx-auto px-4 md:px-6;
+  }
+
+  /* scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #d6dee1 transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px; /* Remove scrollbar space */
+    height: 2px;
+    /* background: transparent;  Optional: just make scrollbar invisible */
+  }
+
+  section::-webkit-scrollbar,
+  section > *::-webkit-scrollbar {
+    width: 4px; /* Remove scrollbar space */
+    height: 2px;
+    /* background: transparent;  Optional: just make scrollbar invisible */
+  }
+
+  @media (max-width: 640px) {
+    ::-webkit-scrollbar {
+      width: 0; /* Remove scrollbar space */
+      height: 2px;
+      background: transparent;
+    }
+  }
+  ::-webkit-scrollbar-track {
+    background-color: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color: #d6dee1;
+    border-radius: 20px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #a3a3a3;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background-color: #404040 !important;
+    border-radius: 20px !important;
+  }
+
+  .dark ::-webkit-scrollbar-thumb:hover {
+    background-color: #737373 !important;
+  }
+  /* scrollbar */
+}
