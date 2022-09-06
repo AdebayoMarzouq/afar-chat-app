@@ -1,11 +1,10 @@
-const bcrypt = require('bcrypt');
 const { CustomError } = require('../errors')
 const { StatusCodes } = require('http-status-codes')
 const db = require('../models')
 
 const register_user = async (req, res) => {
   let user = await db.User.create(req.body)
-  res.status(StatusCodes.CREATED).json({ status: StatusCodes.CREATED, user  })
+  res.status(StatusCodes.CREATED).json({ status: StatusCodes.CREATED, user })
 }
 
 const login_user = async (req, res) => {
@@ -23,5 +22,6 @@ const login_user = async (req, res) => {
 }
 
 module.exports = {
-  register_user, login_user
+  register_user,
+  login_user,
 }

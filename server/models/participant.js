@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Participant extends Model {
     /**
@@ -11,26 +9,21 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Participant.belongsTo(models.Chat)
-      Participant.belongsTo(models.User)
     }
   }
   Participant.init(
     {
-      particpant_id: {
+      room_id: {
+        type: DataTypes.UUID,
         primaryKey: true,
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-      },
-      chat_id: {
-        type: DataTypes.UUID,
         references: {
-          model: 'Chat',
-          key: 'chat_id',
+          model: 'Room',
+          key: 'room_id',
         },
       },
       user_id: {
         type: DataTypes.UUID,
+        primaryKey: true,
         references: {
           model: 'User',
           key: 'user_id',
@@ -38,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       left_at: {
         type: DataTypes.DATE,
-      }
+      },
     },
     {
       sequelize,
@@ -48,5 +41,5 @@ module.exports = (sequelize, DataTypes) => {
       updatedAt: 'updated_at',
     }
   )
-  return Participant;
-};
+  return Participant
+}

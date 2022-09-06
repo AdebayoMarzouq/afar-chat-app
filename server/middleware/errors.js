@@ -10,7 +10,7 @@ const errorHandlerMiddleware = (error, req, res, next) => {
   // }
   return res
     .status(StatusCodes.INTERNAL_SERVER_ERROR)
-    .json({ message: error.message, ...error })
+    .json({ message: error.message, error: error, ...error })
 }
 
 const notFoundMiddleware = (req, res, next) => {

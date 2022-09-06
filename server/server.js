@@ -9,6 +9,8 @@ const db = require('./models')
 
 // Routes
 const authRoutes = require('./routes/user')
+const usersRoutes = require('./routes/users')
+const roomRoutes = require('./routes/room')
 
 // middlewares
 const { notFoundMiddleware, errorHandlerMiddleware } = require('./middleware/errors')
@@ -21,6 +23,8 @@ app.get('/', (req, res) => {
 
 // routes
 app.use('/api/account', authRoutes)
+app.use('/api/users', usersRoutes)
+app.use('/api/chat', roomRoutes)
 
 // Not Found and Error Middlewares
 app.use(notFoundMiddleware)

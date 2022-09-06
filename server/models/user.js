@@ -11,8 +11,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.belongsToMany(models.Chat, { through: models.Participant })
-      User.belongsToMany(models.Chat, { through: models.Message })
+      User.belongsToMany(models.Room, { through: models.Participant })
+      User.belongsToMany(models.Room, { through: models.Message })
     }
 
     async comparePasswords(password) {
@@ -24,6 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         expiresIn: process.env.JWT_EXPIRATION,
       })
     }
+
   }
   User.init(
     {

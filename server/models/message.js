@@ -11,8 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Message.belongsTo(models.Chat)
-      Message.belongsTo(models.User)
+      Message.hasOne(models.Message)
     }
   }
   Message.init(
@@ -29,11 +28,11 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
-      chat_id: {
+      room_id: {
         type: DataTypes.UUID,
         references: {
-          model: 'Chat',
-          key: 'chat_id',
+          model: 'Room',
+          key: 'room_id',
         },
       },
       sender_id: {
@@ -46,6 +45,9 @@ module.exports = (sequelize, DataTypes) => {
       deleted_at: {
         type: DataTypes.DATE,
       },
+      parend_message_id: {
+        type: DataTypes.TEXT
+      }
     },
     {
       sequelize,
