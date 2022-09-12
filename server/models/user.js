@@ -11,8 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.belongsToMany(models.Room, { through: models.Participant })
-      User.belongsToMany(models.Room, { through: models.Message })
+      User.belongsToMany(models.Room, {
+        through: models.Participant,
+      })
+      User.belongsToMany(models.Room, {
+        through: models.Message,
+      })
+      User.hasMany(models.Message)
+      User.hasMany(models.Participant)
     }
 
     async comparePasswords(password) {
@@ -20,15 +26,18 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     generateJWT() {
-      return jwt.sign({ user_id: this.user_id, email: this.email, }, process.env.JWT_SECRET, {
-        expiresIn: process.env.JWT_EXPIRATION,
-      })
+      return jwt.sign(
+        { user_id: this.id, email: this.email },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: process.env.JWT_EXPIRATION,
+        }
+      )
     }
-
   }
   User.init(
     {
-      user_id: {
+      id: {
         primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -72,6 +81,14 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
+      defaultScope: {
+        attributes: { exclude: ['password'] },
+      },
+      scopes: {
+        withPassword: {
+          attributes: {},
+        },
+      },
     }
   )
   return User

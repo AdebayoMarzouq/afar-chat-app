@@ -16,10 +16,10 @@ const checkIfUserIsAuthenticated = async (req, res, next) => {
     const token = authHeader.split(' ')[1]
     const payload = jwt.verify(token, process.env.JWT_SECRET)
     const user = await db.User.findByPk(payload.user_id, {
-      attributes: ['user_id', 'email'],
+      attributes: ['id', 'email'],
     })
     req.user = {
-      user_id: user.user_id,
+      user_id: user.id,
       email: user.email,
     }
     next()

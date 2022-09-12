@@ -12,11 +12,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Message.hasOne(models.Message)
+      Message.belongsTo(models.User)
+      Message.belongsTo(models.Room)
     }
   }
   Message.init(
     {
-      message_id: {
+      id: {
         type: DataTypes.UUID,
         primaryKey: true,
         defaultValue: DataTypes.UUIDV4,
@@ -26,20 +28,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         validate: {
           notEmpty: true,
-        },
-      },
-      room_id: {
-        type: DataTypes.UUID,
-        references: {
-          model: 'Room',
-          key: 'room_id',
-        },
-      },
-      sender_id: {
-        type: DataTypes.UUID,
-        references: {
-          model: 'User',
-          key: 'user_id',
         },
       },
       deleted_at: {

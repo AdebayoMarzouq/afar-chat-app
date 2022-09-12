@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Routes, Route } from 'react-router-dom'
-import { Home } from './pages'
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
+import { Home, Chat } from './pages'
 import { ToastContainer } from 'react-toastify'
-
+import { useChatContext } from './context/ChatProvider'
 
 const contextClass = {
   success: 'bg-blue-600',
@@ -22,19 +22,30 @@ const contextIcons = {
   dark: <div></div>,
 } as { [key: string]: React.ReactElement }
 
+export const ProtectedRoute = ({
+  user,
+  redirectPath = '/',
+  children,
+}: {
+  user: true | null
+  redirectPath?: string
+  children?: React.ReactElement
+}) => {
+  if (!user) return <Navigate to={redirectPath} replace />
+  return children ? children : <Outlet />
+}
+
 function App() {
+  const {userToken, userInfo} = useChatContext()
+
   return (
     <>
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route
-          path='/chat'
-          element={
-            <h1 className='text-2xl text-rose-400 font-light'>
-              Hello, this is the chat page
-            </h1>
-          }
-        />
+        <Route path='/chat' element={<ProtectedRoute user={userInfo && userToken ? true : null} />}>
+          <Route index element={<Chat />} />
+        </Route>
+        <Route path='*' element={<div>Error!</div>} />
       </Routes>
       <ToastContainer
         // className='bg-sky-300'

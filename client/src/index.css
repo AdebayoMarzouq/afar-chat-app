@@ -8,20 +8,43 @@
 @layer base {
   :root {
     --toastify-font-family: 'Work Sans', sans-serif;
+    --color-light-bg-primary: #ffffff;
+    --color-light-bg-secondary: #f0f0f0;
+    --color-light-main-primary: #359d9c;
+    --color-light-main-secondary: #EAF6F6;
+    --color-light-text-primary: #5D5E7F;
+    --color-light-text-secondary: #C2C3CC;
+    --color-light-bubble-bg: theme(colors.white);
+    --color-light-bubble-text: theme(colors.gray.900);
+    /* dark */
+    --color-dark-bg-primary: #000000;
+    --color-dark-bg-secondary: #161618;
+    --color-dark-main-primary: #359d9c;
+    --color-dark-main-secondary: #EAF6F6;
+    --color-dark-text-primary: #ffffff;
+    --color-dark-text-secondary: theme(colors.gray.400);
+    --color-dark-bubble-bg: theme(colors.white);
+    --color-dark-bubble-text: theme(colors.gray.900);
   }
 
+  .plain-theme {
+    --color-light-bg: theme(colors.white);
+    --color-light-text-main: theme(colors.gray.400);
+    --color-light-text-muted: theme(colors.gray.400);
+    --color-light-bubble-bg: theme(colors.white);
+    --color-light-bubble-text: theme(colors.gray.900);
+    /* dark */
+    --color-dark-bg: theme(colors.white);
+    --color-dark-text-main: theme(colors.gray.400);
+    --color-dark-text-muted: theme(colors.gray.400);
+    --color-dark-bubble-bg: theme(colors.white);
+    --color-dark-bubble-text: theme(colors.gray.900);
+  }
   html,
   body {
     font-family: 'Work Sans', sans-serif;
     box-sizing: border-box;
-    background-image: url('./assets/images/circle-scatter-haikei.svg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-
-  body {
-    @apply bg-white;
+    @apply bg-light-bg-primary dark:bg-dark-bg-primary dark:border-dark-bg-secondary;
   }
 
   /* #root {
@@ -46,8 +69,8 @@
     /* background: transparent;  Optional: just make scrollbar invisible */
   }
 
-  section::-webkit-scrollbar,
-  section > *::-webkit-scrollbar {
+  ::-webkit-scrollbar,
+  ::-webkit-scrollbar {
     width: 4px; /* Remove scrollbar space */
     height: 2px;
     /* background: transparent;  Optional: just make scrollbar invisible */
@@ -81,4 +104,59 @@
     background-color: #737373 !important;
   }
   /* scrollbar */
+}
+
+/* .btn-solid {
+  @apply hover:text-gray-600;
+} */
+
+/* speech bubbles */
+.speech-wrapper .bubble {
+  @apply max-w-[60%] rounded-md rounded-tl-none bg-light-bg-primary shadow-lg relative mb-6;
+}
+.speech-wrapper .bubble.alt {
+  @apply ml-auto rounded-md rounded-tr-none;
+}
+.speech-wrapper .bubble .txt {
+  padding: 8px 55px 8px 14px;
+}
+.speech-wrapper .bubble .txt .name {
+  @apply font-semibold text-xs mb-1 text-sky-500;
+}
+.speech-wrapper .bubble .txt .name span {
+  @apply font-normal text-[#b3b3b3];
+}
+.speech-wrapper .bubble .txt .name.alt {
+  @apply text-green-500;
+}
+.speech-wrapper .bubble .txt .message {
+  @apply text-sm m-0 text-gray-700;
+}
+.speech-wrapper .bubble .txt .timestamp {
+  @apply text-xs absolute bottom-2 right-2 uppercase text-[#999];
+}
+
+.speech-wrapper .bubble .bubble-arrow {
+  @apply absolute w-0 top-0 -left-4 h-0;
+}
+.speech-wrapper .bubble .bubble-arrow.alt {
+  @apply right-4 top-0 left-auto;
+}
+.speech-wrapper .bubble .bubble-arrow::after {
+  @apply absolute rounded-tl-md;
+  content: "";
+  position: absolute;
+  border-top: 30px solid white;
+  border-left: 30px solid transparent;
+  /* border-top-left-radius: 4px; */
+}
+.speech-wrapper .bubble .bubble-arrow.alt::after {
+  transform: rotate(180deg) scaleY(-1);
+}
+.icon-btn {
+  @apply bg-gray-50 dark:bg-dark-bg-secondary rounded-full p-2 transform hover:scale-110 hover:bg-light-main-secondary transition-transform text-light-main-primary;
+}
+
+.slide-in {
+  @apply transition-transform duration-300 ease-[cubic-bezier(0.08,0.82,0.17,1)];
 }

@@ -7,18 +7,20 @@ export const Input = ({
   isValid,
   show,
   setShow,
+  disableShow,
   ...props
 }: {
   name: string
   label: string
-  isValid?: boolean | undefined
-  error?: string | boolean | undefined
+  isValid?: boolean
+  error?: string | boolean
   show?: { [key: string]: boolean }
   setShow?: React.Dispatch<
     React.SetStateAction<{
       [key: string]: boolean
     }>
-  >
+    >
+  disableShow?: boolean
 } & React.HTMLProps<HTMLInputElement>) => {
   const valid =
     'border-green-500 text-green-900 placeholder-green-700 rounded-lg focus:ring-green-500 focus:border-green-500'
@@ -42,30 +44,18 @@ export const Input = ({
         />
         {setShow && (
           <button
-            className='absolute inset-y-1 right-4 text-gray-500'
+            className={`${disableShow && 'hidden'} absolute inset-y-1 right-4 text-gray-500 outline-none border-none ring-none`}
+            disabled={disableShow}
             onClick={(e) => {
               e.preventDefault()
               if (!setShow) return
               setShow((prev) => {
-                return { ...prev, [name]: !prev[name] }
+                const check = { ...prev, [name]: !prev[name] }
+                return check
               })
             }}
           >
             {show && show[name] ? (
-              <svg
-                className='w-6 h-6'
-                fill='currentColor'
-                viewBox='0 0 20 20'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path d='M10 12a2 2 0 100-4 2 2 0 000 4z' />
-                <path
-                  fillRule='evenodd'
-                  d='M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z'
-                  clipRule='evenodd'
-                />
-              </svg>
-            ) : (
               <svg
                 className='w-6 h-6'
                 fill='currentColor'
@@ -78,6 +68,20 @@ export const Input = ({
                   clipRule='evenodd'
                 />
                 <path d='M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z' />
+              </svg>
+            ) : (
+              <svg
+                className='w-6 h-6'
+                fill='currentColor'
+                viewBox='0 0 20 20'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path d='M10 12a2 2 0 100-4 2 2 0 000 4z' />
+                <path
+                  fillRule='evenodd'
+                  d='M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z'
+                  clipRule='evenodd'
+                />
               </svg>
             )}
           </button>

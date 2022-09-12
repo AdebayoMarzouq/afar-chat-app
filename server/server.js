@@ -1,6 +1,7 @@
 require('dotenv').config()
 require('express-async-errors')
 const express = require('express')
+const cors = require('cors')
 const app = express()
 
 // use chithchat default profile images later
@@ -15,6 +16,7 @@ const roomRoutes = require('./routes/room')
 // middlewares
 const { notFoundMiddleware, errorHandlerMiddleware } = require('./middleware/errors')
 
+app.use(cors({origin: 'http://localhost:5173'}))
 app.use(express.json())
 
 app.get('/', (req, res) => {
@@ -35,12 +37,12 @@ const PORT = process.env.PORT || 5000
 const start = async () => {
   try {
     app.listen(PORT, console.log('listening on port ' + PORT))
+    // await db.sequelize.sync({alter: true})
     await db.sequelize.sync()
     // await db.sequelize.drop()
     console.log('Database synced')
   } catch (error) {
-    console.log(error)
-  }
+    console.log(error)  }
 }
 
 start()

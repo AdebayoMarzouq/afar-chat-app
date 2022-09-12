@@ -9,30 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Participant.belongsTo(models.User)
+      Participant.belongsTo(models.Room)
     }
   }
   Participant.init(
-    {
-      room_id: {
-        type: DataTypes.UUID,
-        primaryKey: true,
-        references: {
-          model: 'Room',
-          key: 'room_id',
-        },
-      },
-      user_id: {
-        type: DataTypes.UUID,
-        primaryKey: true,
-        references: {
-          model: 'User',
-          key: 'user_id',
-        },
-      },
-      left_at: {
-        type: DataTypes.DATE,
-      },
-    },
+    {},
     {
       sequelize,
       modelName: 'Participant',

@@ -4,7 +4,8 @@ import * as yup from 'yup'
 import { Input } from './Input'
 import { MyToast } from '../utilities/toastFunction'
 import axios from 'axios'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import { useChatContext } from '../context/ChatProvider'
 
 const initialValues = {
   login_email: '',
@@ -21,8 +22,8 @@ const validationSchema = yup.object().shape({
 
 export const Login = () => {
   const navigate = useNavigate()
-  const [autoFilled, setAutoFilled] = useState(false)
-  const [show, setShow] = useState({ password: false } as {
+  const { setUserToken, setUserInfo } = useChatContext()
+  const [show, setShow] = useState({ login_password: false } as {
     [key: string]: boolean
   })
   const {
@@ -47,14 +48,17 @@ export const Login = () => {
           },
         }
 
-        const { data } = await axios.post(
+        const {
+          data: { token, user },
+        } = await axios.post(
           '/api/account/login',
           { email: login_email, password: login_password },
           config
         )
-        console.log(data)
+        console.log(token, user)
+        setUserToken(token)
+        setUserInfo(user)
         MyToast({ textContent: 'Login successful' })
-        localStorage.setItem('user', JSON.stringify(data))
         navigate('/chat')
       } catch (error) {
         console.log(error)
@@ -65,6 +69,8 @@ export const Login = () => {
         } else {
           console.log(error)
         }
+        setUserInfo(null)
+        setUserToken(null)
       }
     },
   })
@@ -73,9 +79,12 @@ export const Login = () => {
   const emailProps = getFieldProps('login_email')
   const passwordProps = getFieldProps('login_password')
 
-  const guestUser = async() => {
-    await setFieldValue('login_email', 'testuser@test.test')
-    await setFieldValue('login_password', 'supersecret')
+  const guestUser = async () => {
+    await setFieldValue('login_email', import.meta.env.VITE_GUEST_USER_EMAIL)
+    await setFieldValue(
+      'login_password',
+      import.meta.env.VITE_GUEST_USER_PASSWORD
+    )
     await setFieldTouched('login_email', true, false)
     await setFieldTouched('login_password', true, false)
   }
@@ -91,11 +100,17 @@ export const Login = () => {
       />
       <Input
         label='Password'
-        type={!show.password ? 'password' : 'text'}
+        type={
+          !show.login_password ||
+          emailProps.value === import.meta.env.VITE_GUEST_USER_EMAIL
+            ? 'password'
+            : 'text'
+        }
         isValid={touched.login_password && !errors.login_password}
         error={touched.login_password && errors.login_password}
         show={show}
         setShow={setShow}
+        disableShow={emailProps.value === import.meta.env.VITE_GUEST_USER_EMAIL}
         {...passwordProps}
       />
       <button
@@ -108,8 +123,7 @@ export const Login = () => {
       <button
         type='button'
         className='block mx-auto bg-sky-600 px-4 py-2 rounded-md text-white cursor-pointer'
-        onClick={() => {
-          // e.preventDefault()
+        onClick={(e) => {
           guestUser()
         }}
       >

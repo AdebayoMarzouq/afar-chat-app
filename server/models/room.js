@@ -11,14 +11,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Room.belongsToMany(models.User, { through: models.Participant })
+      Room.belongsToMany(models.User, {through: models.Participant })
       Room.belongsToMany(models.User, { through: models.Message })
-      Room.hasOne(models.PrivateRoom)
+      Room.hasMany(models.Participant)
+      Room.hasMany(models.Message)
+      Room.hasOne(models.User, {as: 'admin'})
     }
   }
   Room.init(
     {
-      room_id: {
+      id: {
         primaryKey: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
@@ -36,9 +38,6 @@ module.exports = (sequelize, DataTypes) => {
       last_message: {
         type: DataTypes.TEXT,
       },
-      created_by: {
-        type: DataTypes.UUID,
-      }
     },
     {
       sequelize,
