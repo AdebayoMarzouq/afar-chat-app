@@ -2,16 +2,17 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import { useChatContext } from '../context/ChatProvider'
 import { UserType } from '../types/user'
+import { axiosRequest } from '../utilities/requestFunction'
 import { SearchListItem } from './ChatInterface/SearchListItem'
 
-export const ModalInfo = ({
-  children,
-}: {
-  children: React.ReactNode | React.ReactNode[]
-}) => {
-  const { showModalInfo, setShowModalInfo } = useChatContext()
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZWVjMTMyMmUtMDZhNS00OTNhLWE4NDQtNzYwYzYwMDU5NDM2IiwiZW1haWwiOiJ0ZXN0dXNlcjFAdGVzdC50ZXN0IiwiaWF0IjoxNjYyNTc4MjkwLCJleHAiOjE2NjMxODMwOTB9.xYjKhyMA0fMO7sUbySjJqDUY8CO70oyVJsEnDSkSdc4'
+// {
+//   children,
+// }: {
+//   children: React.ReactNode | React.ReactNode[]
+// }
+
+export const ModalInfo = () => {
+  const { showModalInfo, setShowModalInfo, token } = useChatContext()
   const [search, setSearch] = useState('')
   const [users, setUsers] = useState<UserType[] | null>(null)
   const [badgeItems, setBadgeItems] = useState<UserType[] | []>([])
@@ -42,22 +43,22 @@ export const ModalInfo = ({
   }
 
   const handleUserSelect = (user: UserType) => {
-    const check = chatForm.users.includes(user.id)
+    const check = chatForm.users.includes(user.email)
     if (check) return console.log('user added already')
     setChatForm((prev) => {
-      return { ...prev, users: [...prev.users, user.id] }
+      return { ...prev, users: [...prev.users, user.email] }
     })
     setBadgeItems((prev) => {
       return [...prev, user]
     })
   }
 
-  const removeUserFromForm = (user_id: string) => {
+  const removeUserFromForm = (user_email: string) => {
     setChatForm((prev) => {
       return {
         ...prev,
         users: prev.users.filter((item) => {
-          if (item !== user_id) {
+          if (item !== user_email) {
             return item
           }
         }),
@@ -66,7 +67,7 @@ export const ModalInfo = ({
 
     setBadgeItems((prev) =>
       prev.filter((item) => {
-        if (item.id !== user_id) {
+        if (item.email !== user_email) {
           return item
         }
       })
@@ -80,21 +81,27 @@ export const ModalInfo = ({
       room_name: chatForm.chat_name,
       users: JSON.stringify(chatForm.users),
     }
-    return console.log(form_data)
+    // return console.log(form_data)
     setLoading(true)
     try {
-      const response = await axios.post('/api/chat', {
-        data: form_data,
-        headers: { Authorization: 'Bearer ' + token },
+      // const response = await axios.post('/api/chat/group', {
+      //   data: form_data,
+      //   headers: { Authorization: `Bearer ${token}` },
+      // })
+      const { data, _error } = await axiosRequest({
+        url: '/api/chat/group',
+        method: 'POST',
+        token,
+        payload: form_data,
       })
-      console.log(response)
-      const data = await response.data
+      // console.log(response)
+      if (_error) console.log(_error)
       setUsers(data.users)
       setLoading(false)
       setSearch('')
       setUsers([])
       setBadgeItems([])
-      setChatForm({chat_name: '', users: []})
+      setChatForm({ chat_name: '', users: [] })
     } catch (error) {
       setLoading(false)
     }
@@ -149,6 +156,11 @@ export const ModalInfo = ({
                     id='chat_name'
                     className='bg-gray-50 border border-gray-300 text-light-text-primary text-sm rounded-lg focus:ring-light-main-primary focus:border-light-main-primary outline-none block w-full p-2.5'
                     placeholder='Chat Name'
+                    onChange={(e) =>
+                      setChatForm((prev) => {
+                        return { ...prev, chat_name: e.target.value }
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -188,7 +200,7 @@ export const ModalInfo = ({
                     <Badge
                       key={item.email}
                       title={item.username}
-                      closeFunc={() => removeUserFromForm(item.id)}
+                      closeFunc={() => removeUserFromForm(item.email)}
                     />
                   ))}
                 </div>
@@ -199,7 +211,7 @@ export const ModalInfo = ({
                     users.map((user) => (
                       <button
                         type='button'
-                        key={user.id}
+                        key={user.uuid}
                         onClick={() => handleUserSelect(user)}
                       >
                         <SearchListItem {...user} />
@@ -253,9 +265,9 @@ const Badge = ({
           xmlns='http://www.w3.org/2000/svg'
         >
           <path
-            fill-rule='evenodd'
+            fillRule='evenodd'
             d='M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z'
-            clip-rule='evenodd'
+            clipRule='evenodd'
           ></path>
         </svg>
         <span className='sr-only'>Remove badge</span>

@@ -12,16 +12,21 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Room.belongsToMany(models.User, {through: models.Participant })
-      Room.belongsToMany(models.User, { through: models.Message })
+      Room.belongsToMany(models.User, {through: models.Message })
       Room.hasMany(models.Participant)
       Room.hasMany(models.Message)
-      Room.hasOne(models.User, {as: 'admin'})
+      Room.belongsTo(models.User, { as: 'creator' })
     }
   }
   Room.init(
     {
       id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
+      },
+      uuid: {
+        unique: true,
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
       },

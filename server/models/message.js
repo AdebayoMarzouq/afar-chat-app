@@ -19,8 +19,13 @@ module.exports = (sequelize, DataTypes) => {
   Message.init(
     {
       id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
+      },
+      uuid: {
+        type: DataTypes.UUID,
+        unique: true,
         defaultValue: DataTypes.UUIDV4,
       },
       message_text: {
@@ -33,9 +38,9 @@ module.exports = (sequelize, DataTypes) => {
       deleted_at: {
         type: DataTypes.DATE,
       },
-      parend_message_id: {
-        type: DataTypes.TEXT
-      }
+      parent_message_id: {
+        type: DataTypes.UUID,
+      },
     },
     {
       sequelize,

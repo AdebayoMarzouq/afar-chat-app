@@ -26,21 +26,28 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     generateJWT() {
-      return jwt.sign(
-        { user_id: this.id, email: this.email },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: process.env.JWT_EXPIRATION,
-        }
-      )
+      return jwt.sign({ user_id: this.uuid, email: this.email }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRATION,
+      })
     }
   }
   User.init(
     {
       id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
         primaryKey: true,
+      },
+      uuid: {
         type: DataTypes.UUID,
+        unique: true,
         defaultValue: DataTypes.UUIDV4,
+      },
+      email: {
+        type: DataTypes.STRING,
+        unique: true,
+        allowNull: false,
+        validate: { isEmail: true },
       },
       username: {
         type: DataTypes.STRING,
@@ -48,12 +55,6 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notEmpty: true,
         },
-      },
-      email: {
-        type: DataTypes.STRING,
-        unique: true,
-        allowNull: false,
-        validate: { isEmail: true },
       },
       profile_image: {
         type: DataTypes.STRING,
@@ -82,10 +83,13 @@ module.exports = (sequelize, DataTypes) => {
       createdAt: 'created_at',
       updatedAt: 'updated_at',
       defaultScope: {
-        attributes: { exclude: ['password'] },
+        attributes: { exclude: ['password', 'id'] },
       },
       scopes: {
         withPassword: {
+          attributes: {},
+        },
+        withId: {
           attributes: {},
         },
       },

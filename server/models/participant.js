@@ -9,8 +9,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Participant.belongsTo(models.User)
-      Participant.belongsTo(models.Room)
+      Participant.belongsTo(models.User, {
+        foreignKey: {
+          allowNull: false
+        }
+      })
+      Participant.belongsTo(models.Room, {
+        foreignKey: {
+          allowNull: false
+        }
+      })
     }
   }
   Participant.init(

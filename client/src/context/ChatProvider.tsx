@@ -18,6 +18,7 @@ type ChatContext = {
   setUserInfo: React.Dispatch<React.SetStateAction<UserType | null>>
   userChats: ChatListType | []
   setUserChats: React.Dispatch<React.SetStateAction<ChatListType | []>>
+  token: string
 }
 
 const ChatContext = createContext({} as ChatContext)
@@ -29,6 +30,8 @@ export const ChatProvider = ({ children }: { children: Children }) => {
   const [userToken, setUserToken] = useLocalStorage<string | null>('token', null)
   const [userInfo, setUserInfo] = useLocalStorage<UserType | null>('userInfo' ,null)
   const [userChats, setUserChats] = useState<ChatListType | []>([])
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNzI2N2JiODAtMjNlOS00NmVjLWFlZWUtZWMyZjJjYTM3NjIyIiwiZW1haWwiOiJ0ZXN0dXNlcjJAdGVzdC50ZXN0IiwiaWF0IjoxNjYzMDA1OTU0LCJleHAiOjE2NjM2MTA3NTR9.ux6B0-Sr08_LBJLSIzU6qXH7QyoP4nksstknZCOgCGw'
 
   return (
     <ChatContext.Provider
@@ -45,6 +48,7 @@ export const ChatProvider = ({ children }: { children: Children }) => {
         setUserInfo,
         userChats,
         setUserChats,
+        token
       }}
     >
       {children}

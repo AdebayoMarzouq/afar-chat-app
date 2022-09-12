@@ -1,9 +1,9 @@
 import React from 'react'
 import { Avatar } from './Avatar'
 
-type UserType = {id: string, username: string, email: string, profile_image:string}
+type UserType = {username: string, email: string, profile_image:string}
 
-export const SearchListItem = ({id, username, email, profile_image}: UserType) => {
+export const SearchListItem = ({username, email, profile_image}: UserType) => {
   return (
     <div className='[&:last-of-type>div]:border-b-0 cursor-pointer pl-2 flex items-center gap-2 hover:bg-gray-100 active:bg-gray-200'>
       <div className='h-20 flex items-center justify-center'>

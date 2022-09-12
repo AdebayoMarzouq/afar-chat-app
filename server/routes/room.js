@@ -1,14 +1,21 @@
 const express = require('express')
 const { checkIfUserIsAuthenticated } = require('../middleware/authentication')
-const {room, getRooms, group, updateRoom, addParticipant, removeParticipant} = require('../controllers/room')
+const {
+  getOrCreatePrivateRoom,
+  createGroup,
+  getRoomsAndGroups,
+  updateGroup,
+  addParticipantToGroup,
+  removeParticipantFromGroup,
+} = require('../controllers/room')
 
 const router = express.Router()
 
-router.route('/').post(checkIfUserIsAuthenticated, room)
-router.route('/').get(checkIfUserIsAuthenticated, getRooms)
-router.route('/group').post(checkIfUserIsAuthenticated, group)
-router.route('/update').patch(checkIfUserIsAuthenticated, updateRoom)
-router.route('/remove').post(checkIfUserIsAuthenticated, removeParticipant)
-router.route('/add').post(checkIfUserIsAuthenticated, addParticipant)
+router.route('/').post(checkIfUserIsAuthenticated, getOrCreatePrivateRoom)
+router.route('/').get(checkIfUserIsAuthenticated, getRoomsAndGroups)
+router.route('/group').post(checkIfUserIsAuthenticated, createGroup)
+router.route('/update').patch(checkIfUserIsAuthenticated, updateGroup)
+router.route('/remove').post(checkIfUserIsAuthenticated, removeParticipantFromGroup)
+router.route('/add').post(checkIfUserIsAuthenticated, addParticipantToGroup)
 
 module.exports = router

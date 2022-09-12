@@ -2,32 +2,25 @@ import axios from 'axios'
 import React, { useState } from 'react'
 import { useChatContext } from '../../context/ChatProvider'
 import { UserType } from '../../types/user'
+import { axiosRequest } from '../../utilities/requestFunction'
 import { SearchListItem } from './SearchListItem'
 
 export const Searchbar = () => {
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZWVjMTMyMmUtMDZhNS00OTNhLWE4NDQtNzYwYzYwMDU5NDM2IiwiZW1haWwiOiJ0ZXN0dXNlcjFAdGVzdC50ZXN0IiwiaWF0IjoxNjYyNTc4MjkwLCJleHAiOjE2NjMxODMwOTB9.xYjKhyMA0fMO7sUbySjJqDUY8CO70oyVJsEnDSkSdc4'
   const [search, setSearch] = useState('')
   const [users, setUsers] = useState<UserType[] | null>(null)
   const [loading, setLoading] = useState(false)
-  const { searchBar, setSearchBar } = useChatContext()
+  const { searchBar, setSearchBar, token } = useChatContext()
 
   const handleSearch = async (e: React.FormEvent) => {
-
     if (!search) return // display a toast warning if empty
-
     setLoading(true)
-    try {
-      const response = await axios.get('/api/users?search=' + search, {
-        headers: { Authorization: 'Bearer ' + token },
-      })
-      console.log(response)
-      const data = await response.data
-      setUsers(data.users)
-      setLoading(false)
-    } catch (error) {
-      setLoading(false)
-    }
+    const { loading, _error: error, data } = await axiosRequest({
+      url: `/api/users?search=${search}`,
+      token
+    })
+    if (error) console.log(error)
+    setUsers(data.users)
+    setLoading(loading)
   }
 
   return (
@@ -101,7 +94,7 @@ export const Searchbar = () => {
         {loading && <div className='text-center'>Loading...</div>}
         {users &&
           !loading &&
-          users.map((user) => <SearchListItem key={user.id} {...user} />)}
+          users.map((user) => <SearchListItem key={user.uuid} {...user} />)}
       </div>
     </div>
   )

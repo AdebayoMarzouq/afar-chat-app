@@ -10,7 +10,7 @@ const users = async (req, res) => {
         { username: { [Op.substring]: search } },
         { email: { [Op.substring]: search } },
       ],
-      [Op.not]: [{ id: req.user.user_id }],
+      [Op.not]: [{ uuid: req.user.user_id }],
     },
   })
   res.status(StatusCodes.OK).json({ status: StatusCodes.OK, users })

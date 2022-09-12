@@ -27,11 +27,11 @@ export const ChatUI = () => {
     <div className='relative h-screen flex flex-col w-full bg-white col-span-2'>
       <ChatUIHeader />
       <div className='speech-wrapper py-4 px-8 flex-grow bg-gray-200 overflow-y-auto'>
-        {messages.map((message) => {
+        {messages.map((message, i) => {
           if (message.sent) {
-            return <ChatBubbleT2 />
+            return <ChatBubbleT2 key={i} />
           }
-          return <ChatBubbleT1 />
+          return <ChatBubbleT1 key={i} />
         })}
       </div>
       <div className='border-t mt-auto h-16 shrink-0'>
