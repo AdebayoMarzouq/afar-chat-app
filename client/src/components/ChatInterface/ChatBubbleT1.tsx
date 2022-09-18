@@ -1,27 +1,59 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { MessageListItem } from '../../types/chat'
 
-export const ChatBubbleT1 = () => {
+const transition = {
+  type: 'spring',
+  stiffness: 200,
+  mass: 0.2,
+  damping: 20,
+}
+
+const variants = {
+  initial: {
+    opacity: 0,
+    y: 300,
+  },
+  enter: {
+    opacity: 1,
+    y: 0,
+    transition,
+  },
+}
+
+export const ChatBubbleT1 = ({
+  isSender,
+  messageObj: {
+    uuid: sender_id,
+    username,
+    Message: {
+      uuid,
+      message_text,
+      deleted_at,
+      sent_at,
+      updated_at,
+      repliedMessageId,
+    },
+  },
+}: {
+  isSender: boolean
+  messageObj: MessageListItem
+  }) => {
+
   return (
-    <div className='bubble'>
+    <motion.div
+      className={`bubble ${isSender && 'alt'}`}
+      initial='initial'
+      animate='enter'
+      variants={variants}
+      layout
+    >
       <div className='txt'>
-        <p className='name'>Benni</p>
-        <p className='message'>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad nihil
-          suscipit saepe cupiditate fuga perferendis doloremque quas
-          perspiciatis, earum nesciunt obcaecati, aliquam incidunt commodi,
-          adipisci rem non ipsa inventore assumenda harum veritatis illo. Dicta
-          quaerat quam, consequuntur, doloribus eveniet illo beatae recusandae
-          voluptatem rerum iure est facere quis temporibus provident harum
-          deserunt nulla sit exercitationem veritatis itaque similique modi
-          consequatur? Ex aperiam a mollitia nulla ipsum, sit vero deserunt
-          alias praesentium odio et. Porro quae labore culpa nulla possimus
-          neque voluptate exercitationem nemo, eum in natus repellendus nesciunt
-          error tempore, optio beatae ducimus temporibus modi architecto. Ipsum
-          doloribus unde odio.
-        </p>
+        <p className={`name ${isSender && 'alt'}`}>{username}</p>
+        <p className='message'>{message_text}</p>
         <span className='timestamp'>10:20 pm</span>
       </div>
-      <div className='bubble-arrow'></div>
-    </div>
+      <div className={`bubble-arrow ${isSender && 'alt'}`}></div>
+    </motion.div>
   )
 }

@@ -11,8 +11,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Room.belongsToMany(models.User, {through: models.Participant })
-      Room.belongsToMany(models.User, {through: models.Message })
+      Room.belongsToMany(models.User, { as: { singular:'RoomParticipant', plural: 'RoomParticipants'},through: models.Participant })
+      Room.belongsToMany(models.User, {
+        as: { singular: 'RoomMessage', plural: 'RoomMessages' },
+        through: { model: models.Message, unique: false },
+        constraints: false,
+      })
       Room.hasMany(models.Participant)
       Room.hasMany(models.Message)
       Room.belongsTo(models.User, { as: 'creator' })
@@ -42,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       last_message: {
         type: DataTypes.TEXT,
-      },
+      }
     },
     {
       sequelize,
@@ -50,6 +54,11 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
+      scopes: {
+        withoutId: {
+          attributes: { exclude: ['id'] },
+        },
+      },
     }
   )
   return Room

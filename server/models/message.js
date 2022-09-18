@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Message.hasOne(models.Message)
+      Message.hasOne(models.Message, {as: 'repliedMessage'})
       Message.belongsTo(models.User)
       Message.belongsTo(models.Room)
     }
@@ -38,15 +38,17 @@ module.exports = (sequelize, DataTypes) => {
       deleted_at: {
         type: DataTypes.DATE,
       },
-      parent_message_id: {
-        type: DataTypes.UUID,
-      },
     },
     {
       sequelize,
       modelName: 'Message',
       createdAt: 'sent_at',
       updatedAt: 'updated_at',
+      scopes: {
+        withoutId: {
+          attributes: { exclude: ['id'] },
+        },
+      },
     }
   )
   return Message;

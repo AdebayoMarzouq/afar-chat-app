@@ -11,16 +11,16 @@
     --color-light-bg-primary: #ffffff;
     --color-light-bg-secondary: #f0f0f0;
     --color-light-main-primary: #359d9c;
-    --color-light-main-secondary: #EAF6F6;
-    --color-light-text-primary: #5D5E7F;
-    --color-light-text-secondary: #C2C3CC;
+    --color-light-main-secondary: #eaf6f6;
+    --color-light-text-primary: #5d5e7f;
+    --color-light-text-secondary: #c2c3cc;
     --color-light-bubble-bg: theme(colors.white);
     --color-light-bubble-text: theme(colors.gray.900);
     /* dark */
     --color-dark-bg-primary: #000000;
     --color-dark-bg-secondary: #161618;
     --color-dark-main-primary: #359d9c;
-    --color-dark-main-secondary: #EAF6F6;
+    --color-dark-main-secondary: #eaf6f6;
     --color-dark-text-primary: #ffffff;
     --color-dark-text-secondary: theme(colors.gray.400);
     --color-dark-bubble-bg: theme(colors.white);
@@ -130,7 +130,7 @@
   @apply text-green-500;
 }
 .speech-wrapper .bubble .txt .message {
-  @apply text-sm m-0 text-gray-700;
+  @apply text-sm m-0 text-gray-700 break-words;
 }
 .speech-wrapper .bubble .txt .timestamp {
   @apply text-xs absolute bottom-2 right-2 uppercase text-[#999];
@@ -144,7 +144,7 @@
 }
 .speech-wrapper .bubble .bubble-arrow::after {
   @apply absolute rounded-tl-md;
-  content: "";
+  content: '';
   position: absolute;
   border-top: 30px solid white;
   border-left: 30px solid transparent;

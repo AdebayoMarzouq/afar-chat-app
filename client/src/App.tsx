@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { Home, Chat } from './pages'
 import { ToastContainer } from 'react-toastify'
-import { useChatContext } from './context/ChatProvider'
+import { useSelector } from 'react-redux'
+import { RootState } from './redux/store'
+import { MyToast } from './utilities/toastFunction'
 
 const contextClass = {
   success: 'bg-blue-600',
@@ -23,26 +25,31 @@ const contextIcons = {
 } as { [key: string]: React.ReactElement }
 
 export const ProtectedRoute = ({
-  user,
   redirectPath = '/',
   children,
 }: {
-  user: true | null
   redirectPath?: string
   children?: React.ReactElement
-}) => {
-  if (!user) return <Navigate to={redirectPath} replace />
+  }) => {
+  const { userToken, userInfo } = useSelector((state: RootState) => state.user)
+  console.log('---', userToken, userInfo, '---')
+  if (!userToken && !userInfo) {
+    // send you are not logged in toast here
+    MyToast({
+      textContent: 'You are not logged in',
+    })
+    return <Navigate to={redirectPath} replace />
+  }
   return children ? children : <Outlet />
 }
 
 function App() {
-  const {userToken, userInfo} = useChatContext()
 
   return (
     <>
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/chat' element={<ProtectedRoute user={userInfo && userToken ? true : null} />}>
+        <Route path='/chat' element={<ProtectedRoute />}>
           <Route index element={<Chat />} />
         </Route>
         <Route path='*' element={<div>Error!</div>} />

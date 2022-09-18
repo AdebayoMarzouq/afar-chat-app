@@ -1,20 +1,28 @@
-import React, { useState } from 'react'
-import { useChatContext } from '../../context/ChatProvider'
+import React, { memo, useState } from 'react'
 import { Avatar } from './Avatar'
+import type { RootState } from '../../redux/store'
+import { useSelector, useDispatch } from 'react-redux'
+import { closeProfile } from '../../redux/interactionSlice'
 
 export const Profilebar = () => {
+  const profileBar = useSelector(
+    (state: RootState) => state.interaction.profile
+  )
+  const userInfo = useSelector(
+    (state: RootState) => state.user.userInfo
+  )
+  const dispatch = useDispatch()
   const [edit, setEdit] = useState(false)
-  const { showProfile, setShowProfile, userInfo } = useChatContext()
   const [usernameInput, setUsernameInput] = useState(userInfo!.username)
 
   return (
     <div
       className={`slide-in ${
-        showProfile ? 'translate-x-0' : '-translate-x-full'
+        profileBar ? 'translate-x-0' : '-translate-x-full'
       } absolute bg-white inset-0`}
     >
       <div className='px-2 h-16 flex items-center mt-auto gap-6 text-xl font-semibold border-b'>
-        <button className='icon-btn' onClick={() => setShowProfile(false)}>
+        <button className='icon-btn' onClick={() => dispatch(closeProfile())}>
           <svg
             className='w-6 h-6'
             fill='none'
@@ -76,7 +84,7 @@ export const Profilebar = () => {
           <form className='px-4 mt-4'>
             <div className='relative z-0 mb-6 w-full'>
               <label htmlFor='username' className='text-xs'>
-                {userInfo.username}
+                username
               </label>
               <input
                 type='text'
@@ -107,6 +115,8 @@ export const Profilebar = () => {
     </div>
   )
 }
+
+// export const Profilebar = memo(ProfileBar)
 
 // <Input
 //   id='image'

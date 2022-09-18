@@ -1,24 +1,24 @@
 import React from 'react'
-import { useChatContext } from '../../context/ChatProvider'
 import { Avatar } from './Avatar'
 import { HeaderWrapper } from './HeaderWrapper'
+import { useDispatch } from 'react-redux'
+import {
+  openProfile,
+  openSearchbar,
+  openModalInfo,
+} from '../../redux/interactionSlice'
+
 
 export function ChatListHeader() {
-  const {
-    showProfile,
-    setShowProfile,
-    setSearchBar,
-    showModalInfo,
-    setShowModalInfo,
-  } = useChatContext()
+  const dispatch = useDispatch()
 
   return (
     <HeaderWrapper>
-      <button onClick={() => setShowProfile(true)}>
+      <button onClick={() => dispatch(openProfile())}>
         <Avatar size={10} />
       </button>
       <div className='ml-auto flex items-center gap-2'>
-        <button className='icon-btn' onClick={() => setSearchBar(true)}>
+        <button className='icon-btn' onClick={() => dispatch(openSearchbar())}>
           <svg
             className='w-6 h-6'
             fill='currentColor'
@@ -32,7 +32,7 @@ export function ChatListHeader() {
             />
           </svg>
         </button>
-        <button className='icon-btn' onClick={() => setShowModalInfo(true)}>
+        <button className='icon-btn' onClick={() => dispatch(openModalInfo())}>
           <svg
             className='w-6 h-6'
             fill='currentColor'

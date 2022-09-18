@@ -19,6 +19,7 @@ const login_user = async (req, res) => {
   }
   const token = user.generateJWT()
   const userObj = {
+    uuid: user.uuid,
     username: user.username,
     email: user.email,
     profile_image: user.profile_image,

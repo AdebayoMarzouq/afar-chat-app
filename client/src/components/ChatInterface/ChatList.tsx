@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
-import { useChatContext } from '../../context/ChatProvider'
-import { useAxios } from '../../hooks'
-import { ChatListType, RoomType } from '../../types/chat'
-import { axiosRequest } from '../../utilities/requestFunction'
+import { AnimatePresence } from 'framer-motion'
+
+import { useDispatch, useSelector } from 'react-redux'
+import { useSocketContext } from '../../context/SocketContext'
+import { fetchRoomData, setSelected } from '../../redux/chatSlice'
+import { AppDispatch, RootState } from '../../redux/store'
+import { mySort } from '../../utilities/sort'
 import { ModalInfo } from '../ModalInfo'
 import { ChatListHeader } from './ChatListHeader'
 import { ChatListItem } from './ChatListItem'
@@ -10,40 +12,63 @@ import { Profilebar } from './Profilebar'
 import { Searchbar } from './Searchbar'
 
 export const ChatList = () => {
-  const { userToken, userChats, setUserChats } = useChatContext()
-  const [selected, setSelected] = useState<string | null>(null)
+  const dispatch = useDispatch<AppDispatch>()
+  const { socket } = useSocketContext()
+  const {
+    selected,
+    chatDataCollection,
+    chats,
+    chatsLoading,
+    chatsError,
+  } = useSelector((state: RootState) => state.chat)
+  const { userInfo } = useSelector((state: RootState) => state.user)
 
-  if (!userToken) return
-  const { data, loading, error } = useAxios<ChatListType>({
-    url: '/api/chat',
-    token: userToken,
+  const openSelected = (uuid: string) => {
+    if (uuid !== selected) {
+      dispatch(setSelected(uuid))
+    }
+    if (!chatDataCollection[uuid]) {
+      dispatch(fetchRoomData())
+    }
+  }
+
+  const sorted_chats = [...chats].sort(function (b, a) {
+    if (a.updated_at < b.updated_at) return -1
+    else if (a.updated_at > b.updated_at) return 1
+    return 0
   })
 
-  const startChat = async () => {}
-
   return (
-    <div className='relative h-screen flex flex-col w-full bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary'>
+    <div className='relative h-screen flex flex-col bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary'>
       <ChatListHeader />
-      <div className='pb-4 overflow-y-auto flex-grow'>
-        {loading && <div className='text-center'>Loading...</div>}
-        {error && (
-          <div>Something went wrong, try again {JSON.stringify(error)}</div>
-        )}
-        {data &&
-          !error &&
-          (data as ChatListType).rooms.map((chatItem) => {
-            // const info = chatItem.rooms
-            return (
-              <ChatListItem
-                key={chatItem.uuid}
-                selected={selected}
-                setSelected={setSelected}
-                startChat={startChat}
-                {...chatItem}
-              />
-            )
-          })}
-      </div>
+      <AnimatePresence>
+        <div className='pb-4 overflow-y-auto flex-grow'>
+          {chatsLoading && <div className='text-center'>Loading...</div>}
+          {chatsError && (
+            <div>
+              Something went wrong, try again {JSON.stringify(chatsError)}
+            </div>
+          )}
+          {chats && chats.length ? (
+            sorted_chats.map((chatItem) => {
+              // const info = chatItem.rooms
+              return (
+                <ChatListItem
+                  key={chatItem.uuid}
+                  selected={selected}
+                  openSelected={openSelected}
+                  {...chatItem}
+                />
+              )
+            })
+          ) : (
+            <div className='text-center'>
+              You don not have any chats, create a group or search for some
+              friends
+            </div>
+          )}
+        </div>
+      </AnimatePresence>
       <Profilebar />
       <Searchbar />
       <ModalInfo />

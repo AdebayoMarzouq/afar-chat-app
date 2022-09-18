@@ -29,6 +29,11 @@ module.exports = (sequelize, DataTypes) => {
       timestamps: true,
       createdAt: 'joined_at',
       updatedAt: 'updated_at',
+      scopes: {
+        withoutId: {
+          attributes: { exclude: ['id'] },
+        },
+      },
     }
   )
   return Participant

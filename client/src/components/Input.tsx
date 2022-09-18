@@ -37,7 +37,7 @@ export const Input = ({
       <div className='relative'>
         <input
           id={name}
-          className={`text-sm w-full p-2.5 block ${error ? invalid : ''} ${
+          className={`outline-none text-sm w-full p-2.5 block ${error ? invalid : ''} ${
             isValid ? valid : ''
           } bg-gray-50 border rounded-md `}
           {...props}

@@ -9,10 +9,10 @@ export const useAxios = <T>({
 }: {
   url: string
   method?: string
-  token?: string
+  token?: string | null
   payload?: {}
 }) => {
-  const [data, setData] = useState<T[] | T | null>(null)
+  const [data, setData] = useState<T | T[] | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const controllerRef = useRef(new AbortController())
@@ -37,7 +37,12 @@ export const useAxios = <T>({
             port: 3001,
           },
         })
-        setData(response.data)
+        console.log(response.data || null)
+        if (response.status === 200) {
+          setData(response.data)
+        } else {
+          setData(null)
+        }
       } catch (error) {
         if (axios.isAxiosError(error)) {
           setError(error.message)
@@ -49,7 +54,7 @@ export const useAxios = <T>({
         setLoading(false)
       }
     })()
-  }, [])
+  }, [url])
 
   return { cancel, data, error, loading }
 }

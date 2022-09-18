@@ -12,10 +12,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.belongsToMany(models.Room, {
+        as: 'UserParticipation',
         through: models.Participant,
       })
       User.belongsToMany(models.Room, {
-        through: models.Message,
+        as: 'UserSentMessage',
+        through: { model: models.Message, unique: false },
+        constraints: false
       })
       User.hasMany(models.Message)
       User.hasMany(models.Participant)

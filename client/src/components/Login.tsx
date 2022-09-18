@@ -1,11 +1,14 @@
+import axios from 'axios'
 import { useFormik } from 'formik'
 import { useState } from 'react'
-import * as yup from 'yup'
-import { Input } from './Input'
-import { MyToast } from '../utilities/toastFunction'
-import axios from 'axios'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { useChatContext } from '../context/ChatProvider'
+import * as yup from 'yup'
+import { fetchUserChats } from '../redux/chatSlice'
+import { AppDispatch } from '../redux/store'
+import { addUserInfo, addUserToken } from '../redux/userSlice'
+import { MyToast } from '../utilities/toastFunction'
+import { Input } from './Input'
 
 const initialValues = {
   login_email: '',
@@ -22,7 +25,7 @@ const validationSchema = yup.object().shape({
 
 export const Login = () => {
   const navigate = useNavigate()
-  const { setUserToken, setUserInfo } = useChatContext()
+  const dispatch = useDispatch<AppDispatch>()
   const [show, setShow] = useState({ login_password: false } as {
     [key: string]: boolean
   })
@@ -56,8 +59,8 @@ export const Login = () => {
           config
         )
         console.log(token, user)
-        setUserToken(token)
-        setUserInfo(user)
+        dispatch(addUserToken(token))
+        dispatch(addUserInfo(user))
         MyToast({ textContent: 'Login successful' })
         navigate('/chat')
       } catch (error) {
@@ -69,8 +72,8 @@ export const Login = () => {
         } else {
           console.log(error)
         }
-        setUserInfo(null)
-        setUserToken(null)
+        dispatch(addUserToken(null))
+        dispatch(addUserInfo(null))
       }
     },
   })

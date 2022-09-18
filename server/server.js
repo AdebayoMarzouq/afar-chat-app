@@ -1,8 +1,17 @@
 require('dotenv').config()
 require('express-async-errors')
 const express = require('express')
+const { createServer } = require('http')
+const {Server} = require('socket.io')
 const cors = require('cors')
 const app = express()
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+  pingTimeout: 60000,
+  cors: {
+    origin: 'http://localhost:5173',
+  }
+})
 
 // use chithchat default profile images later
 
@@ -12,11 +21,15 @@ const db = require('./models')
 const authRoutes = require('./routes/user')
 const usersRoutes = require('./routes/users')
 const roomRoutes = require('./routes/room')
+const messageRoutes = require('./routes/message')
 
 // middlewares
-const { notFoundMiddleware, errorHandlerMiddleware } = require('./middleware/errors')
+const {
+  notFoundMiddleware,
+  errorHandlerMiddleware,
+} = require('./middleware/errors')
 
-app.use(cors({origin: 'http://localhost:5173'}))
+app.use(cors({ origin: 'http://localhost:5173' }))
 app.use(express.json())
 
 app.get('/', (req, res) => {
@@ -27,6 +40,7 @@ app.get('/', (req, res) => {
 app.use('/api/account', authRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/chat', roomRoutes)
+app.use('/api/message', messageRoutes)
 
 // Not Found and Error Middlewares
 app.use(notFoundMiddleware)
@@ -36,13 +50,17 @@ const PORT = process.env.PORT || 5000
 
 const start = async () => {
   try {
-    app.listen(PORT, console.log('listening on port ' + PORT))
-    // await db.sequelize.sync({alter: true})
     await db.sequelize.sync()
+    // await db.sequelize.sync({alter: true})
+    // await db.sequelize.sync({force: true})
     // await db.sequelize.drop()
     console.log('Database synced')
+    httpServer.listen(PORT, console.log('listening on port ' + PORT))
+    require('./controllers/socket')(io)
   } catch (error) {
-    console.log(error)  }
+    console.log(error)
+  }
 }
 
+module.exports.io = io
 start()

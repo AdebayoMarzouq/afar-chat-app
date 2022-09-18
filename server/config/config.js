@@ -2,6 +2,7 @@ require('dotenv').config()
 
 module.exports = {
   development: {
+    // logging: false,
     username: process.env.DBUSERNAME,
     password: process.env.DBPASS,
     database: 'chat_development',
@@ -12,6 +13,7 @@ module.exports = {
     },
   },
   test: {
+    logging: false,
     username: process.env.DBUSERNAME,
     password: process.env.DBPASS,
     database: 'chat_development',
@@ -22,6 +24,7 @@ module.exports = {
     },
   },
   production: {
+    logging: false,
     username: process.env.DBUSERNAME,
     password: process.env.DBPASS,
     database: 'chat_development',

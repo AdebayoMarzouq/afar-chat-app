@@ -1,6 +1,9 @@
 import axios from 'axios'
 import React, { useState } from 'react'
-import { useChatContext } from '../context/ChatProvider'
+import { useDispatch, useSelector } from 'react-redux'
+import { fetchUserChats } from '../redux/chatSlice'
+import { closeModalInfo} from '../redux/interactionSlice'
+import { AppDispatch, RootState } from '../redux/store'
 import { UserType } from '../types/user'
 import { axiosRequest } from '../utilities/requestFunction'
 import { SearchListItem } from './ChatInterface/SearchListItem'
@@ -12,7 +15,10 @@ import { SearchListItem } from './ChatInterface/SearchListItem'
 // }
 
 export const ModalInfo = () => {
-  const { showModalInfo, setShowModalInfo, token } = useChatContext()
+  const dispatch = useDispatch<AppDispatch>()
+  const modalInfo = useSelector((state: RootState) => state.interaction.modalInfo)
+  const {userToken, userInfo
+} = useSelector((state: RootState) => state.user)
   const [search, setSearch] = useState('')
   const [users, setUsers] = useState<UserType[] | null>(null)
   const [badgeItems, setBadgeItems] = useState<UserType[] | []>([])
@@ -30,10 +36,7 @@ export const ModalInfo = () => {
 
     setLoading(true)
     try {
-      const response = await axios.get('/api/users?search=' + search, {
-        headers: { Authorization: 'Bearer ' + token },
-      })
-      console.log(response)
+      const response = await axiosRequest({url: '/api/users?search=' + search, method: 'GET', token: userToken})
       const data = await response.data
       setUsers(data.users)
       setLoading(false)
@@ -84,25 +87,21 @@ export const ModalInfo = () => {
     // return console.log(form_data)
     setLoading(true)
     try {
-      // const response = await axios.post('/api/chat/group', {
-      //   data: form_data,
-      //   headers: { Authorization: `Bearer ${token}` },
-      // })
-      const { data, _error } = await axiosRequest({
+      const response = await axiosRequest({
         url: '/api/chat/group',
         method: 'POST',
-        token,
-        payload: form_data,
+        token: userToken,
+        payload: form_data
       })
-      // console.log(response)
-      if (_error) console.log(_error)
-      setUsers(data.users)
+      console.log(response.data)
+      dispatch(fetchUserChats())
       setLoading(false)
       setSearch('')
       setUsers([])
       setBadgeItems([])
       setChatForm({ chat_name: '', users: [] })
     } catch (error) {
+      console.log(error)
       setLoading(false)
     }
   }
@@ -114,7 +113,7 @@ export const ModalInfo = () => {
         tabIndex={-1}
         aria-hidden='true'
         className={`${
-          showModalInfo ? 'visible' : 'invisible'
+          modalInfo ? 'visible' : 'invisible'
         } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 md:h-full flex justify-center items-center bg-black bg-opacity-30`}
       >
         <div className='relative p-4 w-full max-w-xl h-full md:h-auto'>
@@ -128,7 +127,7 @@ export const ModalInfo = () => {
               <button
                 type='button'
                 className='text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center'
-                onClick={() => setShowModalInfo(false)}
+                onClick={() => dispatch(closeModalInfo())}
               >
                 <svg
                   aria-hidden='true'
@@ -227,7 +226,7 @@ export const ModalInfo = () => {
                 className='text-white bg-light-main-primary hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-auto'
                 onClick={() => {
                   submitForm()
-                  setShowModalInfo(false)
+                  dispatch(closeModalInfo())
                 }}
               >
                 Create
