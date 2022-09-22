@@ -1,5 +1,7 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useCallback, useContext, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
+import { RootState, store } from '../redux/store'
 
 type SocketContextPropsTypes = { children: React.ReactNode | React.ReactNode[] }
 type SocketContextValuesTypes = {
@@ -9,9 +11,20 @@ type SocketContextValuesTypes = {
 const SocketContext = createContext({} as SocketContextValuesTypes)
 
 const ENDPOINT = 'http://localhost:3001'
-const socket = io(ENDPOINT)
 
 export const SocketProvider = ({ children }: SocketContextPropsTypes) => {
+  const userToken = useSelector((state: RootState) => state.user.userToken)
+
+  const socketInit = useCallback(
+    () => {
+      console.log('called')
+      return io(ENDPOINT, { transports: ["websocket", "polling"], auth: { token: userToken } })
+    },
+    [userToken],
+  )
+
+  const socket = socketInit()
+  
 
   return (
     <SocketContext.Provider value={{ socket }}>

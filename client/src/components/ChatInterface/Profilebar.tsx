@@ -3,23 +3,43 @@ import { Avatar } from './Avatar'
 import type { RootState } from '../../redux/store'
 import { useSelector, useDispatch } from 'react-redux'
 import { closeProfile } from '../../redux/interactionSlice'
+import { motion } from 'framer-motion'
+
+const variants = {
+  initial: { opacity: 0, x: '-100%' },
+  enter: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: 'tween',
+      ease: 'backInOut',
+      duration: 0.6,
+    },
+  },
+  exit: {
+    x: '-100%',
+    transition: {
+      type: 'spring',
+      duration: 0.5,
+      bounce: 0,
+    },
+  },
+}
 
 export const Profilebar = () => {
-  const profileBar = useSelector(
-    (state: RootState) => state.interaction.profile
-  )
-  const userInfo = useSelector(
-    (state: RootState) => state.user.userInfo
-  )
+  const { userInfo } = useSelector((state: RootState) => state.user)
   const dispatch = useDispatch()
   const [edit, setEdit] = useState(false)
   const [usernameInput, setUsernameInput] = useState(userInfo!.username)
 
   return (
-    <div
-      className={`slide-in ${
-        profileBar ? 'translate-x-0' : '-translate-x-full'
-      } absolute bg-white inset-0`}
+    <motion.div
+      className={`absolute bg-white inset-0`}
+      initial='initial'
+      animate='enter'
+      exit='exit'
+      variants={variants}
+      layout
     >
       <div className='px-2 h-16 flex items-center mt-auto gap-6 text-xl font-semibold border-b'>
         <button className='icon-btn' onClick={() => dispatch(closeProfile())}>
@@ -46,7 +66,7 @@ export const Profilebar = () => {
             <Avatar size={48} src={userInfo.profile_image} />
             <label
               htmlFor='profile_upload'
-              className='absolute inset flex flex-col justify-center items-center w-48 h-48 rounded-full bg-gray-50 hover:opacity-50 opacity-0 rounded-lg border-2 border-gray-300 border-dashed cursor-pointer text-gray-500'
+              className='absolute inset flex flex-col justify-center items-center w-48 h-48 rounded-full bg-gray-50 hover:opacity-50 opacity-0 border-2 border-gray-300 border-dashed cursor-pointer text-gray-500'
             >
               <div className='flex flex-col justify-center items-center pt-5 pb-6'>
                 <svg
@@ -112,7 +132,7 @@ export const Profilebar = () => {
       ) : (
         <div className='text-center'>Loading</div>
       )}
-    </div>
+    </motion.div>
   )
 }
 

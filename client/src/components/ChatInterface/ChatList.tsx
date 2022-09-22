@@ -1,4 +1,4 @@
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, Reorder } from 'framer-motion'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { useSocketContext } from '../../context/SocketContext'
@@ -14,6 +14,7 @@ import { Searchbar } from './Searchbar'
 export const ChatList = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { socket } = useSocketContext()
+  const { modalInfo, profile: profileBar, searchBar } = useSelector((state: RootState) => state.interaction)
   const {
     selected,
     chatDataCollection,
@@ -22,6 +23,12 @@ export const ChatList = () => {
     chatsError,
   } = useSelector((state: RootState) => state.chat)
   const { userInfo } = useSelector((state: RootState) => state.user)
+
+  //
+  //
+  // Fix chat return to take care of participant name in the list
+  //
+  //
 
   const openSelected = (uuid: string) => {
     if (uuid !== selected) {
@@ -39,7 +46,7 @@ export const ChatList = () => {
   })
 
   return (
-    <div className='relative h-screen flex flex-col bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary'>
+    <div className='col-span-2 xl:col-span-3 relative h-screen flex flex-col bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary'>
       <ChatListHeader />
       <AnimatePresence>
         <div className='pb-4 overflow-y-auto flex-grow'>
@@ -55,6 +62,7 @@ export const ChatList = () => {
               return (
                 <ChatListItem
                   key={chatItem.uuid}
+                  currentUser={userInfo!.uuid}
                   selected={selected}
                   openSelected={openSelected}
                   {...chatItem}
@@ -69,9 +77,9 @@ export const ChatList = () => {
           )}
         </div>
       </AnimatePresence>
-      <Profilebar />
-      <Searchbar />
-      <ModalInfo />
+      <AnimatePresence>{profileBar && <Profilebar />}</AnimatePresence>
+      <AnimatePresence>{searchBar && <Searchbar />}</AnimatePresence>
+      <AnimatePresence>{modalInfo && <ModalInfo />}</AnimatePresence>
     </div>
   )
 }

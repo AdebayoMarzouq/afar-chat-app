@@ -7,6 +7,8 @@ export type RoomType = {
   last_message: null | string
   created_at: string
   updated_at: string
+  privateUserOne: UserType
+  privateUserTwo: UserType
 }
 
 export type ChatListType = {

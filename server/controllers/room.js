@@ -11,45 +11,45 @@ const getOrCreatePrivateRoom = async (req, res) => {
 
   // check if user exists
   // Prevent creation of random rooms with random users who don't exist
-  const user = await db.User.findOne({ where: { uuid: user_id } })
+  const user = await db.User.scope('withId').findOne({
+    where: { uuid: user_id },
+  })
   if (!user) {
     return res.status(400).send({ message: 'This user does not exist' })
   }
 
-  const haveRoom = await db.sequelize.query(
-    `SELECT * from room r WHERE is_group = 0 AND EXISTS (SELECT 1 from participant p WHERE p.RoomId = r.id AND p.UserId = '${current_user}') AND EXISTS (SELECT 1 from participant p WHERE p.RoomId = r.id AND p.UserId = '${user_id}')`,
-    { type: db.Sequelize.QueryTypes.SELECT }
-  )
+  // const haveRoom = await db.sequelize.query(
+  //   `SELECT * from room r WHERE is_group = 0 AND EXISTS (SELECT 1 from participant p WHERE p.RoomId = r.id AND p.UserId = '${current_user}') AND EXISTS (SELECT 1 from participant p WHERE p.RoomId = r.id AND p.UserId = '${user.id}')`,
+  //   { type: db.Sequelize.QueryTypes.SELECT }
+  // )
 
-  if (haveRoom.length) {
+  const haveRoom = await db.Room.findOne({
+    where: { privateUserOneId: current_user, privateUserTwoId: user.id },
+  })
+
+  if (haveRoom) {
     // const room_id = haveRoom[0].id
     // const room = await db.Room.findByPk(room_id)
     // const room_users = room.getUsers()
-    return res
-      .status(400)
-      .json({ msg: 'These users have a room already', room: haveRoom })
+    return res.status(400).json({ msg: 'These users have a room already' })
   }
 
   const t = await db.sequelize.transaction()
 
   try {
-    const room = await db.Room.create({}, { transaction: t })
-    const participantOne = await db.User.scope('withId').findOne(
-      { where: { uuid: current_user } },
-      {
-        transaction: t,
-      }
-    )
-    const participantTwo = await db.User.scope('withId').findOne(
-      { where: { uuid: user_id } },
+    const room = await db.Room.create(
+      { privateUserOneId: current_user, privateUserTwoId: user.id },
       { transaction: t }
     )
-    await room.addRoomParticipants([participantOne, participantTwo], {
+    await room.addRoomParticipants([current_user, user.id], {
       transaction: t,
     })
     await t.commit()
-    res.status(201).send({ message: 'Room created successfully', room })
+    res
+      .status(201)
+      .send({ message: 'Room created successfully', room_id: room.uuid })
   } catch (error) {
+    console.log(error)
     await t.rollback()
     return res
       .status(StatusCodes.BAD_REQUEST)
@@ -94,13 +94,12 @@ const createGroup = async (req, res) => {
     const current_user = req.user.id
 
     const room = await db.Room.create(
-      { room_name, creatorId: current_user.id, is_group: true },
+      { room_name, creatorId: current_user, is_group: true },
       { transaction: t }
     )
-
     await room.addRoomParticipants([...users_data], { transaction: t })
     await t.commit()
-    return res.status(201).send({ message: 'created group successfully' })
+    return res.status(201).send({ message: 'created group successfully', room_id: room.uuid  })
   } catch (error) {
     await t.rollback()
     return res
@@ -126,6 +125,8 @@ const getRoomsAndGroups = async (req, res) => {
         where: { UserId: req.user.id },
         attributes: [],
       },
+      { model: db.User, as: 'privateUserOne' },
+      { model: db.User, as: 'privateUserTwo' },
     ],
     order: [['updated_at', 'DESC']],
   })
@@ -136,6 +137,7 @@ const getRoomByUUID = async (req, res) => {
   const { room_id } = req.params
   const room = await db.Room.findOne({
     where: { uuid: room_id },
+    attributes: { exclude: ['privateUserOneId', 'privateUserTwoId']},
     include: [
       { model: db.User, as: 'creator' },
       {
@@ -148,11 +150,6 @@ const getRoomByUUID = async (req, res) => {
   const participants = await room.getRoomParticipants({
     joinTableAttributes: ['joined_at'],
   })
-  // const messages = await db.Message.findAll({
-  //   attributes: ['uuid', 'message_text', 'deleted_at', 'sent_at', 'updated_at', 'repliedMessageId'],
-  //   where: { RoomId: room.id },
-  //   order: [['sent_at', 'DESC']],
-  // })
   const messages = await room.getRoomMessages({
     joinTableAttributes: [
       'uuid',
@@ -227,11 +224,9 @@ const removeParticipantFromGroup = async (req, res) => {
     await room_participant.destroy()
     res.status(200).send({ message: 'user removed successfully' })
   }
-  res
-    .status(StatusCodes.UNAUTHORIZED)
-    .message({
-      message: 'You are not authorized to remove participants from this group',
-    })
+  res.status(StatusCodes.UNAUTHORIZED).message({
+    message: 'You are not authorized to remove participants from this group',
+  })
 }
 
 module.exports = {

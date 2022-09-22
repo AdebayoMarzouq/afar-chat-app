@@ -4,9 +4,8 @@ import { MessageListItem } from '../../types/chat'
 
 const transition = {
   type: 'spring',
-  stiffness: 200,
-  mass: 0.2,
-  damping: 20,
+  // damping: 20,
+  bounce: 0.2,
 }
 
 const variants = {
@@ -50,8 +49,10 @@ export const ChatBubbleT1 = ({
     >
       <div className='txt'>
         <p className={`name ${isSender && 'alt'}`}>{username}</p>
-        <p className='message'>{message_text}</p>
-        <span className='timestamp'>10:20 pm</span>
+        <div className='body'>
+          <p className='message'>{message_text}</p>
+          <span className='timestamp'>10:20 pm</span>
+        </div>
       </div>
       <div className={`bubble-arrow ${isSender && 'alt'}`}></div>
     </motion.div>

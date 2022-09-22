@@ -115,6 +115,12 @@ export const chatSlice = createSlice({
         chat.updated_at = messageObj.Message.updated_at
       }
     },
+    appendChat: (
+      state,
+      action: PayloadAction<RoomType>
+    ) => {
+      state.chats.unshift(action.payload)
+    },
     appendMessage: (
       state,
       action: PayloadAction<{ room_id: string; messageObj: MessageListItem }>
@@ -171,7 +177,7 @@ export const chatSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setSelected, setChats, updateChats, appendMessage } =
+export const { setSelected, setChats, updateChats, appendMessage, appendChat } =
   chatSlice.actions
 
 export default chatSlice.reducer

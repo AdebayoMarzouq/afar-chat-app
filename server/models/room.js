@@ -20,8 +20,11 @@ module.exports = (sequelize, DataTypes) => {
       Room.hasMany(models.Participant)
       Room.hasMany(models.Message)
       Room.belongsTo(models.User, { as: 'creator' })
+      Room.belongsTo(models.User, { as: 'privateUserOne' })
+      Room.belongsTo(models.User, { as: 'privateUserTwo' })
     }
   }
+  
   Room.init(
     {
       id: {

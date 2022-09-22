@@ -21,26 +21,33 @@ export function ChatListHeader() {
         <button className='icon-btn' onClick={() => dispatch(openSearchbar())}>
           <svg
             className='w-6 h-6'
-            fill='currentColor'
-            viewBox='0 0 20 20'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
             xmlns='http://www.w3.org/2000/svg'
           >
             <path
-              fillRule='evenodd'
-              d='M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z'
-              clipRule='evenodd'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M12 6v6m0 0v6m0-6h6m-6 0H6'
             />
           </svg>
         </button>
         <button className='icon-btn' onClick={() => dispatch(openModalInfo())}>
           <svg
             className='w-6 h-6'
-            fill='currentColor'
-            viewBox='0 0 20 20'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
             xmlns='http://www.w3.org/2000/svg'
           >
-            <path d='M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z' />
-            <path d='M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z' />
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z'
+            />
           </svg>
         </button>
       </div>

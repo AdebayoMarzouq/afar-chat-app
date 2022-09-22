@@ -58,7 +58,6 @@ export const Login = () => {
           { email: login_email, password: login_password },
           config
         )
-        console.log(token, user)
         dispatch(addUserToken(token))
         dispatch(addUserInfo(user))
         MyToast({ textContent: 'Login successful' })

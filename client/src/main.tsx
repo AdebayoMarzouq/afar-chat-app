@@ -6,7 +6,6 @@ import './index.css'
 import { Provider } from 'react-redux'
 import { persistor, store } from './redux/store'
 import { PersistGate } from 'redux-persist/integration/react'
-import { SocketProvider } from './context/SocketContext'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
@@ -16,9 +15,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           loading={<div className='text-center'>Loading...</div>}
           persistor={persistor}
         >
-          <SocketProvider>
-            <App />
-          </SocketProvider>
+          <App />
         </PersistGate>
       </Provider>
     </BrowserRouter>

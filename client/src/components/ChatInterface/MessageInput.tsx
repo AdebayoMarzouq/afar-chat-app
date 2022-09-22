@@ -31,6 +31,10 @@ export const MessageInput = ({}) => {
     setValue('')
   }
 
+  useEffect(() => {
+    setValue('')
+  }, [selected])
+
   // useEffect(() => {
   //   const handleEvent = (e: KeyboardEvent) => {
   //     if (!e.target) return
@@ -58,41 +62,37 @@ export const MessageInput = ({}) => {
         Your message
       </label>
       <div className='flex items-end py-2 px-3 bg-gray-50 rounded-lg dark:bg-gray-700'>
-        <button
-          type='button'
-          className='inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600'
-        >
+        <button type='button' className='icon-btn'>
           <svg
-            aria-hidden='true'
             className='w-6 h-6'
-            fill='currentColor'
-            viewBox='0 0 20 20'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
             xmlns='http://www.w3.org/2000/svg'
           >
             <path
-              fillRule='evenodd'
-              d='M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z'
-              clipRule='evenodd'
-            ></path>
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
+            />
           </svg>
           <span className='sr-only'>Upload image</span>
         </button>
-        <button
-          type='button'
-          className='p-2 text-gray-500 rounded-lg cursor-pointer hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-600'
-        >
+        <button type='button' className='icon-btn'>
           <svg
-            aria-hidden='true'
             className='w-6 h-6'
-            fill='currentColor'
-            viewBox='0 0 20 20'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
             xmlns='http://www.w3.org/2000/svg'
           >
             <path
-              fillRule='evenodd'
-              d='M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 100-2 1 1 0 000 2zm7-1a1 1 0 11-2 0 1 1 0 012 0zm-.464 5.535a1 1 0 10-1.415-1.414 3 3 0 01-4.242 0 1 1 0 00-1.415 1.414 5 5 0 007.072 0z'
-              clipRule='evenodd'
-            ></path>
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+            />
           </svg>
           <span className='sr-only'>Add emoji</span>
         </button>
@@ -107,17 +107,22 @@ export const MessageInput = ({}) => {
         ></textarea>
         <button
           type='submit'
-          className='inline-flex justify-end p-2 text-light-main-primary rounded-full cursor-pointer hover:bg-light-main-secondary'
+          className='icon-btn'
           onClick={handleSubmit}
         >
           <svg
-            aria-hidden='true'
             className='w-6 h-6 rotate-90'
-            fill='currentColor'
-            viewBox='0 0 20 20'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
             xmlns='http://www.w3.org/2000/svg'
           >
-            <path d='M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z'></path>
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M12 19l9 2-9-18-9 18 9-2zm0 0v-8'
+            />
           </svg>
           <span className='sr-only'>Send message</span>
         </button>

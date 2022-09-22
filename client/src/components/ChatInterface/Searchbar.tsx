@@ -6,79 +6,94 @@ import { SearchListItem } from './SearchListItem'
 import type { AppDispatch, RootState } from '../../redux/store'
 import { useSelector, useDispatch } from 'react-redux'
 import { closeSearchbar } from '../../redux/interactionSlice'
-import { setSelected, fetchRoomData } from '../../redux/chatSlice'
+import { setSelected, fetchRoomData, fetchUserChats } from '../../redux/chatSlice'
+import { useSocketContext } from '../../context/SocketContext'
+import { AnimatePresence, motion } from 'framer-motion'
+
+const variants = {
+  initial: { opacity: 0, x: '-100%' },
+  enter: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      type: 'tween',
+      ease: 'backInOut',
+      duration: 0.6,
+    },
+  },
+  exit: {
+    x: '-100%',
+    transition: {
+      type: 'spring',
+      duration: 0.5,
+      bounce: 0,
+    },
+  },
+}
 
 export const Searchbar = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const searchBar = useSelector(
-    (state: RootState) => state.interaction.searchBar
-  )
+  const { socket } = useSocketContext()
   const userToken = useSelector((state: RootState) => state.user.userToken)
   const { selected, chatDataCollection } = useSelector(
     (state: RootState) => state.chat
   )
   const [search, setSearch] = useState('')
   const [users, setUsers] = useState<UserType[] | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [fetch, setFetch] = useState({ loading: false, error: false })
 
   const handleSearch = async (e: React.FormEvent) => {
     if (!search) return // display a toast warning if empty
-    setLoading(true)
-    const {
-      loading,
-      _error: error,
-      data,
-    } = await axiosRequest({
-      url: `/api/users?search=${search}`,
-      token: userToken,
-    })
-    if (error) console.log(error)
-    setUsers(data.users)
-    setLoading(loading)
-  }
-
-  const openSelected = (uuid: string) => {
-    if (uuid !== selected) {
-      dispatch(setSelected(uuid))
-    }
-    if (!chatDataCollection[uuid]) {
-      dispatch(fetchRoomData())
+    setFetch({ loading: true, error: false })
+    try {
+      const response = await axiosRequest({
+        url: `/api/users?search=${search}`,
+        token: userToken,
+      })
+      setUsers(response.data.users)
+    } catch (error) {
+      console.log(error)
+      setFetch((prev) => {
+        return { ...prev, error: true }
+      })
+    } finally {
+      setFetch(prev => { return { ...prev, loading: false } })
     }
   }
 
-  // const submitForm = async () => {
-  //   if (!chatForm.chat_name || chatForm.users.length < 2)
-  //     return console.log('fill in appropriate details')
-  //   const form_data = {
-  //     room_name: chatForm.chat_name,
-  //     users: JSON.stringify(chatForm.users),
-  //   }
-  //   // return console.log(form_data)
-  //   setLoading(true)
-  //   try {
-  //     // const response = await axios.post('/api/chat/group', {
-  //     //   data: form_data,
-  //     //   headers: { Authorization: `Bearer ${token}` },
-  //     // })
-  //     const { data, _error } = await axiosRequest({
-  //       url: '/api/chat/group',
-  //       method: 'POST',
-  //       token: userToken,
-  //       payload: form_data,
-  //     })
-  //     // console.log(response)
-  //     if (_error) console.log(_error)
-  //     setUsers(data.users)
-  //   } catch (error) {
-  //     setLoading(false)
-  //   }
-  // }
+  const openSelected = async (uuid: string) => {
+    if (!uuid) return // toast here
+    try {
+      const response = await axiosRequest({
+        url: `/api/chat`,
+        token: userToken,
+        method: 'POST',
+        payload: { user_id: uuid }
+      })
+      if (response.status = 201) {
+        const room_id = response.data.room_id
+        socket.emit('joinRoom', room_id)
+        dispatch(fetchUserChats())
+        if (room_id !== selected) {
+          dispatch(setSelected(room_id))
+        }
+        if (!chatDataCollection[room_id]) {
+          dispatch(fetchRoomData())
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
-    <div
-      className={`slide-in ${
-        searchBar ? 'translate-x-0' : '-translate-x-full'
-      } absolute bg-white inset-0 h-screen flex flex-col`}
+    <motion.div
+      className={`absolute bg-white inset-0 h-screen flex flex-col`}
+      initial='initial'
+      animate='enter'
+      exit='exit'
+      variants={variants}
+      layout
     >
       <div className='px-2 h-16 shrink-0 flex items-center gap-6 text-xl font-semibold border-b'>
         <button className='icon-btn' onClick={() => dispatch(closeSearchbar())}>
@@ -100,7 +115,7 @@ export const Searchbar = () => {
         Search Users
       </div>
       <form
-        className='flex items-center my-4 px-2 shrink-0'
+        className='flex items-center my-4 px-4 shrink-0'
         onSubmit={(e) => {
           e.preventDefault()
           handleSearch(e)
@@ -142,11 +157,22 @@ export const Searchbar = () => {
         </button>
       </form>
       <div className='pb-4 overflow-y-auto border-t flex-grow'>
-        {loading && <div className='text-center'>Loading...</div>}
+        {fetch.loading && <div className='text-center'>Loading...</div>}
+        {fetch.error && (
+          <div className='text-center'>
+            An error occured while fetching users
+          </div>
+        )}
         {users &&
-          !loading &&
-          users.map((user) => <SearchListItem key={user.uuid} {...user} />)}
+          !fetch.loading &&
+          users.map((user) => (
+            <SearchListItem
+              key={user.uuid}
+              openSelected={openSelected}
+              {...user}
+            />
+          ))}
       </div>
-    </div>
+    </motion.div>
   )
 }

@@ -13,7 +13,7 @@ export const Avatar = ({
   const sizeWClass = size ? `${size * 4}px` : `${12 * 4}px`
 
   return (
-    <div className='bg-light-'>
+    <div className={`flex justify-center w-[${size}]`}>
       <img
         className='object-cover shrink-0 rounded-full shadow-inner'
         style={{

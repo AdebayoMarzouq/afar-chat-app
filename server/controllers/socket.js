@@ -1,34 +1,81 @@
 const db = require('../models')
+const jwt = require('jsonwebtoken')
+
+const getUserRooms = async (user_id) => {
+  const user = await db.User.scope('withId').findOne({
+    where: { uuid: user_id },
+  })
+  return await db.Room.scope('withoutId').findAll({
+    attributes: [
+      'uuid',
+      'room_name',
+      'is_group',
+      'last_message',
+      'created_at',
+      'updated_at',
+    ],
+    include: [
+      { model: db.User, as: 'creator' },
+      {
+        model: db.Participant,
+        where: { UserId: user.id },
+        attributes: [],
+      },
+      { model: db.User, as: 'privateUserOne' },
+      { model: db.User, as: 'privateUserTwo' },
+    ],
+    order: [['updated_at', 'DESC']],
+  })
+}
 
 module.exports = (io) => {
-  io.on('connection', (socket) => {
-    socket.io = io
-    console.log('A user connected to socket.io server')
-
-    const getUserRooms = async (user_id) => {
-      const user = await db.User.scope('withId').findOne({
-        where: { uuid: user_id },
-      })
-      return await db.Room.scope('withoutId').findAll({
-        attributes: [
-          'uuid',
-          'room_name',
-          'is_group',
-          'last_message',
-          'created_at',
-          'updated_at',
-        ],
-        include: [
-          { model: db.User, as: 'creator' },
-          {
-            model: db.Participant,
-            where: { UserId: user.id },
-            attributes: [],
-          },
-        ],
-        order: [['updated_at', 'DESC']],
-      })
+  io.use((socket, next) => {
+    if (socket.handshake.auth && socket.handshake.auth.token) {
+      jwt.verify(
+        socket.handshake.auth.token,
+        process.env.JWT_SECRET,
+        (err, decoded) => {
+          if (err) {
+            console.log('An error occurred while verifying JWT')
+            return next(new Error('Authentication error'))
+          }
+          socket.user = decoded
+          next()
+        }
+      )
+    } else {
+      console.log('an error occured')
+      next(new Error('Authentication error'))
     }
+  })
+
+  io.on('connection', async (socket) => {
+
+    socket.on('createdNewGroup', async (room_id) => {
+      const sockets = await io.fetchSockets()
+      const room = await db.Room.findOne({
+        where: { uuid: room_id },
+        include: [
+          { model: db.User, as: 'privateUserOne' },
+          { model: db.User, as: 'privateUserTwo' },
+        ],
+      })
+      const users = await room.getRoomParticipants()
+      const roomObj = room.toJSON()
+      delete roomObj.id
+      delete roomObj.creatorId
+      socket.emit('added', roomObj)
+      for (let user of users) {
+        const user_socket = sockets.find(
+          socket => socket.user.user_id === user.uuid
+        )
+        if (user_socket) {
+          user_socket.join(room.uuid)
+          // user_socket.emit('added', roomObj)
+          io.to(user_socket.id).emit('added', roomObj)
+        }
+      }
+    })
 
     socket.on('joinRooms', async ({ username, user_id }) => {
       const rooms = await getUserRooms(user_id)
@@ -38,7 +85,9 @@ module.exports = (io) => {
       })
     })
 
-
+    socket.on('joinRoom', (room_id) => {
+      socket.join(room_id)
+    })
 
     socket.on('send_message', async (messageObj) => {
       const { user_id, room_id, message } = messageObj
@@ -76,11 +125,11 @@ module.exports = (io) => {
             repliedMessageId: createdMessage.repliedMessageId,
           },
         }
-        socket.io.in(room_id).emit('message_received', room_id, returnObj)
+        io.in(room_id).emit('message_received', room_id, returnObj)
       } catch (error) {
         console.log(error)
         await t.rollback()
-        return socket.emit(
+        socket.emit(
           'message_send_error',
           'Unable to send message, try again'
         )
@@ -90,8 +139,5 @@ module.exports = (io) => {
     socket.on('disconnect', () => {
       console.log('A user disconnected from socket.io server')
     })
-  })
-  io.on('disconnect', (socket) => {
-    console.log('A user disconnected from socket.io server')
   })
 }

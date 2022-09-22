@@ -1,22 +1,28 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ChatList, ChatUI } from '../components'
-import { useSocketContext } from '../context/SocketContext'
+import { ChatList, ChatMenubar, ChatUI } from '../components'
+import { SocketProvider, useSocketContext } from '../context/SocketContext'
+import { useWindowDimensions } from '../hooks'
 import {
+  appendChat,
   appendMessage,
   fetchRoomData,
   fetchUserChats,
   updateChats,
 } from '../redux/chatSlice'
 import { AppDispatch, RootState } from '../redux/store'
-import { MessageListItem } from '../types/chat'
+import { ChatListType, MessageListItem, RoomType } from '../types/chat'
 
 export const Chat = () => {
   const dispatch = useDispatch<AppDispatch>()
+  const { width, height } = useWindowDimensions()
+  const [mainToggle, setMainToggle] = useState(false)
   const { socket } = useSocketContext()
   const { userInfo } = useSelector((state: RootState) => state.user)
   const { chatDataCollection } = useSelector((state: RootState) => state.chat)
-
+  const groupMenu = useSelector(
+    (state: RootState) => state.interaction.groupMenu
+  )
   const chatDataCollectionRef = useRef(chatDataCollection)
 
   useEffect(() => {
@@ -28,33 +34,52 @@ export const Chat = () => {
   })
 
   useEffect(() => {
-    if (!userInfo) return
+    if (!userInfo || !socket) return
+
     socket.emit('joinRooms', {
       username: userInfo.username,
       user_id: userInfo.uuid,
     })
 
-    const messageRecievedHandler = (room_id: string, messageObj: MessageListItem) => {
+    const addedToNewGroupHandler = (room: RoomType) => {
+      console.log('addedToNewGroup listener triggered')
+      dispatch(appendChat(room))
+    }
+
+    const messageRecievedHandler = (
+      room_id: string,
+      messageObj: MessageListItem
+    ) => {
       dispatch(updateChats({ room_id, messageObj }))
       if (chatDataCollectionRef.current[room_id]) {
-        console.log('trueee, it is present and just look into the slice')
         dispatch(appendMessage({ room_id, messageObj }))
       } else {
         dispatch(fetchRoomData(room_id))
       }
     }
 
+    socket.on('added', addedToNewGroupHandler)
+
     socket.on('message_received', messageRecievedHandler)
 
     return () => {
+      socket.off('added', addedToNewGroupHandler)
       socket.off('message_received', messageRecievedHandler)
     }
-  }, [])
+  }, [socket])
 
   return (
-    <div className='w-full h-screen grid grid-cols-1 md:grid-cols-3 divide-x'>
-      <ChatList />
-      <ChatUI />
+    <div className='w-screen h-screen grid grid-cols-1 md:grid-cols-5 xl:grid-cols-12 divide-x'>
+      {width >= 768 && (
+        <>
+          <ChatList />
+          <ChatUI />
+          {width >= 1280 && <ChatMenubar />}
+        </>
+      )}
+      {width < 768 && <>
+        {mainToggle ? <ChatUI /> : <ChatList />}
+      </>}
     </div>
   )
 }

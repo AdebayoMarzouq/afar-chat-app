@@ -1,8 +1,10 @@
 import axios from 'axios'
+import { motion } from 'framer-motion'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { fetchUserChats } from '../redux/chatSlice'
-import { closeModalInfo} from '../redux/interactionSlice'
+import { useSocketContext } from '../context/SocketContext'
+import { appendChat, fetchUserChats } from '../redux/chatSlice'
+import { closeModalInfo } from '../redux/interactionSlice'
 import { AppDispatch, RootState } from '../redux/store'
 import { UserType } from '../types/user'
 import { axiosRequest } from '../utilities/requestFunction'
@@ -14,11 +16,26 @@ import { SearchListItem } from './ChatInterface/SearchListItem'
 //   children: React.ReactNode | React.ReactNode[]
 // }
 
+const variants = {
+  initial: { opacity: 0 },
+  enter: {
+    opacity: 1,
+    transition: {
+      type: 'tween',
+    },
+  },
+  exit: {
+    opacity: 0,
+    transition: {
+      type: 'tween',
+    },
+  },
+}
+
 export const ModalInfo = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const modalInfo = useSelector((state: RootState) => state.interaction.modalInfo)
-  const {userToken, userInfo
-} = useSelector((state: RootState) => state.user)
+  const { socket } = useSocketContext()
+  const { userToken } = useSelector((state: RootState) => state.user)
   const [search, setSearch] = useState('')
   const [users, setUsers] = useState<UserType[] | null>(null)
   const [badgeItems, setBadgeItems] = useState<UserType[] | []>([])
@@ -36,7 +53,11 @@ export const ModalInfo = () => {
 
     setLoading(true)
     try {
-      const response = await axiosRequest({url: '/api/users?search=' + search, method: 'GET', token: userToken})
+      const response = await axiosRequest({
+        url: '/api/users?search=' + search,
+        method: 'GET',
+        token: userToken,
+      })
       const data = await response.data
       setUsers(data.users)
       setLoading(false)
@@ -91,10 +112,10 @@ export const ModalInfo = () => {
         url: '/api/chat/group',
         method: 'POST',
         token: userToken,
-        payload: form_data
+        payload: form_data,
       })
-      console.log(response.data)
-      dispatch(fetchUserChats())
+      socket.emit('createdNewGroup', response.data.room_id)
+      dispatch(closeModalInfo())
       setLoading(false)
       setSearch('')
       setUsers([])
@@ -109,16 +130,21 @@ export const ModalInfo = () => {
   return (
     <>
       {/* <!-- Main modal --> */}
-      <div
+      <motion.div
         tabIndex={-1}
         aria-hidden='true'
-        className={`${
-          modalInfo ? 'visible' : 'invisible'
-        } overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 w-full md:inset-0 md:h-full flex justify-center items-center bg-black bg-opacity-30`}
+        className={`overflow-y-auto overflow-x-hidden fixed inset-0 z-50 w-full h-full bg-black flex justify-center items-center bg-opacity-30`}
+        initial='initial'
+        animate='enter'
+        exit='exit'
+        variants={variants}
+        layout
       >
-        <div className='relative p-4 w-full max-w-xl h-full md:h-auto'>
+        <div
+          className='relative p-4 w-full max-w-xl h-full md:h-auto flex justify-center items-center'
+        >
           {/* <!-- Modal content --> */}
-          <div className='relative bg-white rounded-lg shadow'>
+          <div className='relative bg-white rounded-lg shadow w-full'>
             {/* <!-- Modal header --> */}
             <div className='flex justify-between items-start py-4 px-6 rounded-t border-b'>
               <h3 className='text-xl font-semibold text-gray-900'>
@@ -226,15 +252,14 @@ export const ModalInfo = () => {
                 className='text-white bg-light-main-primary hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-auto'
                 onClick={() => {
                   submitForm()
-                  dispatch(closeModalInfo())
                 }}
               >
-                Create
+                {loading ? 'Creating...' : 'Create'}
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </>
   )
 }

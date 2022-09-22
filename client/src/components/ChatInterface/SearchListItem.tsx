@@ -1,11 +1,17 @@
 import React from 'react'
 import { Avatar } from './Avatar'
 
-type UserType = {username: string, email: string, profile_image:string}
+type ItemType = {openSelected?:(uuid: string) => void, uuid: string, username: string, email: string, profile_image:string}
 
-export const SearchListItem = ({username, email, profile_image}: UserType) => {
+export const SearchListItem = ({openSelected, uuid, username, email, profile_image}: ItemType) => {
   return (
-    <div className='[&:last-of-type>div]:border-b-0 cursor-pointer pl-2 flex items-center gap-2 hover:bg-gray-100 active:bg-gray-200'>
+    <div className='[&:last-of-type>div]:border-b-0 cursor-pointer pl-2 flex items-center gap-2 hover:bg-gray-100 active:bg-gray-200'
+      onClick={() => {
+        if (openSelected) {
+          openSelected(uuid)
+        }
+      }}
+    >
       <div className='h-20 flex items-center justify-center'>
         <Avatar size={12} src={profile_image} />
       </div>

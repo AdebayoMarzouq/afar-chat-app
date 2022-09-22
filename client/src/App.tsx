@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
 import { Home, Chat } from './pages'
 import { ToastContainer } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import { RootState } from './redux/store'
 import { MyToast } from './utilities/toastFunction'
+import { SocketProvider } from './context/SocketContext'
 
 const contextClass = {
   success: 'bg-blue-600',
@@ -30,27 +31,53 @@ export const ProtectedRoute = ({
 }: {
   redirectPath?: string
   children?: React.ReactElement
-  }) => {
+}) => {
   const { userToken, userInfo } = useSelector((state: RootState) => state.user)
-  console.log('---', userToken, userInfo, '---')
-  if (!userToken && !userInfo) {
+  if (!userToken || !userInfo) {
     // send you are not logged in toast here
     MyToast({
-      textContent: 'You are not logged in',
+      textContent: 'You need to login',
     })
     return <Navigate to={redirectPath} replace />
   }
   return children ? children : <Outlet />
 }
 
-function App() {
+export const PreventLoginRoute = ({
+  redirectPath = '/chat',
+  children,
+}: {
+  redirectPath?: string
+  children: React.ReactElement
+}) => {
+  const { userToken, userInfo } = useSelector((state: RootState) => state.user)
+  if (userToken && userInfo) {
+    return <Navigate to={redirectPath} replace />
+  }
+  return children
+}
 
+function App() {
   return (
     <>
       <Routes>
-        <Route path='/' element={<Home />} />
+        <Route
+          path='/'
+          element={
+            <PreventLoginRoute>
+              <Home />
+            </PreventLoginRoute>
+          }
+        />
         <Route path='/chat' element={<ProtectedRoute />}>
-          <Route index element={<Chat />} />
+          <Route
+            index
+            element={
+              <SocketProvider>
+                <Chat />
+              </SocketProvider>
+            }
+          />
         </Route>
         <Route path='*' element={<div>Error!</div>} />
       </Routes>
