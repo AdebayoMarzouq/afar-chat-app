@@ -1,3 +1,4 @@
+import { AnimatePresence } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ChatList, ChatMenubar, ChatUI } from '../components'
@@ -74,12 +75,12 @@ export const Chat = () => {
         <>
           <ChatList />
           <ChatUI />
-          {width >= 1280 && <ChatMenubar />}
+          {width >= 1280 && (
+              <ChatMenubar />
+          )}
         </>
       )}
-      {width < 768 && <>
-        {mainToggle ? <ChatUI /> : <ChatList />}
-      </>}
+      {width < 768 && <>{mainToggle ? <ChatUI /> : <ChatList />}</>}
     </div>
   )
 }

@@ -3,6 +3,7 @@ import { AnimatePresence, Reorder } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSocketContext } from '../../context/SocketContext'
 import { fetchRoomData, setSelected } from '../../redux/chatSlice'
+import { closeGroupMenu } from '../../redux/interactionSlice'
 import { AppDispatch, RootState } from '../../redux/store'
 import { mySort } from '../../utilities/sort'
 import { ModalInfo } from '../ModalInfo'
@@ -32,6 +33,7 @@ export const ChatList = () => {
 
   const openSelected = (uuid: string) => {
     if (uuid !== selected) {
+      dispatch(closeGroupMenu())
       dispatch(setSelected(uuid))
     }
     if (!chatDataCollection[uuid]) {

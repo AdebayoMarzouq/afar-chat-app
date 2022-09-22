@@ -8,12 +8,13 @@ export const Avatar = ({
   size?: number
   src?: string
   alt?: string
-}) => {
+  }) => {
+  const width = `w-${size}`
   const sizeHClass = size ? `${size * 4}px` : `${12 * 4}px`
   const sizeWClass = size ? `${size * 4}px` : `${12 * 4}px`
 
   return (
-    <div className={`flex justify-center w-[${size}]`}>
+    <div className={`flex justify-center ${width}`}>
       <img
         className='object-cover shrink-0 rounded-full shadow-inner'
         style={{

@@ -14,6 +14,7 @@ export const ChatUI = () => {
   const dispatch = useDispatch()
   const {width} = useWindowDimensions()
   const { socket } = useSocketContext()
+  const {groupMenu} = useSelector((state: RootState) => state.interaction)
   const userInfo = useSelector((state: RootState) => state.user.userInfo)
   const {
     selected,
@@ -25,13 +26,17 @@ export const ChatUI = () => {
   } = useSelector((state: RootState) => state.chat)
 
   return (
-    <div className='relative col-span-3 xl:col-span-6 h-full flex flex-col w-full bg-white'>
+    <div className='relative col-span-3 xl:col-span-6 h-screen flex flex-col w-full bg-white'>
       <>
-      <ChatUIHeader />
-      <ChatBody />
-      {selected && <MessageInput />}
+        <ChatUIHeader />
+        <ChatBody />
+        {selected && <MessageInput />}
       </>
-      {/* {width < 1280 && <ChatMenubar />} */}
+      {width < 1280 && (
+        <AnimatePresence>
+          {groupMenu && <ChatMenubar />}
+        </AnimatePresence>
+      )}
     </div>
   )
 }
