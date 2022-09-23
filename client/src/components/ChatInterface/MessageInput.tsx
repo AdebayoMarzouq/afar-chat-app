@@ -1,12 +1,12 @@
 import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 import { EmojiClickData } from 'emoji-picker-react/dist/types/exposedTypes'
-import React, { Dispatch, memo, SetStateAction, useCallback, useEffect, useRef, useState } from 'react'
+import React, { Dispatch, memo, SetStateAction, useCallback, useMemo, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useSocketContext } from '../../context/SocketContext'
 import useAutosizeTextArea from '../../hooks/useAutoSizeTextArea'
 import { RootState } from '../../redux/store'
 
-const EmojiComponent = memo(
+const EmojiComponent =
   ({
     openEmoji,
     setEmoji,
@@ -15,57 +15,60 @@ const EmojiComponent = memo(
     setEmoji: (emojiData: EmojiClickData, event: MouseEvent) => void
   }) => {
     return (
-      <>
-        {openEmoji && (
-          <EmojiPicker
-            onEmojiClick={setEmoji}
-            lazyLoadEmojis={true}
-            emojiStyle={EmojiStyle.NATIVE}
-          />
-        )}
-      </>
+      <div className={`${openEmoji ? '' : 'hidden'} w-full`}>
+        <EmojiPicker
+          onEmojiClick={setEmoji}
+          lazyLoadEmojis={true}
+          emojiStyle={EmojiStyle.NATIVE}
+        />
+      </div>
     )
   }
-)
 
 export const MessageInput = ({ }) => {
   const { socket } = useSocketContext()
   const selected = useSelector((state: RootState) => state.chat.selected)
   const { userInfo } = useSelector((state: RootState) => state.user)
   const textAreaRef = useRef<HTMLTextAreaElement>(null)
-  const [value, setValue] = useState('')
+  const [c, setC] = useState<boolean>(false)
   const [openEmoji, setOpenEmoji] = useState<boolean>(false)
-  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) =>
-    setValue(event.target.value)
-  useAutosizeTextArea(textAreaRef.current, value)
-
-  const setEmoji = (emojiData: EmojiClickData, event: MouseEvent) => {
+  useAutosizeTextArea(textAreaRef.current, c)
+  
+  const setEmoji = useCallback((emojiData: EmojiClickData, event: MouseEvent) => {
+    if (textAreaRef.current) {
+      textAreaRef.current.value += emojiData.emoji
+    }
+    setC(x => !x)
     console.log(emojiData)
-    setValue((prev) => prev + emojiData.emoji)
-  }
-
+  },[])
+  
   const sendMessageConnection = useCallback(() => {
     if (!(textAreaRef.current as HTMLTextAreaElement).value) return
     socket.emit('send_message', {
       user_id: userInfo?.uuid,
       room_id: selected,
-      message: value.trim(),
+      message: textAreaRef?.current?.value.trim(),
     })
-  }, [value, selected])
+  }, [selected])
 
   const handleSubmit = () => {
-    if (!value) {
+    if (!textAreaRef?.current?.value) {
       //toast here
       return
     }
     sendMessageConnection()
-    setValue('')
+    textAreaRef.current.value = ''
+    setC((x) => !x)
   }
-
+  
+  const MemoEmoji = useMemo(() => <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} />, [openEmoji])
+  
   useEffect(() => {
-    setValue('')
+    if (textAreaRef.current) {
+      textAreaRef.current.value = ''
+    }
   }, [selected])
-
+  
   // useEffect(() => {
   //   const handleEvent = (e: KeyboardEvent) => {
   //     if (!e.target) return
@@ -90,7 +93,8 @@ export const MessageInput = ({ }) => {
           e.preventDefault()
         }}
       >
-        <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} />
+        {/* <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} /> */}
+        {MemoEmoji}
         <label htmlFor='chat' className='sr-only'>
           Your message
         </label>
@@ -136,10 +140,9 @@ export const MessageInput = ({ }) => {
           </button>
           <textarea
             id='chat'
-            onChange={handleChange}
+            onChange={() => setC((x) => !x)}
             ref={textAreaRef}
             rows={1}
-            value={value}
             className='resize-none max-h-[100px] mx-4 w-full p-2.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:border-light-main-primary outline-none'
             placeholder='Your message...'
           ></textarea>

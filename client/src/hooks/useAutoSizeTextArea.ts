@@ -3,7 +3,7 @@ import { useLayoutEffect } from 'react'
 // Updates the height of a <textarea> when the value changes.
 const useAutosizeTextArea = (
   textAreaRef: HTMLTextAreaElement | null,
-  value: string
+  isChanged: boolean
 ) => {
   useLayoutEffect(() => {
     if (textAreaRef) {
@@ -15,7 +15,7 @@ const useAutosizeTextArea = (
       // Trying to set this with state or a ref will produce an incorrect value.
       textAreaRef.style.height = scrollHeight +  'px'
     }
-  }, [textAreaRef, value])
+  }, [textAreaRef, isChanged])
 }
 
 export default useAutosizeTextArea

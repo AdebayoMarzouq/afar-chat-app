@@ -136,7 +136,7 @@
   @apply flex flex-wrap gap-x-2;
 }
 .speech-wrapper .bubble .txt .message {
-  @apply text-sm m-0 text-gray-700 break-words;
+  @apply text-sm m-0 max-w-full text-gray-700 break-words;
 }
 .speech-wrapper .bubble .txt .timestamp {
   @apply text-[11px] self-end ml-auto uppercase text-[#999];

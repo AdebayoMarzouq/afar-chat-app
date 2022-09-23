@@ -1,16 +1,18 @@
-import { AnimatePresence, Reorder } from 'framer-motion'
+import { AnimatePresence, Reorder } from 'framer-motion';
+import { ChatRoomsList } from './ChatRoomsList';
 
-import { useDispatch, useSelector } from 'react-redux'
-import { useSocketContext } from '../../context/SocketContext'
-import { fetchRoomData, setSelected } from '../../redux/chatSlice'
-import { closeGroupMenu } from '../../redux/interactionSlice'
-import { AppDispatch, RootState } from '../../redux/store'
-import { mySort } from '../../utilities/sort'
-import { ModalInfo } from '../ModalInfo'
-import { ChatListHeader } from './ChatListHeader'
-import { ChatListItem } from './ChatListItem'
-import { Profilebar } from './Profilebar'
-import { Searchbar } from './Searchbar'
+import { useDispatch, useSelector } from 'react-redux';
+import { useSocketContext } from '../../context/SocketContext';
+import { fetchRoomData, setSelected } from '../../redux/chatSlice';
+import { closeGroupMenu } from '../../redux/interactionSlice';
+import { AppDispatch, RootState } from '../../redux/store';
+import { mySort } from '../../utilities/sort';
+import { Spinner } from '../miscellaneous/Spinner';
+import { ModalInfo } from '../ModalInfo';
+import { ChatListHeader } from './ChatListHeader';
+import { ChatListItem } from './ChatListItem';
+import { Profilebar } from './Profilebar';
+import { Searchbar } from './Searchbar';
 
 export const ChatList = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -19,11 +21,9 @@ export const ChatList = () => {
   const {
     selected,
     chatDataCollection,
-    chats,
     chatsLoading,
     chatsError,
   } = useSelector((state: RootState) => state.chat)
-  const { userInfo } = useSelector((state: RootState) => state.user)
 
   //
   //
@@ -41,43 +41,19 @@ export const ChatList = () => {
     }
   }
 
-  const sorted_chats = [...chats].sort(function (b, a) {
-    if (a.updated_at < b.updated_at) return -1
-    else if (a.updated_at > b.updated_at) return 1
-    return 0
-  })
-
   return (
     <div className='col-span-2 xl:col-span-3 relative h-screen flex flex-col bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary'>
       <ChatListHeader />
-      <AnimatePresence>
-        <div className='pb-4 overflow-y-auto flex-grow'>
-          {chatsLoading && <div className='text-center'>Loading...</div>}
-          {chatsError && (
-            <div>
-              Something went wrong, try again {JSON.stringify(chatsError)}
-            </div>
-          )}
-          {chats && chats.length ? (
-            sorted_chats.map((chatItem) => {
-              // const info = chatItem.rooms
-              return (
-                <ChatListItem
-                  key={chatItem.uuid}
-                  currentUser={userInfo!.uuid}
-                  selected={selected}
-                  openSelected={openSelected}
-                  {...chatItem}
-                />
-              )
-            })
-          ) : (
-            <div className='text-center'>
-              You don not have any chats, create a group or search for some
-              friends
-            </div>
-          )}
+      {chatsLoading && (
+        <div className='text-center py-4'>
+          <Spinner className='w-8 h-8' />
         </div>
+      )}
+      {chatsError && (
+        <div>Something went wrong, try again {JSON.stringify(chatsError)}</div>
+      )}
+      <AnimatePresence>
+        <ChatRoomsList openSelected={openSelected} />
       </AnimatePresence>
       <AnimatePresence>{profileBar && <Profilebar />}</AnimatePresence>
       <AnimatePresence>{searchBar && <Searchbar />}</AnimatePresence>

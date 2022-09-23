@@ -14,7 +14,6 @@ export const axiosRequest = async ({
   await axios.request({
     data: payload,
     headers: { Authorization: 'Bearer ' + token },
-    timeout: 1000,
     method: method || 'get',
     url,
     proxy: {

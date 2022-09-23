@@ -64,11 +64,13 @@ export const ChatListItem = <T extends unknown>({
       <div className='h-20 flex items-center gap-2 flex-grow border-b overflow-hidden pr-4'>
         <div className='overflow-hidden w-full'>
           <div className='flex items-center gap-2'>
-            <p className='truncate font-semibold capitalize'>{room_name || oppositeUser}</p>
+            <p className='truncate font-semibold capitalize'>
+              {room_name || oppositeUser}
+            </p>
             <span className='text-xs ml-auto'>12:24PM</span>
           </div>
           <div className='flex items-start gap-2'>
-            <p className='h-8 break-words overflow-ellipsis text-xs text-light-text-primary'>
+            <p className='h-8 break-words w-[calc(100%_-_48px)] text-xs text-light-text-primary'>
               {last_message}
             </p>
             <span className='ml-auto max-w-10 w-fit px-1 py-0.5 h-4 flex items-center justify-center shrink-0 rounded-xl text-light-main-primary border border-light-main-primary bg-white text-xs font-semibold'>

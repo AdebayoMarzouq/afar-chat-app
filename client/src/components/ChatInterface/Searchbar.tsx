@@ -1,3 +1,4 @@
+import { SearchUsersList } from './SearchUsersList';
 import axios from 'axios'
 import React, { useState } from 'react'
 import { UserType } from '../../types/user'
@@ -9,6 +10,7 @@ import { closeSearchbar } from '../../redux/interactionSlice'
 import { setSelected, fetchRoomData, fetchUserChats } from '../../redux/chatSlice'
 import { useSocketContext } from '../../context/SocketContext'
 import { AnimatePresence, motion } from 'framer-motion'
+import { Spinner } from '../miscellaneous/Spinner'
 
 const variants = {
   initial: { opacity: 0, x: '-100%' },
@@ -115,7 +117,7 @@ export const Searchbar = () => {
         Search Users
       </div>
       <form
-        className='flex items-center my-4 px-4 shrink-0'
+        className='flex items-center py-4 border-b px-4 shrink-0'
         onSubmit={(e) => {
           e.preventDefault()
           handleSearch(e)
@@ -136,7 +138,7 @@ export const Searchbar = () => {
         </div>
         <button
           type='submit'
-          className='p-2.5 ml-2 text-sm font-medium text-gray-700 rounded-lg border border-gray-400 hover:bg-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-300 transform active:scale-95'
+          className='p-2.5 ml-2 text-sm font-medium text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-300 focus:ring-1 focus:outline-none transform active:scale-95'
           onClick={handleSearch}
         >
           <svg
@@ -156,23 +158,26 @@ export const Searchbar = () => {
           <span className='sr-only'>Search</span>
         </button>
       </form>
-      <div className='pb-4 overflow-y-auto border-t flex-grow'>
-        {fetch.loading && <div className='text-center'>Loading...</div>}
-        {fetch.error && (
-          <div className='text-center'>
-            An error occured while fetching users
-          </div>
-        )}
-        {users &&
-          !fetch.loading &&
-          users.map((user) => (
-            <SearchListItem
-              key={user.uuid}
-              openSelected={openSelected}
-              {...user}
-            />
-          ))}
-      </div>
+      {fetch.loading && (
+        <div className='text-center py-4'>
+          <Spinner />
+        </div>
+      )}
+      {fetch.error ? (
+        <div className='text-center'>An error occured while fetching users</div>
+      ) : (
+        users && (
+          <>
+            {users.length ? (
+              <SearchUsersList users={users} openSelected={openSelected} />
+            ) : (
+              <div className='text-center py-4 px-4'>
+                No user with name or email {search}
+              </div>
+            )}
+          </>
+        )
+      )}
     </motion.div>
   )
 }
