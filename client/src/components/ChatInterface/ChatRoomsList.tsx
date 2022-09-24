@@ -21,7 +21,6 @@ export function ChatRoomsList({ openSelected }: {openSelected: (uuid: string) =>
     <div className='pb-4 overflow-y-auto flex-grow'>
       {chats && chats.length ? (
         sorted_chats.map((chatItem) => {
-          // const info = chatItem.rooms
           return (
             <ChatListItem
               key={chatItem.uuid}

@@ -42,8 +42,7 @@ export const Chat = () => {
       user_id: userInfo.uuid,
     })
 
-    const addedToNewGroupHandler = (room: RoomType) => {
-      console.log('addedToNewGroup listener triggered')
+    const addedNewGroupHandler = (room: RoomType) => {
       dispatch(appendChat(room))
     }
 
@@ -59,12 +58,12 @@ export const Chat = () => {
       }
     }
 
-    socket.on('added', addedToNewGroupHandler)
-
+    socket.on('added_to_new_group', addedNewGroupHandler)
+    
     socket.on('message_received', messageRecievedHandler)
 
     return () => {
-      socket.off('added', addedToNewGroupHandler)
+      socket.off('added_to_new_group', addedNewGroupHandler)
       socket.off('message_received', messageRecievedHandler)
     }
   }, [socket])

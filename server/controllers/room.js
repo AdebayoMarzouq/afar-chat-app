@@ -187,6 +187,21 @@ const updateGroup = async (req, res) => {
     .send({ message: 'You are not authorized to edit this room name' })
 }
 
+const deleteGroup = async (req, res) => {
+  const { room_id } = req.params
+  const room = await db.Room.findOne({
+    where: { uuid: room_id },
+    include: { model: db.User, as: 'creator' },
+  })
+  if (req.user.user_id === room.creator.uuid) {
+    await room.destroy()
+    return res.status(StatusCodes.OK).message({ message: 'Successfully deleted' })
+  }
+  res
+    .status(StatusCodes.UNAUTHORIZED)
+    .send({ message: 'You are not authorized to delete this room' })
+}
+
 const addParticipantToGroup = async (req, res) => {
   const { room_id, user_id } = req.body
   // Add consideration for adding bulk participants later by passing users as a list
@@ -235,6 +250,7 @@ module.exports = {
   getRoomsAndGroups,
   getRoomByUUID,
   updateGroup,
+  deleteGroup,
   addParticipantToGroup,
   removeParticipantFromGroup,
 }

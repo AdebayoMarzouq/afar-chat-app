@@ -1,5 +1,5 @@
 import { ChatBody } from './ChatBody'
-import { useEffect, useRef } from 'react'
+import { memo, useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSocketContext } from '../../context/SocketContext'
 import { RootState } from '../../redux/store'

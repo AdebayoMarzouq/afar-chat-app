@@ -28,6 +28,10 @@ const getUserRooms = async (user_id) => {
   })
 }
 
+const addParticipantToGroup = () => {
+  const {room_id, user_id} = req.body
+}
+
 module.exports = (io) => {
   io.use((socket, next) => {
     if (socket.handshake.auth && socket.handshake.auth.token) {
@@ -51,7 +55,7 @@ module.exports = (io) => {
 
   io.on('connection', async (socket) => {
 
-    socket.on('createdNewGroup', async (room_id) => {
+    socket.on('created_new_group', async (room_id) => {
       const sockets = await io.fetchSockets()
       const room = await db.Room.findOne({
         where: { uuid: room_id },
@@ -64,15 +68,13 @@ module.exports = (io) => {
       const roomObj = room.toJSON()
       delete roomObj.id
       delete roomObj.creatorId
-      socket.emit('added', roomObj)
-      for (let user of users) {
-        const user_socket = sockets.find(
-          socket => socket.user.user_id === user.uuid
-        )
-        if (user_socket) {
-          user_socket.join(room.uuid)
-          // user_socket.emit('added', roomObj)
-          io.to(user_socket.id).emit('added', roomObj)
+      socket.join(room.uuid)
+      socket.emit('added_to_new_group', roomObj)
+      for (const socketItem of sockets) {
+        const user = users.find(user => user.uuid === socketItem.user.user_id)
+        if (user && socket.user.user_id !== user.uuid) {
+          socketItem.join(room.uuid)
+          socketItem.emit('added_to_new_group', roomObj)
         }
       }
     })

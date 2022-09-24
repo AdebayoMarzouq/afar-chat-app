@@ -15,17 +15,15 @@ const EmojiComponent =
     setEmoji: (emojiData: EmojiClickData, event: MouseEvent) => void
   }) => {
     return (
-      <div className={`${openEmoji ? '' : 'hidden'} w-full`}>
-        <EmojiPicker
-          onEmojiClick={setEmoji}
-          lazyLoadEmojis={true}
-          emojiStyle={EmojiStyle.NATIVE}
-        />
-      </div>
+      <EmojiPicker
+        onEmojiClick={setEmoji}
+        lazyLoadEmojis={true}
+        emojiStyle={EmojiStyle.NATIVE}
+      />
     )
   }
 
-export const MessageInput = ({ }) => {
+export const MessageInput = memo(() => {
   const { socket } = useSocketContext()
   const selected = useSelector((state: RootState) => state.chat.selected)
   const { userInfo } = useSelector((state: RootState) => state.user)
@@ -34,16 +32,15 @@ export const MessageInput = ({ }) => {
   const [openEmoji, setOpenEmoji] = useState<boolean>(false)
   useAutosizeTextArea(textAreaRef.current, c)
   
-  const setEmoji = useCallback((emojiData: EmojiClickData, event: MouseEvent) => {
+  const setEmoji = (emojiData: EmojiClickData, event: MouseEvent) => {
     if (textAreaRef.current) {
       textAreaRef.current.value += emojiData.emoji
     }
     setC(x => !x)
-    console.log(emojiData)
-  },[])
+  }
   
   const sendMessageConnection = useCallback(() => {
-    if (!(textAreaRef.current as HTMLTextAreaElement).value) return
+    if (!(textAreaRef.current as HTMLTextAreaElement) || !(textAreaRef.current as HTMLTextAreaElement).value) return
     socket.emit('send_message', {
       user_id: userInfo?.uuid,
       room_id: selected,
@@ -61,7 +58,7 @@ export const MessageInput = ({ }) => {
     setC((x) => !x)
   }
   
-  const MemoEmoji = useMemo(() => <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} />, [openEmoji])
+  const MemoEmoji = useMemo(() => <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} />, [])
   
   useEffect(() => {
     if (textAreaRef.current) {
@@ -94,7 +91,7 @@ export const MessageInput = ({ }) => {
         }}
       >
         {/* <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} /> */}
-        {MemoEmoji}
+        <div className={`${openEmoji ? '' : 'hidden'} w-full`}>{MemoEmoji}</div>
         <label htmlFor='chat' className='sr-only'>
           Your message
         </label>
@@ -122,20 +119,37 @@ export const MessageInput = ({ }) => {
             className='icon-btn'
             onClick={() => setOpenEmoji((prev) => !prev)}
           >
-            <svg
-              className='w-6 h-6'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth={2}
-                d='M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-              />
-            </svg>
+            {openEmoji ? (
+              <svg
+                className='w-6 h-6'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M6 18L18 6M6 6l12 12'
+                />
+              </svg>
+            ) : (
+              <svg
+                className='w-6 h-6'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth={2}
+                  d='M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                />
+              </svg>
+            )}
             <span className='sr-only'>Add emoji</span>
           </button>
           <textarea
@@ -167,4 +181,4 @@ export const MessageInput = ({ }) => {
       </form>
     </>
   )
-}
+})

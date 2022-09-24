@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { motion } from 'framer-motion'
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSocketContext } from '../context/SocketContext'
 import { appendChat, fetchUserChats } from '../redux/chatSlice'
@@ -28,6 +28,7 @@ const variants = {
     opacity: 0,
     transition: {
       type: 'tween',
+      duration: 0.2
     },
   },
 }
@@ -35,6 +36,7 @@ const variants = {
 export const ModalInfo = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { socket } = useSocketContext()
+  const chatNameRef = useRef<HTMLInputElement>(null)
   const { userToken } = useSelector((state: RootState) => state.user)
   const [search, setSearch] = useState('')
   const [users, setUsers] = useState<UserType[] | null>(null)
@@ -114,7 +116,7 @@ export const ModalInfo = () => {
         token: userToken,
         payload: form_data,
       })
-      socket.emit('createdNewGroup', response.data.room_id)
+      socket.emit('created_new_group', response.data.room_id)
       dispatch(closeModalInfo())
       setLoading(false)
       setSearch('')
@@ -126,6 +128,12 @@ export const ModalInfo = () => {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!chatNameRef.current) return
+    chatNameRef.current.focus()
+  }, [])
+  
 
   return (
     <>
@@ -178,6 +186,7 @@ export const ModalInfo = () => {
                   <input
                     type='text'
                     name='chat_name'
+                    ref={chatNameRef}
                     id='chat_name'
                     className='bg-gray-50 border border-gray-300 text-light-text-primary text-sm rounded-lg focus:ring-light-main-primary focus:border-light-main-primary outline-none block w-full p-2.5'
                     placeholder='Chat Name'

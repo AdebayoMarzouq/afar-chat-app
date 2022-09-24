@@ -10,32 +10,11 @@ import { HeaderWrapper } from './HeaderWrapper'
 import { SearchListItem } from './SearchListItem'
 
 const variants = {
-  initial: { opacity: 0, x: '100%' },
-  enter: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      type: 'tween',
-      ease: 'backInOut',
-      duration: 0.6,
-    },
-  },
-  exit: {
-    x: '100%',
-    transition: {
-      type: 'spring',
-      duration: 0.5,
-      bounce: 0,
-    },
-  },
-}
-
-const variants2 = {
   initial: { scale: 0, originY: 0, originX: '100%' },
   enter: {
     opacity: 1,
     scale: 1,
-    // x: 0,
+    x: 0,
     transition: {
       type: 'spring',
       bounce: 0.3,
@@ -54,7 +33,7 @@ const variants2 = {
 
 function ChatMenuOption({ color, icon, text }: { color?: string, icon: React.ReactNode, text: string }) {
   return (
-    <li className='[&:last-of-type>div]:border-b-0 cursor-pointer pl-2 md:pl-4 flex items-center gap-2 hover:bg-gray-100 active:bg-gray-200'>
+    <div className='[&:last-of-type>div]:border-b-0 cursor-pointer pl-2 md:pl-4 flex items-center gap-2 hover:bg-gray-100 active:bg-gray-200'>
       <div className='h-20 flex items-center justify-center'>
         <div
           className={`w-12 h-12 rounded-full ${
@@ -67,7 +46,7 @@ function ChatMenuOption({ color, icon, text }: { color?: string, icon: React.Rea
       <div className='h-20 flex items-center gap-2 pr-2 md:pr-4 flex-grow border-b capitalize font-semibold'>
         {text}
       </div>
-    </li>
+    </div>
   )
 }
 
@@ -90,11 +69,11 @@ export const ChatMenubar = () => {
     <motion.div
       className={`${
         width < 1280 ? mdclass : xlclass
-      } bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary flex flex-col pb-4`}
+      } bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary flex flex-col pb-4 overflow-y-hidden`}
       initial='initial'
       animate='enter'
       exit='exit'
-      variants={variants2}
+      variants={variants}
       layout
     >
       <div className='px-2 h-16 shrink-0 flex items-center mt-auto gap-6 text-xl font-semibold border-b'>
