@@ -58,7 +58,7 @@ export function ChatUIHeader({ }) {
       </button>
       <ChatName />
       <div className='ml-auto flex items-center gap-2'>
-        <button className='icon-btn'>
+        {/* <button className='icon-btn'>
           <svg
             className='w-6 h-6'
             fill='none'
@@ -73,7 +73,7 @@ export function ChatUIHeader({ }) {
               d='M12 6v6m0 0v6m0-6h6m-6 0H6'
             />
           </svg>
-        </button>
+        </button> */}
         {width < 1280 && (
           <button
             className='icon-btn'

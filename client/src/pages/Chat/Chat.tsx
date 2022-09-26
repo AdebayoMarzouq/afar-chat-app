@@ -1,29 +1,27 @@
 import { AnimatePresence } from 'framer-motion'
 import { useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ChatList, ChatMenubar, ChatUI } from '../components'
-import { SocketProvider, useSocketContext } from '../context/SocketContext'
-import { useWindowDimensions } from '../hooks'
+import { Navigate, useNavigate } from 'react-router-dom'
+import { ChatList, ChatMenubar, ChatUI } from '../../components'
+import { SocketProvider, useSocketContext } from '../../context/SocketContext'
+import { useWindowDimensions } from '../../hooks'
 import {
   appendChat,
   appendMessage,
   fetchRoomData,
   fetchUserChats,
   updateChats,
-} from '../redux/chatSlice'
-import { AppDispatch, RootState } from '../redux/store'
-import { ChatListType, MessageListItem, RoomType } from '../types/chat'
+} from '../../redux/chatSlice'
+import { AppDispatch, RootState } from '../../redux/store'
+import { ChatListType, MessageListItem, RoomType } from '../../types/chat'
 
 export const Chat = () => {
   const dispatch = useDispatch<AppDispatch>()
-  const { width, height } = useWindowDimensions()
-  const [mainToggle, setMainToggle] = useState(false)
+  const { width } = useWindowDimensions()
   const { socket } = useSocketContext()
-  const { userInfo } = useSelector((state: RootState) => state.user)
+  const { userInfo, userToken } = useSelector((state: RootState) => state.user)
   const { chatDataCollection } = useSelector((state: RootState) => state.chat)
-  const groupMenu = useSelector(
-    (state: RootState) => state.interaction.groupMenu
-  )
+  const {groupMenu, mainToggle} = useSelector((state: RootState) => state.interaction)
   const chatDataCollectionRef = useRef(chatDataCollection)
 
   useEffect(() => {

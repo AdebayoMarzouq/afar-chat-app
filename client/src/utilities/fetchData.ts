@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export const axiosRequest = async ({
+export const fetchData = async ({
   url,
   method,
   token,

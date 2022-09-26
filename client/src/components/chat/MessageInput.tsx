@@ -18,7 +18,7 @@ const EmojiComponent =
       <EmojiPicker
         onEmojiClick={setEmoji}
         lazyLoadEmojis={true}
-        emojiStyle={EmojiStyle.NATIVE}
+        // emojiStyle={EmojiStyle.NATIVE}
       />
     )
   }

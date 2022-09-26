@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react'
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom'
-import { Home, Chat } from './pages'
+import { Authentication, Chat } from './pages'
 import { ToastContainer } from 'react-toastify'
 import { useSelector } from 'react-redux'
 import { RootState } from './redux/store'
@@ -65,7 +65,7 @@ function App() {
           path='/'
           element={
             <PreventLoginRoute>
-              <Home />
+              <Authentication />
             </PreventLoginRoute>
           }
         />
@@ -79,7 +79,7 @@ function App() {
             }
           />
         </Route>
-        <Route path='*' element={<div>Error!</div>} />
+        <Route path='*' element={<div>Error!!!</div>} />
       </Routes>
       <ToastContainer
         // className='bg-sky-300'

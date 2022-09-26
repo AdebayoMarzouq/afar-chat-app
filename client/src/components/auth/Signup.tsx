@@ -2,7 +2,7 @@ import { useFormik } from 'formik'
 import { useEffect, useState } from 'react'
 import * as yup from 'yup'
 import { Input } from './Input'
-import { MyToast } from '../utilities/toastFunction'
+import { MyToast } from '../../utilities/toastFunction'
 import axios from 'axios'
 import { Navigate, useNavigate } from 'react-router-dom'
 

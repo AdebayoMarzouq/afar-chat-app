@@ -4,6 +4,7 @@ import type { RootState } from '../../redux/store'
 import { useSelector, useDispatch } from 'react-redux'
 import { closeProfile } from '../../redux/interactionSlice'
 import { motion } from 'framer-motion'
+import { HeaderTypeone } from '../common/HeaderTypeone'
 
 const variants = {
   initial: { opacity: 0, x: '-100%' },
@@ -32,6 +33,10 @@ export const Profilebar = () => {
   const [edit, setEdit] = useState(false)
   const [usernameInput, setUsernameInput] = useState(userInfo!.username)
 
+  const close = () => {
+    dispatch(closeProfile())
+  }
+
   return (
     <motion.div
       className={`absolute bg-white inset-0`}
@@ -41,25 +46,7 @@ export const Profilebar = () => {
       variants={variants}
       layout
     >
-      <div className='px-2 h-16 flex items-center mt-auto gap-6 text-xl font-semibold border-b'>
-        <button className='icon-btn' onClick={() => dispatch(closeProfile())}>
-          <svg
-            className='w-6 h-6'
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M10 19l-7-7m0 0l7-7m-7 7h18'
-            />
-          </svg>
-        </button>
-        Profile
-      </div>
+      <HeaderTypeone title='Profile' fn={close} />
       {userInfo ? (
         <>
           <div className='relative py-8 flex justify-center items-center w-full'>

@@ -1,38 +1,8 @@
 import React, { useState } from 'react'
-import { Login, Signup } from '../components'
-import { MyToast } from '../utilities/toastFunction'
+import { Login } from './Login'
+import { Signup } from './Signup'
 
-export const Home = () => {
-  return (
-    <section className='max-w-sm mx-auto h-screen flex flex-col items-center justify-center'>
-      <div className='w-full h-full md:h-fit bg-white md:rounded-md shadow-md text-center'>
-        <AuthWrapper className='py-5 rounded-lg w-full'>
-          <h2 className='text-2xl font-bold'>Chat</h2>
-          <button
-            onClick={() => MyToast({ textContent:'🦄 Testing the toast!!!'})}
-          >
-            toast
-          </button>
-        </AuthWrapper>
-        <AuthWrapper>
-          <Tab />
-        </AuthWrapper>
-      </div>
-    </section>
-  )
-}
-
-const AuthWrapper = ({
-  className,
-  children,
-}: {
-  className?: string
-  children: React.ReactNode | React.ReactNode[]
-}) => {
-  return <div className={`w-full py-5 rouned-xl ${className}`}>{children}</div>
-}
-
-const Tab = ({
+export const Tab = ({
   className,
   children,
   ...props

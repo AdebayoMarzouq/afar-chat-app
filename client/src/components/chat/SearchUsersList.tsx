@@ -6,7 +6,11 @@ export function SearchUsersList({ users, openSelected }: { users: UserType[], op
   return (
     <div className='pb-4 overflow-y-auto flex-grow'>
       {users.map((user) => (
-        <SearchListItem key={user.uuid} openSelected={openSelected} {...user} />
+          <SearchListItem
+            key={user.uuid}
+            openSelected={openSelected}
+            {...user}
+          />
       ))}
     </div>
   )

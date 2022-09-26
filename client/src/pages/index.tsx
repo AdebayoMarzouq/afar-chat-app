@@ -1,2 +1,2 @@
-export { Home } from './Home'
-export {Chat} from './Chat'
+export { Authentication } from './Auth/Authentication'
+export {Chat} from './Chat/Chat'

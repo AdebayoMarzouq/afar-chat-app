@@ -4,10 +4,9 @@ import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
-import { fetchUserChats } from '../redux/chatSlice'
-import { AppDispatch } from '../redux/store'
-import { addUserInfo, addUserToken } from '../redux/userSlice'
-import { MyToast } from '../utilities/toastFunction'
+import { AppDispatch } from '../../redux/store'
+import { addUserInfo, addUserToken } from '../../redux/userSlice'
+import { MyToast } from '../../utilities/toastFunction'
 import { Input } from './Input'
 
 const initialValues = {

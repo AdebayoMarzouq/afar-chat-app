@@ -1,21 +1,19 @@
-import { SearchUsersList } from './SearchUsersList';
-import axios from 'axios'
-import React, { useState } from 'react'
-import { UserType } from '../../types/user'
-import { axiosRequest } from '../../utilities/requestFunction'
-import { SearchListItem } from './SearchListItem'
-import type { AppDispatch, RootState } from '../../redux/store'
-import { useSelector, useDispatch } from 'react-redux'
-import { closeSearchbar } from '../../redux/interactionSlice'
-import { setSelected, fetchRoomData, fetchUserChats } from '../../redux/chatSlice'
-import { useSocketContext } from '../../context/SocketContext'
-import { AnimatePresence, motion } from 'framer-motion'
-import { Spinner } from '../miscellaneous/Spinner'
+import { motion } from "framer-motion"
+import { useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { useSocketContext } from "../../context/SocketContext"
+import { fetchUserChats, setSelected, fetchRoomData } from "../../redux/chatSlice"
+import { AppDispatch, RootState } from "../../redux/store"
+import { UserType } from "../../types/user"
+import { fetchData } from "../../utilities/fetchData"
+import { Badge } from "../Badge"
+import { Spinner } from "../miscellaneous/Spinner"
+import { SearchListItem } from "./SearchListItem"
+import { SearchUsersList } from "./SearchUsersList"
 
 const variants = {
-  initial: { opacity: 0, x: '-100%' },
+  initial: { x: '100%' },
   enter: {
-    opacity: 1,
     x: 0,
     transition: {
       type: 'tween',
@@ -24,16 +22,16 @@ const variants = {
     },
   },
   exit: {
-    x: '-100%',
+    x: '100%',
     transition: {
-      type: 'spring',
-      duration: 0.5,
-      bounce: 0,
+      type: 'tween',
+      ease: 'backOut',
+      duration: 0.6,
     },
   },
 }
 
-export const Searchbar = () => {
+export const AddParticipantsBar = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { socket } = useSocketContext()
   const userToken = useSelector((state: RootState) => state.user.userToken)
@@ -43,12 +41,14 @@ export const Searchbar = () => {
   const [search, setSearch] = useState('')
   const [users, setUsers] = useState<UserType[] | null>(null)
   const [fetch, setFetch] = useState({ loading: false, error: false })
+  const [badgeItems, setBadgeItems] = useState<UserType[] | []>([])
+  const [chatForm, setChatForm] = useState<{users: string[]}>({users: []})
 
   const handleSearch = async (e: React.FormEvent) => {
     if (!search) return // display a toast warning if empty
     setFetch({ loading: true, error: false })
     try {
-      const response = await axiosRequest({
+      const response = await fetchData({
         url: `/api/users?search=${search}`,
         token: userToken,
       })
@@ -59,20 +59,54 @@ export const Searchbar = () => {
         return { ...prev, error: true }
       })
     } finally {
-      setFetch(prev => { return { ...prev, loading: false } })
+      setFetch((prev) => {
+        return { ...prev, loading: false }
+      })
     }
+  }
+
+  const handleUserSelect = (user: UserType) => {
+    const check = chatForm.users.includes(user.email)
+    if (check) return console.log('user added already')
+    setChatForm((prev) => {
+      return { ...prev, users: [...prev.users, user.email] }
+    })
+    setBadgeItems((prev) => {
+      return [...prev, user]
+    })
+  }
+
+  const removeUserFromForm = (user_email: string) => {
+    setChatForm((prev) => {
+      return {
+        ...prev,
+        users: prev.users.filter((item) => {
+          if (item !== user_email) {
+            return item
+          }
+        }),
+      }
+    })
+
+    setBadgeItems((prev) =>
+      prev.filter((item) => {
+        if (item.email !== user_email) {
+          return item
+        }
+      })
+    )
   }
 
   const openSelected = async (uuid: string) => {
     if (!uuid) return // toast here
     try {
-      const response = await axiosRequest({
+      const response = await fetchData({
         url: `/api/chat`,
         token: userToken,
         method: 'POST',
-        payload: { user_id: uuid }
+        payload: { user_id: uuid },
       })
-      if (response.status = 201) {
+      if ((response.status = 201)) {
         const room_id = response.data.room_id
         socket.emit('joinRoom', room_id)
         dispatch(fetchUserChats())
@@ -90,32 +124,13 @@ export const Searchbar = () => {
 
   return (
     <motion.div
-      className={`absolute bg-white inset-0 h-screen flex flex-col`}
+      className={`absolute bg-white inset-0 flex flex-col`}
       initial='initial'
       animate='enter'
       exit='exit'
       variants={variants}
       layout
     >
-      <div className='px-2 h-16 shrink-0 flex items-center gap-6 text-xl font-semibold border-b'>
-        <button className='icon-btn' onClick={() => dispatch(closeSearchbar())}>
-          <svg
-            className='w-6 h-6'
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M10 19l-7-7m0 0l7-7m-7 7h18'
-            />
-          </svg>
-        </button>
-        Search Users
-      </div>
       <form
         className='flex items-center py-4 border-b px-4 shrink-0'
         onSubmit={(e) => {
@@ -158,6 +173,15 @@ export const Searchbar = () => {
           <span className='sr-only'>Search</span>
         </button>
       </form>
+      <div className='p-4 max-h-48 flex flex-shrink space-y-1 flex-wrap overflow-auto border-b'>
+        {badgeItems.map((item) => (
+          <Badge
+            key={item.email}
+            title={item.username}
+            closeFunc={() => removeUserFromForm(item.email)}
+          />
+        ))}
+      </div>
       {fetch.loading && (
         <div className='text-center py-4'>
           <Spinner />
@@ -169,7 +193,9 @@ export const Searchbar = () => {
         users && (
           <>
             {users.length ? (
-              <SearchUsersList users={users} openSelected={openSelected} />
+              users.map((user) => (
+                <SearchListItem {...user} />
+              ))
             ) : (
               <div className='text-center py-4 px-4'>
                 No user with name or email {search}

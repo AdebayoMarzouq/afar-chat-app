@@ -42,7 +42,7 @@ export const ChatList = () => {
   }
 
   return (
-    <div className='col-span-2 xl:col-span-3 relative h-screen flex flex-col bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary'>
+    <div className='col-span-2 xl:col-span-3 relative h-screen flex flex-col bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary overflow-x-hidden'>
       <ChatListHeader />
       {chatsLoading && (
         <div className='text-center py-4'>
@@ -53,11 +53,11 @@ export const ChatList = () => {
         <div>Something went wrong, try again {JSON.stringify(chatsError)}</div>
       )}
       <AnimatePresence>
-        <ChatRoomsList openSelected={openSelected} />
+        <ChatRoomsList key='chat-rooms-list' openSelected={openSelected} />
+        {profileBar && <Profilebar key='profile-bar' />}
+        {searchBar && <Searchbar key='search-bar' />}
+        {modalInfo && <ModalInfo key='create-modal' />}
       </AnimatePresence>
-      <AnimatePresence>{profileBar && <Profilebar />}</AnimatePresence>
-      <AnimatePresence>{searchBar && <Searchbar />}</AnimatePresence>
-      <AnimatePresence>{modalInfo && <ModalInfo />}</AnimatePresence>
     </div>
   )
 }

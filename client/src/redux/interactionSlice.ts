@@ -6,6 +6,7 @@ export interface InteractionState {
   searchBar: boolean
   modalInfo: boolean
   groupMenu: boolean
+  mainToggle: boolean
 }
 
 const initialState: InteractionState = {
@@ -13,6 +14,7 @@ const initialState: InteractionState = {
   searchBar: false,
   modalInfo: false,
   groupMenu: false,
+  mainToggle: false
 }
 
 export const interactionSlice = createSlice({
@@ -44,9 +46,15 @@ export const interactionSlice = createSlice({
     closeGroupMenu: (state) => {
       state.groupMenu= false
     },
+    openMainToggle: (state) => {
+      state.mainToggle = true
+    },
+    closeMainToggle: (state) => {
+      state.mainToggle = false
+    }
   },
 })
 
-export const { openProfile, closeProfile, openSearchbar, closeSearchbar, openModalInfo, closeModalInfo, openGroupMenu, closeGroupMenu } = interactionSlice.actions
+export const { openProfile, closeProfile, openSearchbar, closeSearchbar, openModalInfo, closeModalInfo, openGroupMenu, closeGroupMenu, openMainToggle, closeMainToggle } = interactionSlice.actions
 
 export default interactionSlice.reducer

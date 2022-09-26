@@ -78,7 +78,6 @@ export const ChatListItem = <T extends unknown>({
             </span>
           </div>
         </div>
-        {/* <div className='h-20 ml-auto shrink-0'></div> */}
       </div>
     </motion.div>
   )

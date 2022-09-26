@@ -203,20 +203,42 @@ const deleteGroup = async (req, res) => {
 }
 
 const addParticipantToGroup = async (req, res) => {
-  const { room_id, user_id } = req.body
-  // Add consideration for adding bulk participants later by passing users as a list
+  const { room_id, groupUsers } = req.body
+
+  // *Add consideration for adding bulk participants later by passing users as a list
+  
+  const users = JSON.parse(groupUsers)
+  const users_data = await Promise.all(
+    users.map(async (user_email) => {
+      try {
+        return await db.User.scope('withId').findOne({
+          where: { email: user_email },
+        })
+      } catch (error) {
+        res.status(400).send({
+          message: 'An error occured, could not find user' + user_email,
+        })
+      }
+    })
+  )
+
   const room = await db.Room.findOne({
     where: { uuid: room_id, is_group: true },
     include: { model: db.User, as: 'creator' },
   })
   if (!room) return res.status(404).json({ message: 'Room does not exist' })
-  const user = await db.User.scope('withId').findOne({
-    where: { uuid: user_id },
-  })
-  if (!user) return res.status(404).json({ message: 'User does not exist' })
   if (req.user.user_id === room.creator.uuid) {
-    await room.addRoomParticipant(user.id)
-    return res.status(200).send({ message: 'user added successfully' })
+    const t = await db.sequelize.transaction()
+    try {
+      await room.addRoomParticipants([...users_data], { transaction: t })
+      await t.commit()
+      return res.status(201).send({ message: 'User(s) added successfully', room_id: room.uuid  })
+    } catch (error) {
+      await t.rollback()
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .send({ message: 'Unable to add Users', error: error.message })
+    }
   }
   res.status(StatusCodes.UNAUTHORIZED).message({
     message: 'You are not authorized to add participants to this group',
