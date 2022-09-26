@@ -55,10 +55,7 @@ export const ModalInfo = () => {
   const {data, fetch, loading: l} = useFetch<UserType>({token: userToken})
 
   const handleSearch = async () => {
-    console.log(l)
     await fetch('/api/users?search=user')
-    console.log(data)
-    console.log(l)
   }
 
   // const handleSearch = async (e: React.FormEvent) => {
@@ -247,14 +244,14 @@ export const ModalInfo = () => {
                   ))}
                 </div>
                 <div className='grid grid-cols-1 md:grid-cols-2  max-h-60 overflow-y-auto'>
-                  {loading && (
+                  {l && (
                     <div className='text-center py-4'>
                       <Spinner />
                     </div>
                   )}
-                  {users &&
-                    !loading &&
-                    users.map((user) => (
+                  {data?.users &&
+                    !l &&
+                    data.users.map((user) => (
                       <button
                         type='button'
                         key={user.uuid}
