@@ -1,19 +1,21 @@
-import { motion } from "framer-motion"
-import { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { useSocketContext } from "../../context/SocketContext"
-import { fetchUserChats, setSelected, fetchRoomData } from "../../redux/chatSlice"
-import { AppDispatch, RootState } from "../../redux/store"
-import { UserType } from "../../types/user"
-import { request } from "../../utilities/request"
-import { Badge } from "../Badge"
-import { Spinner } from "../miscellaneous/Spinner"
-import { SearchListItem } from "./SearchListItem"
-import { SearchUsersList } from "./SearchUsersList"
+import { SearchUsersList } from './SearchUsersList';
+import { useState } from 'react'
+import { UserType } from '../../../types/user'
+import { request } from '../../../utilities/request'
+import type { AppDispatch, RootState } from '../../../redux/store'
+import { useSelector, useDispatch } from 'react-redux'
+import { closeSearchbar } from '../../../redux/interactionSlice'
+import { setSelected, fetchRoomData, fetchUserChats } from '../../../redux/chatSlice'
+import { useSocketContext } from '../../../context/SocketContext'
+import { motion } from 'framer-motion'
+import { Spinner } from '../../miscellaneous/Spinner'
+import { HeaderTypeone } from '../../common/HeaderTypeone';
+import { useFetch } from '../../../hooks';
 
 const variants = {
-  initial: { x: '100%' },
+  initial: { opacity: 0, x: '-100%' },
   enter: {
+    opacity: 1,
     x: 0,
     transition: {
       type: 'tween',
@@ -22,16 +24,16 @@ const variants = {
     },
   },
   exit: {
-    x: '100%',
+    x: '-100%',
     transition: {
-      type: 'tween',
-      ease: 'backOut',
-      duration: 0.6,
+      type: 'spring',
+      duration: 0.5,
+      bounce: 0,
     },
   },
 }
 
-export const AddParticipantsBar = () => {
+export const Searchbar = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { socket } = useSocketContext()
   const userToken = useSelector((state: RootState) => state.user.userToken)
@@ -39,62 +41,18 @@ export const AddParticipantsBar = () => {
     (state: RootState) => state.chat
   )
   const [search, setSearch] = useState('')
-  const [users, setUsers] = useState<UserType[] | null>(null)
-  const [fetch, setFetch] = useState({ loading: false, error: false })
-  const [badgeItems, setBadgeItems] = useState<UserType[] | []>([])
-  const [chatForm, setChatForm] = useState<{users: string[]}>({users: []})
+  const { data, fetch, error, loading } = useFetch<{
+    status: number
+    users: UserType[]
+  }>({})
 
-  const handleSearch = async (e: React.FormEvent) => {
-    if (!search) return // display a toast warning if empty
-    setFetch({ loading: true, error: false })
-    try {
-      const response = await request({
-        url: `/api/users?search=${search}`,
-        token: userToken,
-      })
-      setUsers(response.data.users)
-    } catch (error) {
-      console.log(error)
-      setFetch((prev) => {
-        return { ...prev, error: true }
-      })
-    } finally {
-      setFetch((prev) => {
-        return { ...prev, loading: false }
-      })
-    }
+  const close = () => {
+    dispatch(closeSearchbar())
   }
 
-  const handleUserSelect = (user: UserType) => {
-    const check = chatForm.users.includes(user.email)
-    if (check) return console.log('user added already')
-    setChatForm((prev) => {
-      return { ...prev, users: [...prev.users, user.email] }
-    })
-    setBadgeItems((prev) => {
-      return [...prev, user]
-    })
-  }
-
-  const removeUserFromForm = (user_email: string) => {
-    setChatForm((prev) => {
-      return {
-        ...prev,
-        users: prev.users.filter((item) => {
-          if (item !== user_email) {
-            return item
-          }
-        }),
-      }
-    })
-
-    setBadgeItems((prev) =>
-      prev.filter((item) => {
-        if (item.email !== user_email) {
-          return item
-        }
-      })
-    )
+  const handleSearch = async () => {
+    if (!search) return //* display a toast to user
+    await fetch('/api/users?search=' + search)
   }
 
   const openSelected = async (uuid: string) => {
@@ -104,9 +62,9 @@ export const AddParticipantsBar = () => {
         url: `/api/chat`,
         token: userToken,
         method: 'POST',
-        payload: { user_id: uuid },
+        payload: { user_id: uuid }
       })
-      if ((response.status = 201)) {
+      if (response.status = 201) {
         const room_id = response.data.room_id
         socket.emit('joinRoom', room_id)
         dispatch(fetchUserChats())
@@ -131,11 +89,12 @@ export const AddParticipantsBar = () => {
       variants={variants}
       layout
     >
+      <HeaderTypeone title='Search users' fn={close} />
       <form
         className='flex items-center py-4 border-b px-4 shrink-0'
         onSubmit={(e) => {
           e.preventDefault()
-          handleSearch(e)
+          handleSearch()
         }}
       >
         <label htmlFor='search' className='sr-only'>
@@ -173,29 +132,18 @@ export const AddParticipantsBar = () => {
           <span className='sr-only'>Search</span>
         </button>
       </form>
-      <div className='p-4 max-h-48 flex flex-shrink space-y-1 flex-wrap overflow-auto border-b'>
-        {badgeItems.map((item) => (
-          <Badge
-            key={item.email}
-            title={item.username}
-            closeFunc={() => removeUserFromForm(item.email)}
-          />
-        ))}
-      </div>
-      {fetch.loading && (
+      {loading && (
         <div className='text-center py-4'>
           <Spinner />
         </div>
       )}
-      {fetch.error ? (
+      {error ? (
         <div className='text-center'>An error occured while fetching users</div>
       ) : (
-        users && (
+        data && (
           <>
-            {users.length ? (
-              users.map((user) => (
-                <SearchListItem {...user} />
-              ))
+            {data.users.length ? (
+              <SearchUsersList users={data.users} openSelected={openSelected} />
             ) : (
               <div className='text-center py-4 px-4'>
                 No user with name or email {search}

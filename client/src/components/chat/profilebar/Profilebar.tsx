@@ -1,10 +1,10 @@
 import React, { memo, useState } from 'react'
-import { Avatar } from './Avatar'
-import type { RootState } from '../../redux/store'
+import { Avatar } from '../../common/Avatar'
+import type { RootState } from '../../../redux/store'
 import { useSelector, useDispatch } from 'react-redux'
-import { closeProfile } from '../../redux/interactionSlice'
+import { closeProfile } from '../../../redux/interactionSlice'
 import { motion } from 'framer-motion'
-import { HeaderTypeone } from '../common/HeaderTypeone'
+import { HeaderTypeone } from '../../common/HeaderTypeone'
 
 const variants = {
   initial: { opacity: 0, x: '-100%' },

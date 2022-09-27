@@ -1,9 +1,9 @@
-import React, {useMemo} from "react";
-import { RootState } from "../../redux/store";
+import React, {memo, useMemo} from "react";
+import { RootState } from "../../../redux/store";
 import { ChatListItem } from "./ChatListItem";
 import {useSelector} from 'react-redux'
 
-export function ChatRoomsList({ openSelected }: {openSelected: (uuid: string) => void}) {
+export const ChatRoomsList = memo(({ openSelected }: {openSelected: (uuid: string) => void}) => {
   const { userInfo } = useSelector((state: RootState) => state.user)
   const { selected, chats } = useSelector((state: RootState) => state.chat)
 
@@ -36,5 +36,5 @@ export function ChatRoomsList({ openSelected }: {openSelected: (uuid: string) =>
       )}
     </div>
   )
-}
+})
   

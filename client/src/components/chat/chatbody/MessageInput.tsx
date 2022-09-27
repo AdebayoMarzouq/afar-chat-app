@@ -2,9 +2,9 @@ import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 import { EmojiClickData } from 'emoji-picker-react/dist/types/exposedTypes'
 import React, { Dispatch, memo, SetStateAction, useCallback, useMemo, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useSocketContext } from '../../context/SocketContext'
-import useAutosizeTextArea from '../../hooks/useAutoSizeTextArea'
-import { RootState } from '../../redux/store'
+import { useSocketContext } from '../../../context/SocketContext'
+import useAutosizeTextArea from '../../../hooks/useAutoSizeTextArea'
+import { RootState } from '../../../redux/store'
 
 const EmojiComponent =
   ({
@@ -18,7 +18,7 @@ const EmojiComponent =
       <EmojiPicker
         onEmojiClick={setEmoji}
         lazyLoadEmojis={true}
-        // emojiStyle={EmojiStyle.NATIVE}
+        emojiStyle={EmojiStyle.NATIVE}
       />
     )
   }
@@ -88,9 +88,9 @@ export const MessageInput = memo(() => {
         className='border-t mt-auto shrink-0 relative'
         onSubmit={(e) => {
           e.preventDefault()
+          // *handleSubmit
         }}
       >
-        {/* <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} /> */}
         <div className={`${openEmoji ? '' : 'hidden'} w-full`}>{MemoEmoji}</div>
         <label htmlFor='chat' className='sr-only'>
           Your message

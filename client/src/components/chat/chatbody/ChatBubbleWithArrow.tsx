@@ -20,7 +20,7 @@ const variants = {
   },
 }
 
-export const ChatBubbleT1 = ({
+export const ChatBubbleWithArrow = ({
   isSender,
   messageObj: {
     uuid: sender_id,

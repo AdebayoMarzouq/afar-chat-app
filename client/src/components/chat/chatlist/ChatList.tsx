@@ -1,14 +1,14 @@
 import { AnimatePresence } from 'framer-motion';
 import { ChatRoomsList } from './ChatRoomsList';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchRoomData, setSelected } from '../../redux/chatSlice';
-import { closeGroupMenu } from '../../redux/interactionSlice';
-import { AppDispatch, RootState } from '../../redux/store';
-import { Spinner } from '../miscellaneous/Spinner';
-import { ModalInfo } from '../ModalInfo';
+import { fetchRoomData, setSelected } from '../../../redux/chatSlice';
+import { closeGroupMenu } from '../../../redux/interactionSlice';
+import { AppDispatch, RootState } from '../../../redux/store';
+import { Spinner } from '../../miscellaneous/Spinner';
+import { CreateGroupModal } from '../modal/CreateGroupModal';
 import { ChatListHeader } from './ChatListHeader';
-import { Profilebar } from './Profilebar';
-import { Searchbar } from './Searchbar';
+import { Profilebar } from '../profilebar/Profilebar';
+import { Searchbar } from '../searchbar/Searchbar';
 
 export const ChatList = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -47,7 +47,7 @@ export const ChatList = () => {
         <ChatRoomsList key='chat-rooms-list' openSelected={openSelected} />
         {profileBar && <Profilebar key='profile-bar' />}
         {searchBar && <Searchbar key='search-bar' />}
-        {modalInfo && <ModalInfo key='create-modal' />}
+        {modalInfo && <CreateGroupModal key='create-modal' />}
       </AnimatePresence>
     </div>
   )

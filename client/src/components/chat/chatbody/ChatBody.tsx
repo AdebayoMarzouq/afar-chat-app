@@ -1,10 +1,10 @@
 import { AnimatePresence } from 'framer-motion'
 import React, { useEffect, useLayoutEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useSocketContext } from '../../context/SocketContext'
-import { RootState } from '../../redux/store'
-import { ChatBubbleT1 } from './ChatBubbleT1'
-import { ChatBubbleT2 } from './ChatBubbleT2'
+import { useSocketContext } from '../../../context/SocketContext'
+import { RootState } from '../../../redux/store'
+import { ChatBubbleWithArrow } from './ChatBubbleWithArrow'
+import { ChatBubbleWithoutArrow } from './ChatBubbleWithoutArrow'
 import { MessageInput } from './MessageInput'
 
 export function ChatBody() {
@@ -33,7 +33,7 @@ export function ChatBody() {
       <AnimatePresence>
         <div className='scroll-smooth speech-wrapper py-4 px-6 md:px-8 flex-grow bg-gray-200 overflow-y-auto'>
           {!selected ? (
-            <div className='text-center'>Click a message to chat</div>
+            <div className='text-center pb-4 pt-20'>Click a message to chat</div>
           ) : (
             <>
               {chatDataLoading && <div className='text-center'>Loading...</div>}
@@ -53,7 +53,7 @@ export function ChatBody() {
                     if (previousSender === userId) {
                       previousSender = userId
                       return (
-                        <ChatBubbleT2
+                        <ChatBubbleWithoutArrow
                           key={messageId}
                           isSender={userId === userInfo!.uuid}
                           messageObj={message}
@@ -62,7 +62,7 @@ export function ChatBody() {
                     } else {
                       previousSender = userId
                       return (
-                        <ChatBubbleT1
+                        <ChatBubbleWithArrow
                           key={messageId}
                           isSender={userId === userInfo!.uuid}
                           messageObj={message}

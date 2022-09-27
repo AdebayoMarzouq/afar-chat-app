@@ -163,6 +163,10 @@
   @apply inline-flex justify-center dark:bg-dark-bg-secondary rounded-lg p-2 transform hover:scale-110 hover:bg-light-main-secondary transition-transform text-light-main-primary;
 }
 
+.icon-btn-alt {
+  @apply inline-flex justify-center border border-gray-300 dark:bg-dark-bg-secondary rounded-lg p-2 transform hover:scale-110 hover:bg-gray-200 transition-transform text-gray-500;
+}
+
 /* .chatinfo-menu-list {
   @apply ;
 } */

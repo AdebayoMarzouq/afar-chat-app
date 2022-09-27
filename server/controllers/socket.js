@@ -79,6 +79,39 @@ module.exports = (io) => {
       }
     })
 
+    socket.on('added_to_existing_group', async (room_id, users) => {
+      const sockets = await io.fetchSockets()
+      const room = await db.Room.findOne({
+        where: { uuid: room_id },
+        include: [
+          { model: db.User, as: 'privateUserOne' },
+          { model: db.User, as: 'privateUserTwo' },
+        ],
+      })
+      const roomObj = room.toJSON()
+      delete roomObj.id
+      delete roomObj.creatorId
+      const users_data = await Promise.all(
+        users.map(async (user_email) => {
+          try {
+            return await db.User.findOne({
+              where: { email: user_email },
+            })
+          } catch (error) {
+            console.log(error)
+          }
+        })
+      )
+      io.in(room_id).emit('new_user_added_to_existing_room', room_id, users_data)
+      for (const socketItem of sockets) {
+        const user = users_data.find((user) => user.uuid === socketItem.user.user_id)
+        if (user && socket.user.user_id !== user.uuid) {
+          socketItem.join(room.uuid)
+          socketItem.emit('added_to_existing_group', roomObj)
+        }
+      }
+    })
+
     socket.on('joinRooms', async ({ username, user_id }) => {
       const rooms = await getUserRooms(user_id)
       rooms.forEach((room) => {

@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { ChatData, MessageListItem, RoomType } from '../types/chat'
 import axios from 'axios'
 import { RootState } from './store'
+import { UserType } from '../types/user'
 
 export const chatCreate = createAsyncThunk<
   ChatData,
@@ -16,7 +17,6 @@ export const chatCreate = createAsyncThunk<
     const response = await axios.get(`/api/chat/${selected}`, {
       headers: { Authorization: 'Bearer ' + userToken },
     })
-    console.log('called!!!!')
     return response.data
   } catch (error) {
     console.log(error)
@@ -35,7 +35,6 @@ export const fetchUserChats = createAsyncThunk<
     const response = await axios.get('/api/chat', {
       headers: { Authorization: 'Bearer ' + userToken },
     })
-    console.log('calledFetchRoomData!!!!')
     return response.data
   } catch (error) {
     console.log(error)
@@ -58,7 +57,6 @@ export const fetchRoomData = createAsyncThunk<
         headers: { Authorization: 'Bearer ' + userToken },
       }
     )
-    console.log('called!!!!')
     return response.data
   } catch (error) {
     console.log(error)
@@ -115,10 +113,7 @@ export const chatSlice = createSlice({
         chat.updated_at = messageObj.Message.updated_at
       }
     },
-    appendChat: (
-      state,
-      action: PayloadAction<RoomType>
-    ) => {
+    appendChat: (state, action: PayloadAction<RoomType>) => {
       state.chats.unshift(action.payload)
     },
     appendMessage: (
@@ -136,6 +131,25 @@ export const chatSlice = createSlice({
             messages: [
               ...state.chatDataCollection[room_id].messages,
               messageObj,
+            ],
+          },
+        },
+      }
+    },
+    appendParticipant: (
+      state,
+      action: PayloadAction<{ room_id: string; users: UserType[] }>
+    ) => {
+      const { room_id, users } = action.payload
+      return {
+        ...state,
+        chatDataCollection: {
+          ...state.chatDataCollection,
+          [room_id]: {
+            ...state.chatDataCollection[room_id],
+            participants: [
+              ...state.chatDataCollection[room_id].participants,
+              ...users,
             ],
           },
         },
@@ -177,7 +191,7 @@ export const chatSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setSelected, setChats, updateChats, appendMessage, appendChat } =
+export const { setSelected, setChats, updateChats, appendMessage, appendChat, appendParticipant } =
   chatSlice.actions
 
 export default chatSlice.reducer

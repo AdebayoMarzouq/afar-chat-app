@@ -1,11 +1,11 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useWindowDimensions } from "../../hooks";
-import { openGroupMenu } from "../../redux/interactionSlice";
-import { RootState } from '../../redux/store'
-import { RoomType } from "../../types/chat";
-import { Avatar } from "./Avatar";
-import { HeaderWrapper } from './HeaderWrapper'
+import { useWindowDimensions } from "../../../hooks";
+import { openGroupMenu } from "../../../redux/interactionSlice";
+import { RootState } from '../../../redux/store'
+import { RoomType } from "../../../types/chat";
+import { Avatar } from "../../common/Avatar";
+import { HeaderWrapper } from '../../common/HeaderWrapper'
 
 function ChatName() {
   const { selected, chats } = useSelector((state: RootState) => state.chat)

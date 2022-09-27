@@ -1,6 +1,6 @@
 import React from "react";
-import { UserType } from "../../types/user";
-import { SearchListItem } from "./SearchListItem";
+import { UserType } from "../../../types/user";
+import { SearchListItem } from "../../common/SearchListItem";
 
 export function SearchUsersList({ users, openSelected }: { users: UserType[], openSelected: (uuid:string)=>void}) {
   return (

@@ -1,23 +1,15 @@
-import axios from 'axios'
 import { motion } from 'framer-motion'
-import React, { useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useSocketContext } from '../context/SocketContext'
-import { useFetch } from '../hooks'
-import { appendChat, fetchUserChats } from '../redux/chatSlice'
-import { closeModalInfo } from '../redux/interactionSlice'
-import { AppDispatch, RootState } from '../redux/store'
-import { UserType } from '../types/user'
-import { request } from '../utilities/request'
-import { Badge } from './Badge'
-import { SearchListItem } from './chat/SearchListItem'
-import { Spinner } from './miscellaneous/Spinner'
-
-// {
-//   children,
-// }: {
-//   children: React.ReactNode | React.ReactNode[]
-// }
+import { useEffect, useRef, useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { useSocketContext } from '../../../context/SocketContext'
+import { useFetch } from '../../../hooks'
+import { closeModalInfo } from '../../../redux/interactionSlice'
+import { AppDispatch } from '../../../redux/store'
+import { UserType } from '../../../types/user'
+import { request } from '../../../utilities/request'
+import { Badge } from '../../common/Badge'
+import { SearchListItem } from '../../common/SearchListItem'
+import { Spinner } from '../../miscellaneous/Spinner'
 
 const variants = {
   initial: { opacity: 0 },
@@ -36,7 +28,7 @@ const variants = {
   },
 }
 
-export const ModalInfo = () => {
+export const CreateGroupModal = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { socket } = useSocketContext()
   const chatNameRef = useRef<HTMLInputElement>(null)

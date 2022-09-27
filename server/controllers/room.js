@@ -240,7 +240,7 @@ const addParticipantToGroup = async (req, res) => {
         .send({ message: 'Unable to add Users', error: error.message })
     }
   }
-  res.status(StatusCodes.UNAUTHORIZED).message({
+  res.status(StatusCodes.UNAUTHORIZED).send({
     message: 'You are not authorized to add participants to this group',
   })
 }

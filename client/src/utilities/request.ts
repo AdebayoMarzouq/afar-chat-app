@@ -1,19 +1,18 @@
 import axios from 'axios'
+import { store } from '../redux/store'
 
 export const request = async ({
   url,
   method,
-  token,
   payload,
 }: {
   url: string
   method?: string
-  token?: string | null
   payload?: {}
 }) =>
   await axios.request({
     data: payload,
-    headers: { Authorization: 'Bearer ' + token },
+    headers: { Authorization: 'Bearer ' + store.getState().user.userToken },
     method: method || 'get',
     url,
     proxy: {

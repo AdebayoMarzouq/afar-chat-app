@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import { Avatar } from "./Avatar";
+import { RootState } from "../../../redux/store";
+import { Avatar } from "../../common/Avatar";
 import { ChatMenuListItem } from "./ChatMenuListItem";
 
 function ChatMenuOption({

@@ -1,59 +1,23 @@
-import { ChatMenuInfo } from './ChatMenuInfo';
-import { AnimatePresence, motion } from 'framer-motion'
-import { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useWindowDimensions } from '../../hooks'
-import { closeGroupMenu } from '../../redux/interactionSlice'
-import { AppDispatch, RootState } from '../../redux/store'
-import { AddParticipantsBar } from './AddParticipantsBar'
+import React, { useState } from "react";
+import { AnimatePresence } from "framer-motion";
+import { useDispatch, useSelector } from "react-redux";
+import { useWindowDimensions } from "../../../hooks";
+import { closeGroupMenu } from "../../../redux/interactionSlice";
+import { AppDispatch, RootState } from "../../../redux/store";
+import { AddParticipantsBar } from "./AddParticipantsBar";
+import { ChatMenuInfo } from "./ChatMenuInfo";
 
-const variants = {
-  initial: { scale: 0, originY: 0, originX: '100%' },
-  enter: {
-    opacity: 1,
-    scale: 1,
-    x: 0,
-    transition: {
-      type: 'spring',
-      bounce: 0.3,
-    },
-  },
-  exit: {
-    scale: 0,
-    originY: 0,
-    originX: '100%',
-    transition: {
-      type: 'spring',
-      bounce: 0.3,
-    },
-  },
-}
-
-export const ChatMenubar = () => {
+export const ChatMenuBody = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { width } = useWindowDimensions()
   const [addParticipant, setAddParticipant] = useState<boolean>(false)
-  const { selected, chatDataLoading,chatDataCollection } = useSelector(
-    (state: RootState) => state.chat
-  )
 
-  const mdclass = `absolute z-10 inset-0`
-  const xlclass = 'xl:static xl:col-span-3 h-screen'
-
-  if (chatDataLoading) return <div>Loading...</div>
-  if (!chatDataCollection[selected]) return <div>Select to view info here</div>
+  const closeBar = () => {
+    setAddParticipant(false)
+  }
 
   return (
-    <motion.div
-      className={`${
-        width < 1280 ? mdclass : xlclass
-      } bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary flex flex-col pb-4 overflow-hidden`}
-      initial='initial'
-      animate='enter'
-      exit='exit'
-      variants={variants}
-      layout
-    >
+    <>
       <div className='px-2 h-16 shrink-0 flex items-center mt-auto gap-6 text-xl font-semibold border-b'>
         <button
           className='icon-btn'
@@ -104,12 +68,14 @@ export const ChatMenubar = () => {
       <div className='relative overflow-y-auto flex-grow'>
         <AnimatePresence>
           {addParticipant ? (
-            <AddParticipantsBar />
+            <AddParticipantsBar close={closeBar} />
           ) : (
             <ChatMenuInfo setAddParticipant={setAddParticipant} />
           )}
         </AnimatePresence>
       </div>
-    </motion.div>
+    </>
   )
 }
+  
+  

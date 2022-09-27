@@ -1,6 +1,6 @@
-import React, { Dispatch, SetStateAction } from 'react'
-import { Avatar } from './Avatar'
-import { RoomType } from '../../types/chat'
+import React, { Dispatch, memo, SetStateAction } from 'react'
+import { Avatar } from '../../common/Avatar'
+import { RoomType } from '../../../types/chat'
 import { motion } from 'framer-motion'
 
 type ChatListItemType<T> = RoomType & {
@@ -27,7 +27,7 @@ const variants = {
   },
 }
 
-export const ChatListItem = <T extends unknown>({
+export const ChatListItem = memo(<T extends unknown>({
   uuid,
   room_name,
   is_group,
@@ -81,4 +81,4 @@ export const ChatListItem = <T extends unknown>({
       </div>
     </motion.div>
   )
-}
+})

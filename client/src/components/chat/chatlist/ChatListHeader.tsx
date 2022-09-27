@@ -1,12 +1,12 @@
 import React from 'react'
-import { Avatar } from './Avatar'
-import { HeaderWrapper } from './HeaderWrapper'
+import { Avatar } from '../../common/Avatar'
+import { HeaderWrapper } from '../../common/HeaderWrapper'
 import { useDispatch } from 'react-redux'
 import {
   openProfile,
   openSearchbar,
   openModalInfo,
-} from '../../redux/interactionSlice'
+} from '../../../redux/interactionSlice'
 
 
 export function ChatListHeader() {
