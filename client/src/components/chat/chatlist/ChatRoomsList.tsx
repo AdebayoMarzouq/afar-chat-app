@@ -18,7 +18,7 @@ export const ChatRoomsList = () => {
   return (
     <div className='pb-4 overflow-y-auto flex-grow'>
       {chats && chats.length ? (
-        <FixedSizeList height={100}  itemCount={sorted_chats.length} itemSize={40} width={100}>
+        <FixedSizeList height={100}  itemCount={sorted_chats.length} itemSize={80} width={100}>
           {sorted_chats.map((chatItem) => {
             return <ChatListItem key={chatItem.uuid} {...chatItem} />
           })}
