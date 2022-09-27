@@ -2,11 +2,12 @@ import React, { Dispatch, memo, SetStateAction } from 'react'
 import { Avatar } from '../../common/Avatar'
 import { RoomType } from '../../../types/chat'
 import { motion } from 'framer-motion'
+import { useDispatch, useSelector } from 'react-redux'
+import { setSelected, fetchRoomData } from '../../../redux/chatSlice'
+import { closeGroupMenu } from '../../../redux/interactionSlice'
+import { AppDispatch, RootState } from '../../../redux/store'
 
 type ChatListItemType<T> = RoomType & {
-  currentUser: string
-  selected: string | null
-  openSelected: (uuid: string) => void
 }
 
 const transition = {
@@ -27,22 +28,36 @@ const variants = {
   },
 }
 
-export const ChatListItem = memo(<T extends unknown>({
+export const ChatListItem = <T extends unknown>({
   uuid,
   room_name,
   is_group,
   last_message,
-  currentUser,
   privateUserOne: {uuid: userOneId,username: userOne},
   privateUserTwo: {username: userTwo},
-  selected,
-  openSelected,
 }: ChatListItemType<T>) => {
+  const dispatch = useDispatch<AppDispatch>()
+  const { userInfo } = useSelector((state: RootState) => state.user)
+  const { selected, chatDataCollection } = useSelector(
+    (state: RootState) => state.chat
+  )
   let oppositeUser
   const selectedClass = 'bg-gray-100'
 
+  // *Fix chat return to take care of participant name in the list
+
+  const openSelected = (uuid: string) => {
+    if (uuid !== selected) {
+      dispatch(closeGroupMenu())
+      dispatch(setSelected(uuid))
+    }
+    if (!chatDataCollection[uuid]) {
+      dispatch(fetchRoomData())
+    }
+  }
+
   if (!is_group) {
-    oppositeUser = currentUser === userOneId ? userTwo : userOne
+    oppositeUser = userInfo!.uuid === userOneId ? userTwo : userOne
   }
 
   return (
@@ -81,4 +96,4 @@ export const ChatListItem = memo(<T extends unknown>({
       </div>
     </motion.div>
   )
-})
+}

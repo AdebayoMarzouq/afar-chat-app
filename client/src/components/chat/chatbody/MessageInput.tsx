@@ -1,6 +1,6 @@
 import EmojiPicker, { EmojiStyle } from 'emoji-picker-react'
 import { EmojiClickData } from 'emoji-picker-react/dist/types/exposedTypes'
-import React, { Dispatch, memo, SetStateAction, useCallback, useMemo, useEffect, useRef, useState } from 'react'
+import React, { Dispatch, memo, SetStateAction, useCallback, useMemo, useEffect, useRef, useState, useTransition } from 'react'
 import { useSelector } from 'react-redux'
 import { useSocketContext } from '../../../context/SocketContext'
 import useAutosizeTextArea from '../../../hooks/useAutoSizeTextArea'
@@ -24,6 +24,7 @@ const EmojiComponent =
   }
 
 export const MessageInput = memo(() => {
+  const [isPending, startTransition] = useTransition()
   const { socket } = useSocketContext()
   const selected = useSelector((state: RootState) => state.chat.selected)
   const { userInfo } = useSelector((state: RootState) => state.user)
@@ -58,13 +59,21 @@ export const MessageInput = memo(() => {
     setC((x) => !x)
   }
   
-  const MemoEmoji = useMemo(() => <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} />, [])
+  const MemoEmoji = useMemo(
+    () => <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} />,
+    []
+  )
   
   useEffect(() => {
     if (textAreaRef.current) {
       textAreaRef.current.value = ''
     }
   }, [selected])
+
+  useEffect(() => {
+    if (!textAreaRef.current) return
+    startTransition(() => {})
+  }, [])
   
   // useEffect(() => {
   //   const handleEvent = (e: KeyboardEvent) => {

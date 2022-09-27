@@ -173,7 +173,7 @@
 
 /*Emoji picker*/
 aside.EmojiPickerReact.epr-main {
-  @apply w-full max-h-96 rounded-none border-none;
+  @apply w-full max-h-80 rounded-none border-none;
 }
 
 aside > .Flex.epr-preview.FlexRow {

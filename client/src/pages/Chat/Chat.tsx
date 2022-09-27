@@ -1,9 +1,7 @@
-import { AnimatePresence } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Navigate, useNavigate } from 'react-router-dom'
 import { ChatList, ChatMenubar, ChatUI } from '../../components'
-import { SocketProvider, useSocketContext } from '../../context/SocketContext'
+import { useSocketContext } from '../../context/SocketContext'
 import { useWindowDimensions } from '../../hooks'
 import {
   appendChat,
@@ -14,7 +12,7 @@ import {
   updateChats,
 } from '../../redux/chatSlice'
 import { AppDispatch, RootState } from '../../redux/store'
-import { ChatListType, MessageListItem, RoomType } from '../../types/chat'
+import { MessageListItem, RoomType } from '../../types/chat'
 import { UserType } from '../../types/user'
 
 export const Chat = () => {
@@ -22,8 +20,8 @@ export const Chat = () => {
   const { width } = useWindowDimensions()
   const { socket } = useSocketContext()
   const { userInfo } = useSelector((state: RootState) => state.user)
-  const { selected, chatDataCollection } = useSelector((state: RootState) => state.chat)
-  const {groupMenu, mainToggle} = useSelector((state: RootState) => state.interaction)
+  const { chatDataCollection } = useSelector((state: RootState) => state.chat)
+  const { mainToggle} = useSelector((state: RootState) => state.interaction)
   const chatDataCollectionRef = useRef(chatDataCollection)
 
   useEffect(() => {

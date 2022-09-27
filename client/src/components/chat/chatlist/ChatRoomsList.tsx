@@ -1,11 +1,11 @@
 import React, {memo, useMemo} from "react";
 import { RootState } from "../../../redux/store";
 import { ChatListItem } from "./ChatListItem";
-import {useSelector} from 'react-redux'
+import { useSelector } from 'react-redux'
+import {FixedSizeList} from 'react-window'
 
-export const ChatRoomsList = memo(({ openSelected }: {openSelected: (uuid: string) => void}) => {
-  const { userInfo } = useSelector((state: RootState) => state.user)
-  const { selected, chats } = useSelector((state: RootState) => state.chat)
+export const ChatRoomsList = () => {
+  const { chats } = useSelector((state: RootState) => state.chat)
 
   const sorted_chats = useMemo(
     () =>
@@ -18,17 +18,11 @@ export const ChatRoomsList = memo(({ openSelected }: {openSelected: (uuid: strin
   return (
     <div className='pb-4 overflow-y-auto flex-grow'>
       {chats && chats.length ? (
-        sorted_chats.map((chatItem) => {
-          return (
-            <ChatListItem
-              key={chatItem.uuid}
-              currentUser={userInfo!.uuid}
-              selected={selected}
-              openSelected={openSelected}
-              {...chatItem}
-            />
-          )
-        })
+        <FixedSizeList height={100}  itemCount={sorted_chats.length} itemSize={40} width={100}>
+          {sorted_chats.map((chatItem) => {
+            return <ChatListItem key={chatItem.uuid} {...chatItem} />
+          })}
+        </FixedSizeList>
       ) : (
         <div className='text-center'>
           You don not have any chats, create a group or search for some friends
@@ -36,5 +30,5 @@ export const ChatRoomsList = memo(({ openSelected }: {openSelected: (uuid: strin
       )}
     </div>
   )
-})
+}
   
