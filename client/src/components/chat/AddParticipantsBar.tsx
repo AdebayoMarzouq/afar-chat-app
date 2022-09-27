@@ -5,7 +5,7 @@ import { useSocketContext } from "../../context/SocketContext"
 import { fetchUserChats, setSelected, fetchRoomData } from "../../redux/chatSlice"
 import { AppDispatch, RootState } from "../../redux/store"
 import { UserType } from "../../types/user"
-import { fetchData } from "../../utilities/fetchData"
+import { request } from "../../utilities/request"
 import { Badge } from "../Badge"
 import { Spinner } from "../miscellaneous/Spinner"
 import { SearchListItem } from "./SearchListItem"
@@ -48,7 +48,7 @@ export const AddParticipantsBar = () => {
     if (!search) return // display a toast warning if empty
     setFetch({ loading: true, error: false })
     try {
-      const response = await fetchData({
+      const response = await request({
         url: `/api/users?search=${search}`,
         token: userToken,
       })
@@ -100,7 +100,7 @@ export const AddParticipantsBar = () => {
   const openSelected = async (uuid: string) => {
     if (!uuid) return // toast here
     try {
-      const response = await fetchData({
+      const response = await request({
         url: `/api/chat`,
         token: userToken,
         method: 'POST',

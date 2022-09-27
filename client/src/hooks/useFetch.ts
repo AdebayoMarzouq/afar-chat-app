@@ -1,20 +1,21 @@
 import axios from 'axios'
 import { useState, useRef, useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { RootState } from '../redux/store'
 
 export const useFetch = <T>({
   url,
   method,
-  token,
   payload,
   timeout,
 }: {
   url?: string
   method?: string
-  token?: string | null
   payload?: {}
   timeout?: number
-}) => {
-  const [data, setData] = useState<T | T[] | null>(null)
+  }) => {
+  const userToken = useSelector((state: RootState) => state.user.userToken)
+  const [data, setData] = useState<T | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const controllerRef = useRef(new AbortController())
@@ -27,7 +28,7 @@ export const useFetch = <T>({
     try {
       const response = await axios.request({
         data: payload,
-        headers: { Authorization: 'Bearer ' + token },
+        headers: { Authorization: 'Bearer ' + userToken },
         signal: controllerRef.current.signal,
         timeout: timeout || 1000,
         method: method || 'get',
@@ -41,7 +42,7 @@ export const useFetch = <T>({
       if (response.status === 200) {
         setData(response.data)
       } else {
-        setData(null)
+        setError('An error occurred: ' + response.status)
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

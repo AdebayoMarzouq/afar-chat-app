@@ -9,10 +9,8 @@ export function ChatRoomsList({ openSelected }: {openSelected: (uuid: string) =>
 
   const sorted_chats = useMemo(
     () =>
-      [...chats].sort(function (b, a) {
-        if (a.updated_at < b.updated_at) return -1
-        else if (a.updated_at > b.updated_at) return 1
-        return 0
+      [...chats].sort(function (a, b) {
+        return a.updated_at > b.updated_at ? -1 : a.updated_at < b.updated_at ? 1 : 0
       }),
     [chats]
   )

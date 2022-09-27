@@ -1,17 +1,16 @@
 import { SearchUsersList } from './SearchUsersList';
-import axios from 'axios'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { UserType } from '../../types/user'
-import { fetchData } from '../../utilities/fetchData'
-import { SearchListItem } from './SearchListItem'
+import { request } from '../../utilities/request'
 import type { AppDispatch, RootState } from '../../redux/store'
 import { useSelector, useDispatch } from 'react-redux'
 import { closeSearchbar } from '../../redux/interactionSlice'
 import { setSelected, fetchRoomData, fetchUserChats } from '../../redux/chatSlice'
 import { useSocketContext } from '../../context/SocketContext'
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Spinner } from '../miscellaneous/Spinner'
 import { HeaderTypeone } from '../common/HeaderTypeone';
+import { useFetch } from '../../hooks';
 
 const variants = {
   initial: { opacity: 0, x: '-100%' },
@@ -42,36 +41,24 @@ export const Searchbar = () => {
     (state: RootState) => state.chat
   )
   const [search, setSearch] = useState('')
-  const [users, setUsers] = useState<UserType[] | null>(null)
-  const [fetch, setFetch] = useState({ loading: false, error: false })
+  const { data, fetch, error, loading } = useFetch<{
+    status: number
+    users: UserType[]
+  }>({})
 
   const close = () => {
     dispatch(closeSearchbar())
   }
 
-  const handleSearch = async (e: React.FormEvent) => {
-    if (!search) return // display a toast warning if empty
-    setFetch({ loading: true, error: false })
-    try {
-      const response = await fetchData({
-        url: `/api/users?search=${search}`,
-        token: userToken,
-      })
-      setUsers(response.data.users)
-    } catch (error) {
-      console.log(error)
-      setFetch((prev) => {
-        return { ...prev, error: true }
-      })
-    } finally {
-      setFetch(prev => { return { ...prev, loading: false } })
-    }
+  const handleSearch = async () => {
+    if (!search) return //* display a toast to user
+    await fetch('/api/users?search=' + search)
   }
 
   const openSelected = async (uuid: string) => {
     if (!uuid) return // toast here
     try {
-      const response = await fetchData({
+      const response = await request({
         url: `/api/chat`,
         token: userToken,
         method: 'POST',
@@ -107,7 +94,7 @@ export const Searchbar = () => {
         className='flex items-center py-4 border-b px-4 shrink-0'
         onSubmit={(e) => {
           e.preventDefault()
-          handleSearch(e)
+          handleSearch()
         }}
       >
         <label htmlFor='search' className='sr-only'>
@@ -145,18 +132,18 @@ export const Searchbar = () => {
           <span className='sr-only'>Search</span>
         </button>
       </form>
-      {fetch.loading && (
+      {loading && (
         <div className='text-center py-4'>
           <Spinner />
         </div>
       )}
-      {fetch.error ? (
+      {error ? (
         <div className='text-center'>An error occured while fetching users</div>
       ) : (
-        users && (
+        data && (
           <>
-            {users.length ? (
-              <SearchUsersList users={users} openSelected={openSelected} />
+            {data.users.length ? (
+              <SearchUsersList users={data.users} openSelected={openSelected} />
             ) : (
               <div className='text-center py-4 px-4'>
                 No user with name or email {search}

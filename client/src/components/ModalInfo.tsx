@@ -8,7 +8,7 @@ import { appendChat, fetchUserChats } from '../redux/chatSlice'
 import { closeModalInfo } from '../redux/interactionSlice'
 import { AppDispatch, RootState } from '../redux/store'
 import { UserType } from '../types/user'
-import { fetchData } from '../utilities/fetchData'
+import { request } from '../utilities/request'
 import { Badge } from './Badge'
 import { SearchListItem } from './chat/SearchListItem'
 import { Spinner } from './miscellaneous/Spinner'
@@ -40,41 +40,22 @@ export const ModalInfo = () => {
   const dispatch = useDispatch<AppDispatch>()
   const { socket } = useSocketContext()
   const chatNameRef = useRef<HTMLInputElement>(null)
-  const { userToken } = useSelector((state: RootState) => state.user)
   const [search, setSearch] = useState('')
-  const [users, setUsers] = useState<UserType[] | null>(null)
+  const [submitStatus, setSubmitStatus] = useState({loading: false, error: false})
   const [badgeItems, setBadgeItems] = useState<UserType[] | []>([])
   const [chatForm, setChatForm] = useState<{
     chat_name: string
     users: string[]
   }>({
-    chat_name: 'chat',
+    chat_name: '',
     users: [],
   })
-  const [loading, setLoading] = useState(false)
-  const {data, fetch, loading: l} = useFetch<UserType>({token: userToken})
+  const { data, fetch, error, loading } = useFetch<{ status: number, users: UserType[] }>({})
 
   const handleSearch = async () => {
-    await fetch('/api/users?search=user')
+    if (!search) return //* display a toast to user
+    await fetch('/api/users?search=' + search)
   }
-
-  // const handleSearch = async (e: React.FormEvent) => {
-  //   if (!search) return // display a toast warning if empty
-
-  //   setLoading(true)
-  //   try {
-  //     const response = await fetchData({
-  //       url: '/api/users?search=' + search,
-  //       method: 'GET',
-  //       token: userToken,
-  //     })
-  //     const data = await response.data
-  //     setUsers(data.users)
-  //     setLoading(false)
-  //   } catch (error) {
-  //     setLoading(false)
-  //   }
-  // }
 
   const handleUserSelect = (user: UserType) => {
     const check = chatForm.users.includes(user.email)
@@ -109,31 +90,34 @@ export const ModalInfo = () => {
   }
 
   const submitForm = async () => {
-    if (!chatForm.chat_name || chatForm.users.length < 2)
-      return console.log('fill in appropriate details')
+    if (!chatForm.chat_name) return console.log('Group name not filled')
+    if (chatForm.users.length < 2) return console.log('Only two or more users can form a group')
     const form_data = {
       room_name: chatForm.chat_name,
       users: JSON.stringify(chatForm.users),
     }
-    // return console.log(form_data)
-    setLoading(true)
+    setSubmitStatus(prev => {return {...prev, loading: true}})
     try {
-      const response = await fetchData({
+      const response = await request({
         url: '/api/chat/group',
         method: 'POST',
-        token: userToken,
         payload: form_data,
       })
       socket.emit('created_new_group', response.data.room_id)
       dispatch(closeModalInfo())
-      setLoading(false)
       setSearch('')
-      setUsers([])
       setBadgeItems([])
       setChatForm({ chat_name: '', users: [] })
     } catch (error) {
       console.log(error)
-      setLoading(false)
+      setSubmitStatus((prev) => {
+        return { ...prev, error: true }
+      })
+      //* pass toast here
+    } finally {
+      setSubmitStatus((prev) => {
+        return { ...prev, loading: false }
+      })
     }
   }
 
@@ -244,22 +228,32 @@ export const ModalInfo = () => {
                   ))}
                 </div>
                 <div className='grid grid-cols-1 md:grid-cols-2  max-h-60 overflow-y-auto'>
-                  {l && (
+                  {loading && (
                     <div className='text-center py-4'>
                       <Spinner />
                     </div>
                   )}
-                  {data?.users &&
-                    !l &&
-                    data.users.map((user) => (
-                      <button
-                        type='button'
-                        key={user.uuid}
-                        onClick={() => handleUserSelect(user)}
-                      >
-                        <SearchListItem {...user} />
-                      </button>
+                  {data &&
+                    (data.users.length ? (
+                      data.users.map((user) => (
+                        <button
+                          type='button'
+                          key={user.uuid}
+                          onClick={() => handleUserSelect(user)}
+                        >
+                          <SearchListItem {...user} />
+                        </button>
+                      ))
+                    ) : (
+                      <div className='text-center'>
+                        No user with this search term
+                      </div>
                     ))}
+                  {!data && error && (
+                    <div className='text-center'>
+                      An error occured while searching
+                    </div>
+                  )}
                 </div>
               </form>
             </div>
@@ -272,7 +266,7 @@ export const ModalInfo = () => {
                   submitForm()
                 }}
               >
-                {loading ? (
+                {submitStatus.loading ? (
                   <>
                     <svg
                       role='status'
@@ -290,10 +284,10 @@ export const ModalInfo = () => {
                         fill='currentColor'
                       />
                     </svg>
-                    'Creating...'
+                    Creating...
                   </>
                 ) : (
-                  'Create'
+                  <>Create</>
                 )}
               </button>
             </div>
