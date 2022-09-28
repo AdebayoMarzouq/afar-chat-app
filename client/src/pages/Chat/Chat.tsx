@@ -99,7 +99,12 @@ export const Chat = () => {
           {width >= 1280 && <ChatMenubar />}
         </>
       )}
-      {width < 768 && <>{mainToggle ? <ChatUI /> : <ChatList />}</>}
+      {width < 768 && (
+        <>
+          <ChatUI />
+          <ChatList />
+        </>
+      )}
     </div>
   )
 }

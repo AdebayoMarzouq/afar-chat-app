@@ -147,7 +147,7 @@
 }
 
 .speech-wrapper .bubble .bubble-arrow {
-  @apply absolute w-0 top-0 -left-4 h-0;
+  @apply absolute w-0 top-0 -left-3 h-0;
 }
 .speech-wrapper .bubble .bubble-arrow.alt {
   @apply right-0 top-0 left-auto;
@@ -156,8 +156,8 @@
   @apply absolute rounded-tl-md;
   content: '';
   /* position: absolute; */
-  border-top: 16px solid white;
-  border-left: 16px solid transparent;
+  border-top: 12px solid white;
+  border-left: 12px solid transparent;
   /* border-top-left-radius: 4px; */
 }
 .speech-wrapper .bubble .bubble-arrow.alt::after {

@@ -4,7 +4,7 @@ import { RoomType } from '../../../types/chat'
 import { motion } from 'framer-motion'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSelected, fetchRoomData } from '../../../redux/chatSlice'
-import { closeGroupMenu } from '../../../redux/interactionSlice'
+import { closeGroupMenu, openMainToggle } from '../../../redux/interactionSlice'
 import { AppDispatch, RootState } from '../../../redux/store'
 
 type ChatListItemType<T> = RoomType & {
@@ -38,6 +38,7 @@ export const ChatListItem = <T extends unknown>({
 }: ChatListItemType<T>) => {
   const dispatch = useDispatch<AppDispatch>()
   const { userInfo } = useSelector((state: RootState) => state.user)
+  const { mainToggle } = useSelector((state: RootState) => state.interaction)
   const { selected, chatDataCollection } = useSelector(
     (state: RootState) => state.chat
   )
@@ -47,12 +48,14 @@ export const ChatListItem = <T extends unknown>({
   // *Fix chat return to take care of participant name in the list
 
   const openSelected = (uuid: string) => {
-    if (uuid !== selected) {
+    if (uuid !== selected || mainToggle === false) {
       dispatch(closeGroupMenu())
       dispatch(setSelected(uuid))
+      dispatch(openMainToggle())
     }
     if (!chatDataCollection[uuid]) {
       dispatch(fetchRoomData())
+      dispatch(openMainToggle())
     }
   }
 

@@ -1,7 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useWindowDimensions } from "../../../hooks";
-import { openGroupMenu } from "../../../redux/interactionSlice";
+import { setSelected } from "../../../redux/chatSlice";
+import { closeMainToggle, openGroupMenu } from "../../../redux/interactionSlice";
 import { RootState } from '../../../redux/store'
 import { RoomType } from "../../../types/chat";
 import { Avatar } from "../../common/Avatar";
@@ -36,7 +37,13 @@ export function ChatUIHeader({ }) {
   return (
     <HeaderWrapper>
       {width < 768 && (
-        <button className='icon-btn'>
+        <button
+          className='icon-btn'
+          onClick={() => {
+            dispatch(setSelected(''))
+            dispatch(closeMainToggle())
+          }}
+        >
           <svg
             className='w-6 h-6'
             fill='none'

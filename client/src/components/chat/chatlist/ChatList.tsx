@@ -1,5 +1,6 @@
 import { AnimatePresence } from 'framer-motion';
 import { useSelector } from 'react-redux';
+import { useWindowDimensions } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import { Spinner } from '../../miscellaneous/Spinner';
 import { CreateGroupModal } from '../modal/CreateGroupModal';
@@ -9,7 +10,8 @@ import { ChatListHeader } from './ChatListHeader';
 import { ChatRoomsList } from './ChatRoomsList';
 
 export const ChatList = () => {
-  const { modalInfo, profile: profileBar, searchBar } = useSelector((state: RootState) => state.interaction)
+  const {width} = useWindowDimensions()
+  const { modalInfo, profile: profileBar, searchBar, mainToggle } = useSelector((state: RootState) => state.interaction)
   const {
     chatsLoading,
     chatsError,
@@ -18,7 +20,11 @@ export const ChatList = () => {
   // *Fix chat return to take care of participant name in the list
 
   return (
-    <div className='col-span-2 xl:col-span-3 relative h-screen flex flex-col bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary overflow-x-hidden'>
+    <div
+      className={`${
+        mainToggle && width < 768 && 'hidden'
+      } col-span-2 xl:col-span-3 relative h-screen flex flex-col bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary overflow-x-hidden`}
+    >
       <ChatListHeader />
       {chatsLoading && (
         <div className='text-center py-4'>
