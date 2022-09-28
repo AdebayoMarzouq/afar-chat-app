@@ -10,7 +10,7 @@
     --toastify-font-family: 'Work Sans', sans-serif;
     --color-light-bg-primary: #ffffff;
     --color-light-bg-secondary: #f0f0f0;
-    --color-light-main-primary: #22d3ee;
+    --color-light-main-primary: #10b981;
     --color-light-main-secondary: #eaf6f6;
     --color-light-text-primary: #5d5e7f;
     --color-light-text-secondary: #c2c3cc;
@@ -19,7 +19,7 @@
     /* dark */
     --color-dark-bg-primary: #000000;
     --color-dark-bg-secondary: #161618;
-    --color-dark-main-primary: #22d3ee;
+    --color-dark-main-primary: #10b981;
     --color-dark-main-secondary: #eaf6f6;
     --color-dark-text-primary: #ffffff;
     --color-dark-text-secondary: theme(colors.gray.400);
@@ -114,16 +114,20 @@
 
 /* speech bubbles */
 .speech-wrapper .bubble {
-  @apply max-w-[75%] md:max-w-[60%] w-fit rounded-md bg-light-bg-primary shadow-lg relative mb-6;
+  @apply max-w-[75%] md:max-w-[60%] w-fit rounded-md rounded-tl-none bg-light-bg-primary shadow-lg relative mb-6;
 }
 .speech-wrapper .bubble.alt {
-  @apply ml-auto rounded-md;
+  @apply ml-auto rounded-tl-md rounded-tr-none;
+}
+
+.speech-wrapper .bubble.withoutArrow {
+  @apply rounded-md
 }
 .speech-wrapper .bubble .txt {
-  padding: 8px 8px 8px 14px;
+  @apply p-2;
 }
 .speech-wrapper .bubble .txt .name {
-  @apply font-semibold text-xs mb-1 text-sky-500;
+  @apply font-semibold text-xs mb-1 text-sky-500 capitalize;
 }
 .speech-wrapper .bubble .txt .name span {
   @apply font-normal text-[#b3b3b3];
@@ -136,7 +140,7 @@
   @apply flex flex-wrap gap-x-2;
 }
 .speech-wrapper .bubble .txt .message {
-  @apply text-sm m-0 max-w-full text-gray-700 break-words;
+  @apply text-sm m-0 max-w-full text-gray-700 break-words leading-tight tracking-tight;
 }
 .speech-wrapper .bubble .txt .timestamp {
   @apply text-[11px] self-end ml-auto uppercase text-[#999];
@@ -146,14 +150,14 @@
   @apply absolute w-0 top-0 -left-4 h-0;
 }
 .speech-wrapper .bubble .bubble-arrow.alt {
-  @apply right-4 top-0 left-auto;
+  @apply right-0 top-0 left-auto;
 }
 .speech-wrapper .bubble .bubble-arrow::after {
   @apply absolute rounded-tl-md;
   content: '';
-  position: absolute;
-  border-top: 30px solid white;
-  border-left: 30px solid transparent;
+  /* position: absolute; */
+  border-top: 16px solid white;
+  border-left: 16px solid transparent;
   /* border-top-left-radius: 4px; */
 }
 .speech-wrapper .bubble .bubble-arrow.alt::after {
@@ -164,7 +168,11 @@
 }
 
 .icon-btn-alt {
-  @apply inline-flex justify-center border border-gray-300 dark:bg-dark-bg-secondary rounded-lg p-2 transform hover:scale-110 hover:bg-gray-200 transition-transform text-gray-500;
+  @apply inline-flex justify-center border border-gray-300 dark:bg-dark-bg-secondary rounded-lg p-2.5 transform hover:scale-110 hover:bg-gray-200 transition-transform text-gray-500;
+}
+
+.input-style1 {
+  @apply bg-gray-50 border border-gray-300 text-light-text-primary text-sm rounded-lg focus:ring-light-main-primary focus:border-light-main-primary outline-none block w-full p-2.5;
 }
 
 /* .chatinfo-menu-list {
@@ -173,7 +181,9 @@
 
 /*Emoji picker*/
 aside.EmojiPickerReact.epr-main {
-  @apply w-full max-h-80 rounded-none border-none;
+  @apply rounded-none border-none;
+  max-height: 320px;
+  width: 100% !important;
 }
 
 aside > .Flex.epr-preview.FlexRow {

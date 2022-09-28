@@ -169,7 +169,7 @@ export const CreateGroupModal = () => {
                     name='chat_name'
                     ref={chatNameRef}
                     id='chat_name'
-                    className='bg-gray-50 border border-gray-300 text-light-text-primary text-sm rounded-lg focus:ring-light-main-primary focus:border-light-main-primary outline-none block w-full p-2.5'
+                    className='input-style1'
                     placeholder='Chat Name'
                     onChange={(e) =>
                       setChatForm((prev) => {
@@ -183,13 +183,13 @@ export const CreateGroupModal = () => {
                     <input
                       type='text'
                       id='search'
-                      className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 outline-none block w-full p-2.5'
+                      className='input-style1'
                       placeholder='Search users by username or email'
                       onChange={(e) => setSearch(e.target.value)}
                     />
                     <button
                       type='button'
-                      className='p-2.5 ml-2 text-sm font-medium text-gray-700 rounded-lg border border-gray-400 hover:bg-gray-300 focus:ring-1 focus:outline-none focus:ring-blue-300 transform active:scale-95'
+                      className='icon-btn-alt ml-2'
                       onClick={handleSearch}
                     >
                       <svg
@@ -253,7 +253,7 @@ export const CreateGroupModal = () => {
             <div className='flex items-center p-6 space-x-2 rounded-b border-t border-gray-200'>
               <button
                 type='button'
-                className='text-white bg-light-main-primary hover:bg-sky-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-auto'
+                className='text-white bg-light-main-primary transform hover:scale-105 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-auto'
                 onClick={() => {
                   submitForm()
                 }}

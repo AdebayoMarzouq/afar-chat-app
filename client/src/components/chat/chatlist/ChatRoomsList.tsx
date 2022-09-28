@@ -1,7 +1,7 @@
 import React, {memo, useMemo} from "react";
 import { RootState } from "../../../redux/store";
-import { ChatListItem } from "./ChatListItem";
 import { useSelector } from 'react-redux'
+import { ChatListItem } from "./ChatListItem";
 
 export const ChatRoomsList = () => {
   const { chats } = useSelector((state: RootState) => state.chat)
@@ -26,7 +26,7 @@ export const ChatRoomsList = () => {
   return (
     <div className='pb-4 overflow-y-auto flex-grow'>
       {chats && chats.length ? (
-        sorted_chats.map(chat => <ChatListItem key={chat.uuid} {...chat} />)
+        sorted_chats.map((chat) => <ChatListItem key={chat.uuid} {...chat} />)
       ) : (
         <div className='text-center'>
           You don not have any chats, create a group or search for some friends

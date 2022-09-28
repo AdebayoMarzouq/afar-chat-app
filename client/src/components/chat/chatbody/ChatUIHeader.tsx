@@ -14,12 +14,12 @@ function ChatName() {
 
   if (!room) return null
 
-  const { room_name, is_group, privateUserOne, privateUserTwo } = room!
+  const { room_name, is_group, privateUserOne, privateUserTwo } = room
   let oppositeUser
 
   if (!is_group && privateUserOne && privateUserTwo && userInfo) {
     oppositeUser =
-      privateUserOne.uuid !== userInfo.uuid
+      privateUserOne.uuid === userInfo.uuid
         ? privateUserTwo.username
         : privateUserOne.username
   }

@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageListItem } from '../../types/chat'
+import { MessageListItem } from '../../../types/chat'
+import { ChatBubbleReply } from './ChatBubbleReply'
 
 const transition = {
   type: 'spring',
@@ -40,20 +41,19 @@ export const ChatBubbleWithoutArrow = ({
 }) => {
   return (
     <motion.div
-      className={`bubble ${isSender && 'alt'} -mt-5 bg-green-200`}
+      className={`bubble ${isSender && 'alt'} withoutArrow -mt-5 bg-green-200`}
       initial='initial'
       animate='enter'
       variants={variants}
       layout
     >
       <div className='txt'>
-        {/* <p className={`name ${isSender && 'alt'}`}>{username}</p> */}
+        {repliedMessageId || (true && <ChatBubbleReply />)}
         <div className='body'>
           <p className='message'>{message_text}</p>
           <span className='timestamp'>10:20 pm</span>
         </div>
       </div>
-      {/* <div className={`bubble-arrow ${isSender && 'alt'}`}></div> */}
     </motion.div>
   )
 }

@@ -146,7 +146,7 @@ export const AddParticipantsBar = ({close}:{close: ()=>void}) => {
           <input
             type='text'
             id='search'
-            className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-500 outline-none block w-full p-2.5'
+            className='input-style1'
             placeholder='Search users by username or email'
             onChange={(e) => setSearch(e.target.value)}
             value={search}
@@ -154,7 +154,7 @@ export const AddParticipantsBar = ({close}:{close: ()=>void}) => {
         </div>
         <button
           type='submit'
-          className='p-2.5 ml-2 text-sm font-medium text-gray-700 rounded-lg border border-gray-300 hover:bg-gray-300 focus:ring-1 focus:outline-none transform active:scale-95'
+          className='icon-btn-alt ml-2'
           onClick={handleSearch}
         >
           <svg
@@ -180,7 +180,7 @@ export const AddParticipantsBar = ({close}:{close: ()=>void}) => {
             onClick={submitForm}
           >
             <svg
-              className='w-6 h-6 rotate-90'
+              className='w-5 h-5 rotate-90'
               fill='none'
               stroke='currentColor'
               viewBox='0 0 24 24'

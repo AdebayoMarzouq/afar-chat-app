@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { MessageListItem } from '../../types/chat'
+import { MessageListItem } from '../../../types/chat'
+import { ChatBubbleReply } from './ChatBubbleReply'
 
 const transition = {
   type: 'spring',
@@ -34,11 +35,12 @@ export const ChatBubbleWithArrow = ({
       repliedMessageId,
     },
   },
+  openClickedUserChat,
 }: {
   isSender: boolean
   messageObj: MessageListItem
-  }) => {
-
+  openClickedUserChat: (uuid: string) => void
+}) => {
   return (
     <motion.div
       className={`bubble ${isSender && 'alt'}`}
@@ -48,7 +50,13 @@ export const ChatBubbleWithArrow = ({
       layout
     >
       <div className='txt'>
-        <p className={`name ${isSender && 'alt'}`}>{username}</p>
+        <p
+          className={`name ${isSender && 'alt'} cursor-pointer`}
+          onClick={() => openClickedUserChat(sender_id)}
+        >
+          {username}
+        </p>
+        {/* {repliedMessageId || true && <ChatBubbleReply />} */}
         <div className='body'>
           <p className='message'>{message_text}</p>
           <span className='timestamp'>10:20 pm</span>

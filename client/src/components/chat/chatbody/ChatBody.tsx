@@ -2,14 +2,16 @@ import { AnimatePresence } from 'framer-motion'
 import React, { useEffect, useLayoutEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSocketContext } from '../../../context/SocketContext'
-import { RootState } from '../../../redux/store'
+import { fetchRoomData, fetchUserChats, setSelected } from '../../../redux/chatSlice'
+import { AppDispatch, RootState } from '../../../redux/store'
+import { request } from '../../../utilities/request'
 import { ChatBubbleWithArrow } from './ChatBubbleWithArrow'
 import { ChatBubbleWithoutArrow } from './ChatBubbleWithoutArrow'
 import { MessageInput } from './MessageInput'
 
 export function ChatBody() {
   const bottomRef = useRef<HTMLDivElement>(null)
-  const dispatch = useDispatch()
+  const dispatch = useDispatch<AppDispatch>()
   const { socket } = useSocketContext()
   const userInfo = useSelector((state: RootState) => state.user.userInfo)
   const {
@@ -22,6 +24,40 @@ export function ChatBody() {
   } = useSelector((state: RootState) => state.chat)
   let previousSender = ''
   
+  const openSelected = async (uuid: string) => {
+    if (!uuid) return // toast here
+    try {
+      const response = await request({
+        url: `/api/chat`,
+        method: 'POST',
+        payload: { user_id: uuid },
+      })
+      if ((response.status = 201)) {
+        const room_id = response.data.room_id
+        socket.emit('joinRoom', room_id)
+        dispatch(fetchUserChats())
+        if (room_id !== selected) {
+          dispatch(setSelected(room_id))
+        }
+        if (!chatDataCollection[room_id]) {
+          dispatch(fetchRoomData())
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const openClickedUserChat = async (uuid: string) => {
+    if (userInfo!.uuid === uuid) return
+    const room = chats.find(room => room.privateUserOne.uuid === uuid || room.privateUserTwo.uuid === uuid)
+    if (room) {
+      dispatch(setSelected(room.uuid))
+    } else {
+      await openSelected(uuid)
+    }
+  }
+
   // useEffect(() => {
   //   if (!bottomRef || !bottomRef.current) return
   //   bottomRef.current.scrollIntoView()
@@ -57,17 +93,18 @@ export function ChatBody() {
                           key={messageId}
                           isSender={userId === userInfo!.uuid}
                           messageObj={message}
-                        />
-                      )
-                    } else {
-                      previousSender = userId
-                      return (
-                        <ChatBubbleWithArrow
-                          key={messageId}
-                          isSender={userId === userInfo!.uuid}
-                          messageObj={message}
-                        />
-                      )
+                          />
+                          )
+                        } else {
+                          previousSender = userId
+                          return (
+                            <ChatBubbleWithArrow
+                              key={messageId}
+                              isSender={userId === userInfo!.uuid}
+                              messageObj={message}
+                              openClickedUserChat={openClickedUserChat}
+                            />
+                          )
                     }
                   })}
             </>
