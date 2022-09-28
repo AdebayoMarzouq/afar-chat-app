@@ -24,7 +24,6 @@ const EmojiComponent =
   }
 
 export const MessageInput = memo(() => {
-  const [isPending, startTransition] = useTransition()
   const { socket } = useSocketContext()
   const selected = useSelector((state: RootState) => state.chat.selected)
   const { userInfo } = useSelector((state: RootState) => state.user)
@@ -69,11 +68,6 @@ export const MessageInput = memo(() => {
       textAreaRef.current.value = ''
     }
   }, [selected])
-
-  useEffect(() => {
-    if (!textAreaRef.current) return
-    startTransition(() => {})
-  }, [])
   
   // useEffect(() => {
   //   const handleEvent = (e: KeyboardEvent) => {
@@ -94,7 +88,7 @@ export const MessageInput = memo(() => {
   return (
     <>
       <form
-        className='border-t mt-auto shrink-0 relative'
+        className={`${!selected && 'hidden'} border-t mt-auto shrink-0 relative`}
         onSubmit={(e) => {
           e.preventDefault()
           // *handleSubmit

@@ -1,21 +1,23 @@
 import React from 'react'
 import { Avatar } from '../../common/Avatar'
 import { HeaderWrapper } from '../../common/HeaderWrapper'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import {
   openProfile,
   openSearchbar,
   openModalInfo,
 } from '../../../redux/interactionSlice'
+import { RootState } from '../../../redux/store'
 
 
 export function ChatListHeader() {
   const dispatch = useDispatch()
+  const {userInfo} = useSelector((state: RootState) => state.user)
 
   return (
     <HeaderWrapper>
       <button onClick={() => dispatch(openProfile())}>
-        <Avatar size={10} />
+        <Avatar size={10} src={userInfo!.profile_image} />
       </button>
       <div className='ml-auto flex items-center gap-2'>
         <button className='icon-btn' onClick={() => dispatch(openSearchbar())}>

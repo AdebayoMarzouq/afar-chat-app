@@ -13,9 +13,13 @@ export const ChatUI = () => {
   const { selected, chatDataCollection } = useSelector((state: RootState) => state.chat)
 
   return (
-    <div className={`${!mainToggle && width <768 && 'hidden'} relative col-span-3 xl:col-span-6 h-screen flex flex-col w-full bg-white`}>
+    <div
+      className={`${
+        !mainToggle && width < 768 && 'hidden'
+      } relative col-span-3 xl:col-span-6 h-screen flex flex-col w-full bg-white`}
+    >
       <>
-        {chatDataCollection[selected] && <ChatUIHeader />}
+        <ChatUIHeader />
         <ChatBody />
         {selected && <MessageInput />}
       </>

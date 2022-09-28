@@ -19,6 +19,7 @@ export const ChatMenuListItem = ({
   profile_image,
 }: ItemType) => {
   const isCreator = creator === uuid
+
   return (
     <li
       className='[&:last-of-type>div]:border-b-0 cursor-pointer pl-2 md:pl-4 flex items-center gap-2 hover:bg-gray-100 active:bg-gray-200'

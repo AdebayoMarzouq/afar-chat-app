@@ -7,9 +7,6 @@ import { setSelected, fetchRoomData } from '../../../redux/chatSlice'
 import { closeGroupMenu, openMainToggle } from '../../../redux/interactionSlice'
 import { AppDispatch, RootState } from '../../../redux/store'
 
-type ChatListItemType<T> = RoomType & {
-}
-
 const transition = {
   type: 'tween',
   ease: 'easeIn',
@@ -28,14 +25,14 @@ const variants = {
   },
 }
 
-export const ChatListItem = <T extends unknown>({
+export const ChatListItem = ({
   uuid,
   room_name,
   is_group,
   last_message,
-  privateUserOne: {uuid: userOneId,username: userOne},
-  privateUserTwo: {username: userTwo},
-}: ChatListItemType<T>) => {
+  privateUserOne,
+  privateUserTwo,
+}: RoomType) => {
   const dispatch = useDispatch<AppDispatch>()
   const { userInfo } = useSelector((state: RootState) => state.user)
   const { mainToggle } = useSelector((state: RootState) => state.interaction)
@@ -60,7 +57,7 @@ export const ChatListItem = <T extends unknown>({
   }
 
   if (!is_group) {
-    oppositeUser = userInfo!.uuid === userOneId ? userTwo : userOne
+    oppositeUser = userInfo!.uuid === privateUserOne.uuid ? privateUserTwo : privateUserOne
   }
 
   return (
@@ -77,13 +74,13 @@ export const ChatListItem = <T extends unknown>({
       layout
     >
       <div className='h-20 flex items-center justify-center shrink-0'>
-        <Avatar size={12} />
+        <Avatar size={12} src={oppositeUser?.profile_image} />
       </div>
       <div className='h-20 flex items-center gap-2 flex-grow border-b overflow-hidden pr-4'>
         <div className='overflow-hidden w-full'>
           <div className='flex items-center gap-2'>
             <p className='truncate font-semibold capitalize'>
-              {room_name || oppositeUser}
+              {room_name || oppositeUser?.username}
             </p>
             <span className='text-xs ml-auto'>12:24PM</span>
           </div>

@@ -8,10 +8,14 @@ import { RoomType } from "../../../types/chat";
 import { Avatar } from "../../common/Avatar";
 import { HeaderWrapper } from '../../common/HeaderWrapper'
 
-function ChatName() {
+export function ChatUIHeader({ }) {
+  const { width } = useWindowDimensions()
+  const dispatch = useDispatch()
   const { selected, chats } = useSelector((state: RootState) => state.chat)
   const { userInfo } = useSelector((state: RootState) => state.user)
-  const room:RoomType | undefined = chats.find((chat) => chat.uuid === selected)
+  const room: RoomType | undefined = chats.find(
+    (chat) => chat.uuid === selected
+  )
 
   if (!room) return null
 
@@ -20,19 +24,8 @@ function ChatName() {
 
   if (!is_group && privateUserOne && privateUserTwo && userInfo) {
     oppositeUser =
-      privateUserOne.uuid === userInfo.uuid
-        ? privateUserTwo.username
-        : privateUserOne.username
+      privateUserOne.uuid === userInfo.uuid ? privateUserTwo : privateUserOne
   }
-
-  return (
-    <div className='tracking-wider capitalize'>{room_name || oppositeUser}</div>
-  )
-}
-
-export function ChatUIHeader({ }) {
-  const { width } = useWindowDimensions()
-  const dispatch = useDispatch()
 
   return (
     <HeaderWrapper>
@@ -61,9 +54,11 @@ export function ChatUIHeader({ }) {
         </button>
       )}
       <button onClick={() => {}}>
-        <Avatar size={10} />
+        <Avatar size={10} src={oppositeUser?.profile_image} />
       </button>
-      <ChatName />
+      <div className='tracking-wider capitalize'>
+        {room_name || oppositeUser?.username}
+      </div>
       <div className='ml-auto flex items-center gap-2'>
         {/* <button className='icon-btn'>
           <svg
