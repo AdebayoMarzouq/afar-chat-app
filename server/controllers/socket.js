@@ -79,6 +79,12 @@ module.exports = (io) => {
       }
     })
 
+    socket.on('leave_group', (room_id, user_id) => {
+      console.log('left.....')
+      socket.leave(room_id)
+      socket.to(room_id).emit('user_left_group', room_id, user_id)
+    })
+
     socket.on('added_to_existing_group', async (room_id, users) => {
       const sockets = await io.fetchSockets()
       const room = await db.Room.findOne({
@@ -127,7 +133,7 @@ module.exports = (io) => {
     socket.on('send_message', async (messageObj) => {
       const { user_id, room_id, message } = messageObj
       if (!user_id || !message || !room_id) {
-        socket.emit('message_send_error', 'Please provide all details')
+        return socket.emit('message_send_error', 'Please provide all details')
       }
       const room = await db.Room.findOne({
         where: { uuid: room_id },
@@ -136,6 +142,12 @@ module.exports = (io) => {
       const user = await db.User.scope('withId').findOne({
         where: { uuid: user_id },
       })
+      const isParticipant = await db.Participant.findOne({
+        where: {UserId: user.id, RoomId: room.id}
+      })
+      if (!isParticipant) {
+        return socket.emit('message_send_error', 'You are not a participant of this group.')
+      }
       const t = await db.sequelize.transaction()
       try {
         const createdMessage = await db.Message.create(

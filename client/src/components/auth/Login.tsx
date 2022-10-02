@@ -117,13 +117,13 @@ export const Login = () => {
       <button
         type='submit'
         disabled={!(isValid && dirty) || isSubmitting}
-        className='block mx-auto mb-4 bg-sky-600 px-4 py-2 rounded-md text-white cursor-pointer disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed'
+        className='block mx-auto mb-4 bg-light-main-primary dark:bg-dark-main-primary px-4 py-2 rounded-md text-white dark:text-dark-bg-primary cursor-pointer disabled:bg-gray-600 dark:disabled:bg-dark-fillOne disabled:text-gray-400 dark:disabled:text-dark-text-secondary disabled:cursor-not-allowed'
       >
         {!isSubmitting ? 'Submit' : 'Loading...'}
       </button>
       <button
         type='button'
-        className='block mx-auto bg-sky-600 px-4 py-2 rounded-md text-white cursor-pointer'
+        className='block mx-auto bg-light-main-primary dark:bg-dark-main-primary px-4 py-2 rounded-md text-white dark:text-dark-bg-primary cursor-pointer'
         onClick={(e) => {
           guestUser()
         }}

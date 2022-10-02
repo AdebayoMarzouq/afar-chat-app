@@ -9,6 +9,7 @@ import {
   appendParticipant,
   fetchRoomData,
   fetchUserChats,
+  removeParticipantFromGroup,
   updateChats,
 } from '../../redux/chatSlice'
 import { AppDispatch, RootState } from '../../redux/store'
@@ -68,6 +69,15 @@ export const Chat = () => {
       dispatch(appendChat(room))
     }
 
+    const messageSendErrorHandler = (message: string) => {
+      console.log(message)
+    }
+
+    const userLeftGroupHandler = (room_id: string, user_id: string) => {
+      console.log('user left group...')
+      dispatch(removeParticipantFromGroup({room_id, user_id}))
+    }
+
     socket.on('added_to_existing_group', addedToExistingGroupHandler)
 
     socket.on(
@@ -76,13 +86,17 @@ export const Chat = () => {
     )
 
     socket.on('added_to_new_group', addedNewGroupHandler)
+    socket.on('user_left_group', userLeftGroupHandler)
     
     socket.on('message_received', messageRecievedHandler)
-
+    socket.on('message_send_error', messageSendErrorHandler)
+    
     return () => {
       socket.off('added_to_new_group', addedNewGroupHandler)
       socket.off('message_received', messageRecievedHandler)
       socket.off('added_to_existing_group', addedToExistingGroupHandler)
+      socket.off('user_left_group', userLeftGroupHandler)
+      socket.off('message_send_error', messageSendErrorHandler)
       socket.off(
         'new_user_added_to_existing_room',
         newUserAddedToExistingRoomHandler
@@ -91,7 +105,7 @@ export const Chat = () => {
   }, [])
 
   return (
-    <div className='w-screen h-screen grid grid-cols-1 md:grid-cols-5 xl:grid-cols-12 divide-x'>
+    <div className='w-screen h-screen grid grid-cols-1 md:grid-cols-5 xl:grid-cols-12 divide-x dark:divide-dark-separator'>
       {width >= 768 && (
         <>
           <ChatList />

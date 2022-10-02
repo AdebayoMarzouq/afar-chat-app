@@ -22,7 +22,7 @@ export const ChatMenuListItem = ({
 
   return (
     <li
-      className='[&:last-of-type>div]:border-b-0 cursor-pointer pl-2 md:pl-4 flex items-center gap-2 hover:bg-gray-100 active:bg-gray-200'
+      className='[&:last-of-type>div]:border-b-0 dark:border-dark-separator cursor-pointer pl-2 md:pl-4 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-dark-bg-secondary active:bg-gray-200 dark:active:bg-dark-bg-secondary'
       onClick={() => {
         if (openSelected) {
           openSelected(uuid)
@@ -32,18 +32,20 @@ export const ChatMenuListItem = ({
       <div className='h-20 flex items-center justify-center'>
         <Avatar size={12} src={profile_image} />
       </div>
-      <div className='h-20 flex items-center gap-2 flex-grow border-b pr-4 md:pr-4'>
+      <div className='h-20 flex items-center gap-2 flex-grow border-b border-inherit pr-4 md:pr-4'>
         <div className='text-left'>
           <p className='font-semibold'>{username}</p>
           <p className='text-xs font-semibold'>
-            <span className='font-normal'>Email : </span>
+            <span className='font-normal dark:text-dark-text-secondary'>
+              Email :{' '}
+            </span>
             {email}
           </p>
         </div>
         {isCreator && (
-          <div className='ml-auto shrink-0 text-sm font-bold text-light-main-primary'>
+          <div className='ml-auto shrink-0 text-sm font-bold text-light-main-primary dark:text-dark-main-primary'>
             <svg
-              className='w-6 h-6'
+              className='w-8 h-8'
               fill='currentColor'
               viewBox='0 0 20 20'
               xmlns='http://www.w3.org/2000/svg'

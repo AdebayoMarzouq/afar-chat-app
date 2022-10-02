@@ -4,6 +4,7 @@ import { ChatData, MessageListItem, RoomType } from '../types/chat'
 import axios from 'axios'
 import { RootState } from './store'
 import { UserType } from '../types/user'
+import { resetState } from './action'
 
 export const chatCreate = createAsyncThunk<
   ChatData,
@@ -141,6 +142,12 @@ export const chatSlice = createSlice({
       action: PayloadAction<{ room_id: string; users: UserType[] }>
     ) => {
       const { room_id, users } = action.payload
+      const usersToAdd = users.filter((user) => {
+        const isInGroup = state.chatDataCollection[room_id].participants.find(
+          (participant) => participant.uuid === user.uuid
+        )
+        if (!isInGroup) return user
+      })
       return {
         ...state,
         chatDataCollection: {
@@ -149,15 +156,49 @@ export const chatSlice = createSlice({
             ...state.chatDataCollection[room_id],
             participants: [
               ...state.chatDataCollection[room_id].participants,
-              ...users,
+              ...usersToAdd,
             ],
           },
+        },
+      }
+    },
+    removeParticipantFromGroup: (
+      state,
+      action: PayloadAction<{ room_id: string; user_id: string }>
+    ) => {
+      const {room_id, user_id} = action.payload;
+      return {
+        ...state,
+        chatDataCollection: {
+          ...state.chatDataCollection,
+          [room_id]: {
+            ...state.chatDataCollection[room_id],
+            participants: state.chatDataCollection[room_id].participants.filter(
+              (item) => item.uuid !== user_id
+            ),
+          },
+        },
+      }
+    },
+    removeGroup: (
+      state,
+      action: PayloadAction<{ room_id: string; user_id: string }>
+    ) => {
+      const { room_id, user_id } = action.payload
+      const copy = { ...state.chatDataCollection }
+      delete copy[room_id]
+      return {
+        ...state,
+        chats: state.chats.filter(chat => chat.uuid !== room_id),
+        chatDataCollection: {
+          ...copy
         },
       }
     },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(resetState, () => initialState)
       .addCase(fetchUserChats.pending, (state) => {
         state.chatsLoading = true
       })
@@ -191,7 +232,7 @@ export const chatSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { setSelected, setChats, updateChats, appendMessage, appendChat, appendParticipant } =
+export const { setSelected, setChats, updateChats, appendMessage, appendChat, appendParticipant, removeParticipantFromGroup, removeGroup } =
   chatSlice.actions
 
 export default chatSlice.reducer

@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import { Avatar } from '../../common/Avatar'
 import type { RootState } from '../../../redux/store'
 import { useSelector, useDispatch } from 'react-redux'
@@ -28,6 +28,7 @@ const variants = {
 }
 
 export const Profilebar = () => {
+  const nameRef = useRef<HTMLInputElement>(null)
   const { userInfo } = useSelector((state: RootState) => state.user)
   const dispatch = useDispatch()
   const [edit, setEdit] = useState(false)
@@ -37,9 +38,15 @@ export const Profilebar = () => {
     dispatch(closeProfile())
   }
 
+  useEffect(() => {
+    if (edit) {
+      nameRef.current!.focus()
+    }
+  })
+
   return (
     <motion.div
-      className={`absolute bg-white inset-0`}
+      className={`absolute bg-light-bg-primary dark:bg-dark-bg-primary inset-0`}
       initial='initial'
       animate='enter'
       exit='exit'
@@ -53,7 +60,7 @@ export const Profilebar = () => {
             <Avatar size={48} src={userInfo.profile_image} />
             <label
               htmlFor='profile_upload'
-              className='absolute inset flex flex-col justify-center items-center w-48 h-48 rounded-full bg-gray-50 hover:opacity-50 opacity-0 border-2 border-gray-300 border-dashed cursor-pointer text-gray-500'
+              className='absolute inset flex flex-col justify-center items-center w-48 h-48 rounded-full bg-gray-50 dark:bg-gray-800 hover:opacity-50 opacity-0 border-2 border-gray-300 dark:border-white border-dashed cursor-pointer text-gray-500 dark:text-gray-300'
             >
               <div className='flex flex-col justify-center items-center pt-5 pb-6'>
                 <svg
@@ -76,7 +83,7 @@ export const Profilebar = () => {
                     d='M15 13a3 3 0 11-6 0 3 3 0 016 0z'
                   />
                 </svg>
-                <p className='text-xs text-gray-900 max-w-1/3 overflow-wrap'>
+                <p className='text-xs text-gray-900 dark:text-gray-300 max-w-1/3 overflow-wrap'>
                   Change Profile Photo
                 </p>
               </div>
@@ -89,30 +96,66 @@ export const Profilebar = () => {
             </label>
           </div>
           <form className='px-4 mt-4'>
-            <div className='relative z-0 mb-6 w-full'>
-              <label htmlFor='username' className='text-xs'>
+            <div className='relative z-0 mb-6 w-full flex flex-col'>
+              <label
+                htmlFor='username'
+                className='text-xs dark:text-dark-text-secondary'
+              >
                 username
               </label>
-              <input
-                type='text'
-                name='username'
-                id='username'
-                value={usernameInput}
-                readOnly={!edit}
-                placeholder='username is here'
-                className={`block pt-2.5 pb-0.5 px-0 w-full text-lg text-gray-900 bg-transparent border-0 ${
-                  !edit ? 'border-b' : 'border-b-2'
-                } border-gray-200 focus:outline-none focus:ring-0 focus:border-gray-400`}
-                required
-                onChange={(e) => setUsernameInput(e.target.value)}
-              />
-              <button
-                type='button'
-                className='absolute right-0 top-1/2'
-                onClick={() => setEdit((x) => !x)}
-              >
-                edit
-              </button>
+              <div className='flex gap-2'>
+                <input
+                  type='text'
+                  name='username'
+                  id='username'
+                  value={usernameInput}
+                  readOnly={!edit}
+                  ref={nameRef}
+                  placeholder='username is here'
+                  className={`block pt-2.5 pb-1 px-0 w-full text-lg text-light-text-primary dark:text-dark-text-primary bg-transparent border-0 ${
+                    !edit ? 'border-b' : 'border-b-2'
+                  } border-gray-200 dark:border-dark-separator focus:outline-none focus:ring-0 focus:border-gray-400`}
+                  required
+                  onChange={(e) => setUsernameInput(e.target.value)}
+                />
+                <button
+                  type='button'
+                  className='input-icon'
+                  onClick={() => setEdit((x) => !x)}
+                >
+                  {!edit ? (
+                    <svg
+                      className='w-6 h-6'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z'
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className='w-6 h-6'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5'
+                      />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
           </form>
         </>

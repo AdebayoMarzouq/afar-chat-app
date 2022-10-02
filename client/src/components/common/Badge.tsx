@@ -1,18 +1,22 @@
 import React from 'react'
+import { Avatar } from './Avatar'
 
 export const Badge = ({
   title,
   closeFunc,
+  avatar
 }: {
   title: string
+  avatar: string
   closeFunc: () => void
 }) => {
   return (
-    <span className='inline-flex items-center py-1 px-2 mr-2 text-sm font-medium text-light-main-primary bg-light-main-secondary rounded'>
-      {title || 'hello user'}
+    <div className='inline-flex items-center py-1 px-2 mr-2 text-sm font-medium text-light-main-primary dark:text-dark-main-primary bg-light-main-secondary dark:bg-dark-fillOne rounded'>
+      <Avatar src={avatar} size={6} />
+      <span className='ml-2'>{title || 'hello user'}</span>
       <button
         type='button'
-        className='inline-flex items-center p-0.5 ml-2 text-sm text-light-main-primary bg-transparent rounded-sm hover:bg-light-main-primary hover:text-white'
+        className='inline-flex items-center p-0.5 ml-2 text-sm text-light-main-primary dark:text-dark-main-primary bg-transparent rounded-sm hover:bg-light-main-primary dark:hover:bg-dark-main-primary hover:text-white dark:hover:text-dark-text-primary'
         data-dismiss-target='#badge-dismiss-default'
         aria-label='Remove'
         onClick={closeFunc}
@@ -30,8 +34,8 @@ export const Badge = ({
             clipRule='evenodd'
           ></path>
         </svg>
-        <span className='sr-only'>Remove badge</span>
+        <span className='sr-only'>Remove user</span>
       </button>
-    </span>
+    </div>
   )
 }

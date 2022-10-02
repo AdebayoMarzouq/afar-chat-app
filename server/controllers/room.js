@@ -28,9 +28,6 @@ const getOrCreatePrivateRoom = async (req, res) => {
   })
 
   if (haveRoom) {
-    // const room_id = haveRoom[0].id
-    // const room = await db.Room.findByPk(room_id)
-    // const room_users = room.getUsers()
     return res.status(400).json({ msg: 'These users have a room already' })
   }
 
@@ -261,8 +258,29 @@ const removeParticipantFromGroup = async (req, res) => {
     await room_participant.destroy()
     res.status(200).send({ message: 'user removed successfully' })
   }
-  res.status(StatusCodes.UNAUTHORIZED).message({
+  res.status(StatusCodes.UNAUTHORIZED).send({
     message: 'You are not authorized to remove participants from this group',
+  })
+}
+
+const leaveGroup = async (req, res) => {
+  const { room_id, user_id } = req.body
+  const room = await db.Room.findOne({
+    where: { uuid: room_id, is_group: true },
+    include: { model: db.User, as: 'creator' },
+  })
+  const user = await db.User.scope('withId').findOne({
+    where: { uuid: user_id },
+  })
+  if (user) {
+    const room_participant = await db.Participant.findOne({
+      where: { UserId: user.id, RoomId: room.id },
+    })
+    await room_participant.destroy()
+    return res.status(200).send({ message: 'user removed successfully' })
+  }
+  res.status(StatusCodes.BAD_REQUEST).send({
+    message: 'User not found',
   })
 }
 
@@ -275,4 +293,5 @@ module.exports = {
   deleteGroup,
   addParticipantToGroup,
   removeParticipantFromGroup,
+  leaveGroup
 }

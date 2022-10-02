@@ -74,9 +74,9 @@ export function ChatBody() {
   return (
     <>
       <AnimatePresence>
-        <div className='scroll-smooth speech-wrapper py-4 px-6 md:px-8 flex-grow bg-gray-200 overflow-y-auto'>
+        <div className='scroll-smooth speech-wrapper py-4 px-6 md:px-8 flex-grow bg-gray-200 dark:bg-dark-bg-primary overflow-y-auto'>
           {!selected ? (
-            <div className='text-center pb-4 pt-20'>
+            <div className='text-center dark:text-dark-text-secondary pb-4 pt-20'>
               Click a message to chat
             </div>
           ) : (

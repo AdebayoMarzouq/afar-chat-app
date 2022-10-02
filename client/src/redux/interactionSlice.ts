@@ -1,10 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { resetState } from './action'
 
 export interface InteractionState {
   profile: boolean
   searchBar: boolean
-  modalInfo: boolean
+  createGroupbar: boolean
   groupMenu: boolean
   mainToggle: boolean
 }
@@ -12,7 +13,7 @@ export interface InteractionState {
 const initialState: InteractionState = {
   profile: false,
   searchBar: false,
-  modalInfo: false,
+  createGroupbar: false,
   groupMenu: false,
   mainToggle: false
 }
@@ -33,11 +34,11 @@ export const interactionSlice = createSlice({
     closeSearchbar: (state) => {
       state.searchBar = false
     },
-    openModalInfo: (state) => {
-      state.modalInfo = true
+    openCreateGroupbar: (state) => {
+      state.createGroupbar = true
     },
-    closeModalInfo: (state) => {
-      state.modalInfo = false
+    closeCreateGroupbar: (state) => {
+      state.createGroupbar = false
     },
 
     openGroupMenu: (state) => {
@@ -53,8 +54,11 @@ export const interactionSlice = createSlice({
       state.mainToggle = false
     }
   },
+  extraReducers: (builder) => {
+    builder.addCase(resetState, () => initialState)
+  }
 })
 
-export const { openProfile, closeProfile, openSearchbar, closeSearchbar, openModalInfo, closeModalInfo, openGroupMenu, closeGroupMenu, openMainToggle, closeMainToggle } = interactionSlice.actions
+export const { openProfile, closeProfile, openSearchbar, closeSearchbar, openCreateGroupbar, closeCreateGroupbar, openGroupMenu, closeGroupMenu, openMainToggle, closeMainToggle } = interactionSlice.actions
 
 export default interactionSlice.reducer

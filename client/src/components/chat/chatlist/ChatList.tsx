@@ -4,6 +4,7 @@ import { useWindowDimensions } from '../../../hooks';
 import { RootState } from '../../../redux/store';
 import { Spinner } from '../../miscellaneous/Spinner';
 import { CreateGroupModal } from '../modal/CreateGroupModal';
+import { CreateGroupbar } from '../newgroup/CreateGroupbar';
 import { Profilebar } from '../profilebar/Profilebar';
 import { Searchbar } from '../searchbar/Searchbar';
 import { ChatListHeader } from './ChatListHeader';
@@ -11,7 +12,7 @@ import { ChatRoomsList } from './ChatRoomsList';
 
 export const ChatList = () => {
   const {width} = useWindowDimensions()
-  const { modalInfo, profile: profileBar, searchBar, mainToggle } = useSelector((state: RootState) => state.interaction)
+  const { createGroupbar, profile: profileBar, searchBar, mainToggle } = useSelector((state: RootState) => state.interaction)
   const {
     chatsLoading,
     chatsError,
@@ -23,7 +24,7 @@ export const ChatList = () => {
     <div
       className={`${
         mainToggle && width < 768 && 'hidden'
-      } col-span-2 xl:col-span-3 relative h-screen flex flex-col bg-light-bg-primary dark:bg-dark-bg-primary text-light-text-primary dark:text-dark-text-primary overflow-x-hidden`}
+      } col-span-2 xl:col-span-3 relative h-screen flex flex-col text-light-text-primary dark:text-dark-text-primary overflow-x-hidden`}
     >
       <ChatListHeader />
       {chatsLoading && (
@@ -38,7 +39,7 @@ export const ChatList = () => {
         <ChatRoomsList key='chat-rooms-list' />
         {profileBar && <Profilebar key='profile-bar' />}
         {searchBar && <Searchbar key='search-bar' />}
-        {modalInfo && <CreateGroupModal key='create-modal' />}
+        {createGroupbar && <CreateGroupbar key='create-modal' />}
       </AnimatePresence>
     </div>
   )

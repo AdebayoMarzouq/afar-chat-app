@@ -12,12 +12,12 @@ export const Tab = ({
 }) => {
   const [currentTab, setCurrentTab] = useState('login')
 
-  const activeTab = 'border-sky-600'
-  const inActiveTab = 'text-gray-400 border-transparent hover:border-gray-400'
+  const activeTab = 'dark:text-dark-text-primary border-light-main-primary dark:border-dark-main-primary'
+  const inActiveTab = 'text-gray-400 dark:text-dark-text-secondary border-transparent hover:border-gray-400 dark:hover:border-dark-text-secondary'
 
   return (
     <>
-      <div className='mb-4 border-b border-gray-200'>
+      <div className='mb-4 border-b border-gray-200 dark:border-dark-separator'>
         <ul
           className='flex -mb-px text-sm font-medium text-center'
           id='Tab'

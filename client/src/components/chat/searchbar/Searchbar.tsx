@@ -81,16 +81,16 @@ export const Searchbar = () => {
 
   return (
     <motion.div
-      className={`absolute bg-white inset-0 flex flex-col`}
+      className={`absolute bg-light-bg-primary dark:bg-dark-bg-primary inset-0 flex flex-col`}
       initial='initial'
       animate='enter'
       exit='exit'
       variants={variants}
       layout
     >
-      <HeaderTypeone title='Search users' fn={close} />
+      <HeaderTypeone title='New Chat' fn={close} />
       <form
-        className='flex items-center py-4 border-b px-4 shrink-0'
+        className='flex items-center py-4 border-b dark:border-dark-separator px-4 shrink-0'
         onSubmit={(e) => {
           e.preventDefault()
           handleSearch()

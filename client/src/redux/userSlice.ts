@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { UserType } from '../types/user'
+import { resetState } from './action'
 
 export interface UserState {
   userToken: string | null
@@ -25,6 +26,9 @@ export const userSlice = createSlice({
       state.userToken = action.payload
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(resetState, () => initialState)
+  }
 })
 
 // Action creators are generated for each case reducer function

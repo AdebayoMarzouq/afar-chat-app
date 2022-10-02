@@ -23,28 +23,31 @@ export const Input = ({
   disableShow?: boolean
 } & React.HTMLProps<HTMLInputElement>) => {
   const valid =
-    'border-green-500 text-green-900 placeholder-green-700 rounded-lg focus:ring-green-500 focus:border-green-500'
+    'border-green-500 dark:border-green-400 text-green-900 dark:text-green-400 placeholder-green-700 rounded-lg focus:ring-green-400 focus:border-green-500 dark:caret-green-400'
   const invalid =
-    'border border-red-500 text-red-900 placeholder-red-700 rounded-lg focus:ring-red-500 focus:border-red-500'
+    'border border-red-500 text-red-900 dark:text-red-400 placeholder-red-700 rounded-lg focus:ring-red-500 focus:border-red-500 dark:caret-dark-text-primary dark:caret-red-400'
   return (
     <div className='relative mb-6 text-left'>
       <label
         htmlFor={name}
-        className='block mb-2 ml-2 text-sm font-medium text-gray-700'
+        className='block mb-2 ml-2 text-sm font-medium text-gray-700 dark:text-dark-text-secondary
+        '
       >
         {label}
       </label>
       <div className='relative'>
         <input
           id={name}
-          className={`outline-none text-sm w-full p-2.5 block ${error ? invalid : ''} ${
-            isValid ? valid : ''
-          } bg-gray-50 border rounded-md `}
+          className={`border outline-none text-sm w-full p-2.5 block ${
+            error ? invalid : 'dark:border-dark-text-secondary dark:caret-dark-text-primary'
+          } ${isValid ? valid : ''} bg-gray-50 dark:bg-dark-fillOne rounded-md`}
           {...props}
         />
         {setShow && (
           <button
-            className={`${disableShow && 'hidden'} absolute inset-y-1 right-4 text-gray-500 outline-none border-none ring-none`}
+            className={`${
+              disableShow && 'hidden'
+            } absolute inset-y-1 right-4 text-gray-500 outline-none border-none ring-none`}
             disabled={disableShow}
             onClick={(e) => {
               e.preventDefault()
@@ -91,7 +94,7 @@ export const Input = ({
         <p
           className={`${
             !error && 'hidden'
-          } mt-2 text-xs tracking-tight leading-none text-red-600 dark:text-red-500`}
+          } mt-2 text-xs tracking-tight leading-none text-red-600 dark:text-red-400`}
         >
           {error}
         </p>

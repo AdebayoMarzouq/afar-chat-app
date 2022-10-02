@@ -53,16 +53,13 @@ export const ChatMenubar = () => {
             <div className='text-center pb-4 pt-20'>
               <Spinner className='w-8 h-8' />
             </div>
-          ) : !chatDataCollection[selected] ? (
-            <p className='p-4'>No info to display</p>
           ) : (
             <ChatMenuBody />
           )}
         </>
       ) : (
         <div className='hidden xl:block xl:static xl:col-span-3 h-screen text-center'>
-          <div className='h-16 w-full border-b'></div>
-          <p className='p-4'>
+          <p className='mt-20 p-4 dark:text-dark-text-secondary'>
             No info to display, select a chat to display its info here
           </p>
         </div>

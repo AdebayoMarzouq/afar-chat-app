@@ -1,16 +1,13 @@
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useSocketContext } from "../../../context/SocketContext"
-import { fetchUserChats, setSelected, fetchRoomData, appendParticipant, appendChat } from "../../../redux/chatSlice"
 import { AppDispatch, RootState } from "../../../redux/store"
 import { UserType } from "../../../types/user"
 import { request } from "../../../utilities/request"
-import { Badge } from "../../common/Badge"
-import { Spinner } from "../../miscellaneous/Spinner"
-import { SearchListItem } from "../../common/SearchListItem"
 import { useFetch } from "../../../hooks"
-import { RoomType } from "../../../types/chat"
+import { UserAddListBody } from "../../common/UserAddListBody"
+import { UsersAddBadgeBody } from "../../common/UsersAddBadgeBody"
 
 const variants = {
   initial: { x: '100%' },
@@ -47,7 +44,6 @@ export const AddParticipantsBar = ({close}:{close: ()=>void}) => {
     loading: false,
     error: false,
   })
-
 
   const handleSearch = async () => {
     if (!search) return //* display a toast to user
@@ -88,7 +84,7 @@ export const AddParticipantsBar = ({close}:{close: ()=>void}) => {
 
   const submitForm = async () => {
     if (!chatForm.users.length)
-      return console.log('Only two or more users can form a group')
+      return console.log('No user selected')
     const form_data = {
       room_id: selected,
       groupUsers: JSON.stringify(chatForm.users),
@@ -104,12 +100,12 @@ export const AddParticipantsBar = ({close}:{close: ()=>void}) => {
       })
       if (response.status === 200) { 
         // *Success toast
+        socket.emit('added_to_existing_group', response.data.room_id, chatForm.users)
+        setSearch('')
+        setBadgeItems([])
+        setChatForm({ users: [] })
+        close()
       }
-      socket.emit('added_to_existing_group', response.data.room_id, chatForm.users)
-      setSearch('')
-      setBadgeItems([])
-      setChatForm({ users: [] })
-      close()
     } catch (error) {
       console.log(error)
       setSubmitStatus((prev) => {
@@ -125,7 +121,7 @@ export const AddParticipantsBar = ({close}:{close: ()=>void}) => {
 
   return (
     <motion.div
-      className={`absolute bg-white inset-0 flex flex-col`}
+      className={`absolute bg-light-bg-primary dark:bg-dark-bg-primary inset-0 flex flex-col`}
       initial='initial'
       animate='enter'
       exit='exit'
@@ -133,7 +129,7 @@ export const AddParticipantsBar = ({close}:{close: ()=>void}) => {
       layout
     >
       <form
-        className='flex items-center py-4 border-b px-4 shrink-0'
+        className='flex items-center py-4 border-b dark:border-dark-separator px-4 shrink-0'
         onSubmit={(e) => {
           e.preventDefault()
           handleSearch()
@@ -197,40 +193,17 @@ export const AddParticipantsBar = ({close}:{close: ()=>void}) => {
           </button>
         )}
       </form>
-      <div className='p-4 max-h-48 flex flex-shrink space-y-1 flex-wrap overflow-auto border-b'>
-        {badgeItems.map((item) => (
-          <Badge
-            key={item.email}
-            title={item.username}
-            closeFunc={() => removeUserFromForm(item.email)}
-          />
-        ))}
-      </div>
-      <div className='flex flex-grow flex-col overflow-y-auto'>
-        {loading && (
-          <div className='text-center py-4'>
-            <Spinner />
-          </div>
-        )}
-        {data &&
-          (data.users.length ? (
-            data.users.map((user) => (
-              <button
-                className='[&>div>div:last-child]:border-b'
-                type='button'
-                key={user.uuid}
-                onClick={() => handleUserSelect(user)}
-              >
-                <SearchListItem {...user} />
-              </button>
-            ))
-          ) : (
-            <div className='text-center'>No user with this search term</div>
-          ))}
-        {!data && error && (
-          <div className='text-center'>An error occured while searching</div>
-        )}
-      </div>
+      <UsersAddBadgeBody
+        badgeItems={badgeItems}
+        removeUserFromForm={removeUserFromForm}
+      />
+      <UserAddListBody
+        type='existing-group'
+        loading={loading}
+        data={data}
+        handleUserSelect={handleUserSelect}
+        error={error}
+      />
     </motion.div>
   )
 }

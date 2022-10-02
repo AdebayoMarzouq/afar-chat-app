@@ -40,7 +40,7 @@ export const ChatListItem = ({
     (state: RootState) => state.chat
   )
   let oppositeUser
-  const selectedClass = 'bg-gray-100'
+  const selectedClass = 'bg-gray-100 dark:bg-dark-bg-secondary'
 
   // *Fix chat return to take care of participant name in the list
 
@@ -62,7 +62,7 @@ export const ChatListItem = ({
 
   return (
     <motion.div
-      className={`[&:last-of-type>div]:border-b-0 bg-white cursor-pointer pl-4 xl:pl-4 flex items-center gap-2 hover:bg-gray-100 ${
+      className={`[&:last-of-type>div]:border-b-0 cursor-pointer pl-4 xl:pl-4 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-dark-bg-secondary ${
         selected === uuid && selectedClass
       }`}
       onClick={() => {
@@ -76,19 +76,19 @@ export const ChatListItem = ({
       <div className='h-20 flex items-center justify-center shrink-0'>
         <Avatar size={12} src={oppositeUser?.profile_image} />
       </div>
-      <div className='h-20 flex items-center gap-2 flex-grow border-b overflow-hidden pr-4'>
+      <div className='h-20 flex items-center gap-2 flex-grow border-b dark:border-dark-separator overflow-hidden pr-4'>
         <div className='overflow-hidden w-full'>
           <div className='flex items-center gap-2'>
             <p className='truncate font-semibold capitalize'>
               {room_name || oppositeUser?.username}
             </p>
-            <span className='text-xs ml-auto'>12:24PM</span>
+            <span className='text-xs ml-auto dark:text-dark-main-primary'>12:24PM</span>
           </div>
           <div className='flex items-start gap-2'>
-            <p className='h-8 break-words w-[calc(100%_-_48px)] text-xs text-light-text-primary'>
+            <p className='h-8 break-words w-[calc(100%_-_48px)] text-xs text-light-text-primary dark:text-dark-text-secondary font-[Ubuntu] font-medium'>
               {last_message}
             </p>
-            <span className='ml-auto max-w-10 w-fit px-1 py-0.5 h-4 flex items-center justify-center shrink-0 rounded-xl text-light-main-primary border border-light-main-primary bg-white text-xs font-semibold'>
+            <span className='ml-auto max-w-10 w-fit px-1 py-0.5 h-4 flex items-center justify-center shrink-0 rounded-xl dark:bg-dark-main-primary text-light-main-primary dark:text-dark-bg-primary border border-light-main-primary dark:border-none text-xs font-semibold'>
               999+
             </span>
           </div>

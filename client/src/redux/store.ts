@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import chatReducer from './chatSlice'
 import interactionReducer from './interactionSlice'
 import storage from 'redux-persist/lib/storage'
@@ -14,17 +14,17 @@ import {
   REGISTER,
 } from 'redux-persist'
 
-const persistConfig = {
-  key: 'root',
+const persistUserConfig = {
+  key: 'user',
   storage,
 }
 
-const persistedReducer = persistReducer(persistConfig, userReducer)
+const persistedUserReducer = persistReducer(persistUserConfig, userReducer)
 
 export const store = configureStore({
   reducer: {
     interaction: interactionReducer,
-    user: persistedReducer,
+    user: persistedUserReducer,
     chat: chatReducer,
   },
   middleware: (getDefaultMiddleware) =>

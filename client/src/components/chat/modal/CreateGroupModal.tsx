@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { useSocketContext } from '../../../context/SocketContext'
 import { useFetch } from '../../../hooks'
-import { closeModalInfo } from '../../../redux/interactionSlice'
 import { AppDispatch } from '../../../redux/store'
 import { UserType } from '../../../types/user'
 import { request } from '../../../utilities/request'
@@ -96,7 +95,7 @@ export const CreateGroupModal = () => {
         payload: form_data,
       })
       socket.emit('created_new_group', response.data.room_id)
-      dispatch(closeModalInfo())
+      // dispatch(closeModalInfo())
       setSearch('')
       setBadgeItems([])
       setChatForm({ chat_name: '', users: [] })
@@ -124,7 +123,7 @@ export const CreateGroupModal = () => {
       <motion.div
         tabIndex={-1}
         aria-hidden='true'
-        className={`overflow-y-auto overflow-x-hidden fixed inset-0 z-50 w-full h-full bg-black flex justify-center items-center bg-opacity-30`}
+        className={`overflow-y-auto overflow-x-hidden fixed inset-0 z-50 w-full h-full bg-black dark:bg-white flex justify-center items-center bg-opacity-30 dark:bg-opacity-20`}
         initial='initial'
         animate='enter'
         exit='exit'
@@ -133,16 +132,16 @@ export const CreateGroupModal = () => {
       >
         <div className='relative p-4 w-full max-w-xl h-full md:h-auto flex justify-center items-center'>
           {/* <!-- Modal content --> */}
-          <div className='relative bg-white rounded-lg shadow w-full'>
+          <div className='relative bg-light-bg-primary dark:bg-dark-bg-primary rounded-lg shadow w-full'>
             {/* <!-- Modal header --> */}
-            <div className='flex justify-between items-start py-4 px-6 rounded-t border-b'>
-              <h3 className='text-xl font-semibold text-gray-900'>
+            <div className='flex justify-between items-start py-4 px-6 rounded-t border-b dark:border-dark-separator'>
+              <h3 className='text-xl font-semibold text-light-text-primary dark:text-dark-text-primary'>
                 Create Group
               </h3>
               <button
                 type='button'
-                className='text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center'
-                onClick={() => dispatch(closeModalInfo())}
+                className='icon-btn dark:text-dark-text-secondary'
+                // onClick={() => dispatch(closeModalInfo())}
               >
                 <svg
                   aria-hidden='true'
@@ -250,10 +249,10 @@ export const CreateGroupModal = () => {
               </form>
             </div>
             {/* <!-- Modal footer --> */}
-            <div className='flex items-center p-6 space-x-2 rounded-b border-t border-gray-200'>
+            <div className='flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-dark-separator'>
               <button
                 type='button'
-                className='text-white bg-light-main-primary transform hover:scale-105 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-auto'
+                className='text-white bg-light-main-primary dark:bg-dark-main-primary transform hover:scale-105 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center ml-auto'
                 onClick={() => {
                   submitForm()
                 }}

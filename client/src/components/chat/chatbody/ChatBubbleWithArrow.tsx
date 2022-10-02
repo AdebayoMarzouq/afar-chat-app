@@ -43,7 +43,9 @@ export const ChatBubbleWithArrow = ({
 }) => {
   return (
     <motion.div
-      className={`bubble ${isSender && 'alt'}`}
+      className={`bubble ${
+        isSender ? 'alt bg-light-bg-primary dark:bg-dark-bubbleOne-bg' : 'bg-light-bg-secondary dark:bg-dark-bubbleTwo-bg'
+      }`}
       initial='initial'
       animate='enter'
       variants={variants}
@@ -62,7 +64,7 @@ export const ChatBubbleWithArrow = ({
           <span className='timestamp'>10:20 pm</span>
         </div>
       </div>
-      <div className={`bubble-arrow ${isSender && 'alt'}`}></div>
+      <div className={`bubble-arrow ${isSender ? 'alt sender-arrow' : 'reciever-arrow'}`}></div>
     </motion.div>
   )
 }

@@ -129,7 +129,7 @@ export const Signup = () => {
       <button
         type='submit'
         disabled={!(isValid && dirty) || isSubmitting}
-        className='bg-sky-600 px-4 py-2 rounded-md text-white cursor-pointer disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed'
+        className='bg-light-main-primary dark:bg-dark-main-primary px-4 py-2 rounded-md text-white cursor-pointer disabled:bg-gray-600 dark:disabled:bg-dark-fillOne disabled:text-gray-400 dark:disabled:text-dark-text-secondary disabled:cursor-not-allowed'
       >
         {!isSubmitting ? 'Submit' : 'Loading...'}
       </button>

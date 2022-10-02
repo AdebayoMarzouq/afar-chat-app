@@ -4,7 +4,7 @@ export const Spinner = ({ className }: { className?: string }) => {
   return (
     <div role='status'>
       <svg
-        className={`inline text-gray-200 animate-spin w-10 h-10 fill-light-main-primary ${className}`}
+        className={`inline text-gray-200 dark:text-dark-bg-secondary animate-spin w-10 h-10 fill-light-main-primary dark:fill-dark-main-primary ${className}`}
         viewBox='0 0 100 101'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'

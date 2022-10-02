@@ -88,7 +88,9 @@ export const MessageInput = memo(() => {
   return (
     <>
       <form
-        className={`${!selected && 'hidden'} border-t mt-auto shrink-0 relative`}
+        className={`${
+          !selected && 'hidden'
+        } border-t dark:border-dark-separator dark:bg-dark-bg-secondary mt-auto shrink-0 relative`}
         onSubmit={(e) => {
           e.preventDefault()
           // *handleSubmit
@@ -98,7 +100,7 @@ export const MessageInput = memo(() => {
         <label htmlFor='chat' className='sr-only'>
           Your message
         </label>
-        <div className='flex items-end py-2 px-3 bg-gray-50 rounded-lg dark:bg-gray-700'>
+        <div className='flex items-end py-2 px-3 bg-inherit'>
           <button type='button' className='icon-btn'>
             <svg
               className='w-6 h-6'
@@ -119,7 +121,7 @@ export const MessageInput = memo(() => {
 
           <button
             type='button'
-            className='icon-btn'
+            className='icon-btn ml-2'
             onClick={() => setOpenEmoji((prev) => !prev)}
           >
             {openEmoji ? (
@@ -160,7 +162,7 @@ export const MessageInput = memo(() => {
             onChange={() => setC((x) => !x)}
             ref={textAreaRef}
             rows={1}
-            className='resize-none max-h-[100px] mx-4 w-full p-2.5 text-sm text-gray-900 bg-white rounded-lg border border-gray-300 focus:border-light-main-primary outline-none'
+            className='resize-none max-h-[100px] mx-2 w-full p-2.5 text-sm text-light-text-primary dark:text-dark-text-primary bg-white dark:bg-dark-fillOne rounded-lg border border-gray-300 dark:border-transparent focus:border-light-main-primary dark:focus:border-dark-main-primary outline-none'
             placeholder='Your message...'
           ></textarea>
           <button type='submit' className='icon-btn' onClick={handleSubmit}>

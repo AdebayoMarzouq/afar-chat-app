@@ -3,7 +3,7 @@ import { RootState } from "../../../redux/store";
 import { useSelector } from 'react-redux'
 import { ChatListItem } from "./ChatListItem";
 
-export const ChatRoomsList = () => {
+export const ChatRoomsList = ({}) => {
   const { chats } = useSelector((state: RootState) => state.chat)
 
   const sorted_chats = useMemo(

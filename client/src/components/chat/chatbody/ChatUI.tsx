@@ -16,7 +16,7 @@ export const ChatUI = () => {
     <div
       className={`${
         !mainToggle && width < 768 && 'hidden'
-      } relative col-span-3 xl:col-span-6 h-screen flex flex-col w-full bg-white`}
+      } relative col-span-3 xl:col-span-6 h-screen flex flex-col w-full bg-inherit`}
     >
       <>
         <ChatUIHeader />

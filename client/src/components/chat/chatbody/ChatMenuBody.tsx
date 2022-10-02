@@ -16,9 +16,13 @@ export const ChatMenuBody = () => {
     setAddParticipant(false)
   }
 
+  const exitGroup = () => {
+    
+  }
+
   return (
     <>
-      <div className='px-2 h-16 shrink-0 flex items-center mt-auto gap-6 text-xl font-semibold border-b'>
+      <div className='px-2 h-16 dark:bg-dark-bg-secondary shrink-0 flex items-center mt-auto gap-6 text-xl font-semibold border-b dark:border-dark-separator'>
         <button
           className='icon-btn'
           onClick={() => {

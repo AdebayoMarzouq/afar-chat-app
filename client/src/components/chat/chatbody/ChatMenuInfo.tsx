@@ -1,6 +1,9 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useSocketContext } from "../../../context/SocketContext";
+import { removeGroup, setSelected } from "../../../redux/chatSlice";
+import { AppDispatch, RootState } from "../../../redux/store";
+import { request } from "../../../utilities/request";
 import { Avatar } from "../../common/Avatar";
 import { ChatMenuListItem } from "./ChatMenuListItem";
 
@@ -8,28 +11,28 @@ function ChatMenuOption({
   color,
   icon,
   text,
-  setAddParticipant,
+  fn,
 }: {
   color?: string
   icon: React.ReactNode
   text: string
-  setAddParticipant?: () => void
+  fn?: () => void
 }) {
   return (
     <div
-      className='[&:last-of-type>div]:border-b-0 cursor-pointer pl-2 md:pl-4 flex items-center gap-2 hover:bg-gray-100 active:bg-gray-200'
-      onClick={setAddParticipant}
+      className='[&:last-of-type>div]:border-b-0 dark:border-dark-separator cursor-pointer pl-2 md:pl-4 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-dark-bg-secondary active:bg-gray-200 dark:active:bg-dark-bg-secondary'
+      onClick={fn}
     >
       <div className='h-20 flex items-center justify-center'>
         <div
           className={`w-12 h-12 rounded-full ${
-            color || 'bg-light-main-primary'
+            color || 'bg-light-main-primary dark:bg-dark-main-primary'
           } text-white inline-flex justify-center items-center`}
         >
           {icon}
         </div>
       </div>
-      <div className='h-20 flex items-center gap-2 pr-2 md:pr-4 flex-grow border-b capitalize font-semibold'>
+      <div className='h-20 flex items-center gap-2 pr-2 md:pr-4 flex-grow border-b dark:border-inherit capitalize font-semibold'>
         {text}
       </div>
     </div>
@@ -41,18 +44,66 @@ export function ChatMenuInfo({
 }: {
   setAddParticipant: React.Dispatch<React.SetStateAction<boolean>>
   }) {
+  const { socket } = useSocketContext()
+  const dispatch = useDispatch<AppDispatch>()
   const {userInfo} = useSelector((state: RootState) => state.user)
   const { selected, chatDataLoading, chatDataCollection } = useSelector(
     (state: RootState) => state.chat
   )
+  const [submitStatus, setSubmitStatus] = useState({
+    loading: false,
+    error: false,
+  })
   const { room, participants } = chatDataCollection[selected]
+
+  const exitGroup = async (user_id: string) => {
+    const form_data = {
+      room_id: selected,
+      user_id,
+    }
+    setSubmitStatus((prev) => {
+      return { ...prev, loading: true }
+    })
+    try {
+      const response = await request({
+        url: '/api/chat/leave',
+        method: 'DELETE',
+        payload: form_data
+      })
+      if (response.status === 200) {
+        // *Success toast
+        // *Remove all room data here
+        dispatch(setSelected(''))
+        dispatch(removeGroup({ room_id: form_data.room_id, user_id}))
+        socket.emit(
+        'leave_group',
+        form_data.room_id,
+        user_id
+        )
+      } else if(response.status === 401) {
+        // *Add to general display or alert error
+      }
+    } catch (error) {
+      console.log(error)
+      setSubmitStatus((prev) => {
+        return { ...prev, error: true }
+      })
+      //* pass toast here
+    } finally {
+      setSubmitStatus((prev) => {
+        return { ...prev, loading: false }
+      })
+    }
+  }
 
   return (
     <>
       <div className='flex flex-col gap-2 items-center justify-center py-8'>
         <Avatar size={32} />
         <div>
-          {room.is_group && 'Group'} &bull; {participants.length} Participants
+          {room.is_group && (
+            <>Group &bull; {participants.length} Participants</>
+          )}
         </div>
       </div>
       <div className='w-full h-32 px-2 text-sm md:px-4 py-2 overflow-hidden'>
@@ -80,7 +131,9 @@ export function ChatMenuInfo({
         repudiandae, facilis necessitatibus!
       </div>
       <div className='w-full'>
-        <h3 className='text-gray-400 px-6 py-2'>7 participants</h3>
+        <h3 className='text-gray-400 dark:text-dark-text-secondary px-6 py-2'>
+          7 participants
+        </h3>
         {room.creator.uuid === userInfo!.uuid && (
           <ChatMenuOption
             icon={
@@ -100,7 +153,7 @@ export function ChatMenuInfo({
               </svg>
             }
             text='add participant'
-            setAddParticipant={() => setAddParticipant(true)}
+            fn={() => setAddParticipant(true)}
           />
         )}
         <ChatMenuOption
@@ -134,6 +187,7 @@ export function ChatMenuInfo({
         </ul>
         <ChatMenuOption
           color='bg-red-500'
+          fn={() => exitGroup(userInfo!.uuid)}
           icon={
             <svg
               className='w-6 h-6'
