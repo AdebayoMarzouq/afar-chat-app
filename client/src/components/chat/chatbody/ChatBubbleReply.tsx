@@ -5,9 +5,9 @@ export const ChatBubbleReply = ({isSender}:{isSender: boolean}) => {
     <div
       className={`${
         isSender
-          ? 'alt bg-light-bg-primary dark:bg-dark-bubbleOne-replied'
-          : 'bg-light-bg-secondary dark:bg-dark-bubbleTwo-replied'
-      } p-1 border-l-4 border-rose-400 h-fit w-full max-h-[77px] overflow-hidden rounded-md text-sm mb-2 bg-gray-100`}
+          ? 'alt bg-light-bubbleOne-replied dark:bg-dark-bubbleOne-replied'
+          : 'bg-light-bubbleTwo-replied dark:bg-dark-bubbleTwo-replied'
+      } p-1 border-l-4 border-rose-400 h-fit w-full max-h-[77px] overflow-hidden rounded-md text-sm mb-2`}
     >
       <div className='text-rose-400 text-xs font-semibold mb-0.5 capitalize'>
         Testuser1

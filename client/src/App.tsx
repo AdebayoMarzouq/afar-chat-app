@@ -35,9 +35,9 @@ export const ProtectedRoute = ({
   const { userToken, userInfo } = useSelector((state: RootState) => state.user)
   if (!userToken || !userInfo) {
     // send you are not logged in toast here
-    MyToast({
-      textContent: 'You need to login',
-    })
+    //* MyToast({
+    //*   textContent: 'You need to login',
+    // * })
     return <Navigate to={redirectPath} replace />
   }
   return children ? children : <Outlet />

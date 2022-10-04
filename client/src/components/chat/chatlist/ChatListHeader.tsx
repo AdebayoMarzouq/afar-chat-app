@@ -1,34 +1,45 @@
+import { ChatListHeaderDropDownMenu } from './ChatListHeaderDropDownMenu';
 import { useState } from 'react'
 import { Avatar } from '../../common/Avatar'
-import { HeaderWrapper } from '../../common/HeaderWrapper'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   openProfile,
   openSearchbar,
-  openCreateGroupbar,
 } from '../../../redux/interactionSlice'
+import { setTheme, Theme } from '../../../redux/userSlice'
 import { RootState } from '../../../redux/store'
-import { resetState } from '../../../redux/action'
 import { useNavigate } from 'react-router-dom'
+import Header from '../../common/Header';
 
 
 export function ChatListHeader() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [dropdown, setDropdown] = useState<boolean>()
-  const {userInfo} = useSelector((state: RootState) => state.user)
-
-  const logout = () => {
-    dispatch(resetState())
-    navigate('/')
-  }
+  const [dropdown, setDropdown] = useState<boolean>(false)
+  const { userInfo } = useSelector((state: RootState) => state.user)
 
   return (
-    <HeaderWrapper>
+    <Header>
       <button onClick={() => dispatch(openProfile())}>
         <Avatar size={10} src={userInfo!.profile_image} />
       </button>
-      <div className='ml-auto flex items-center gap-2'>
+      <div className='flex items-center gap-2 ml-auto'>
+        <button
+          className='icon-btn'
+          onClick={() => {
+            dispatch(setTheme(Theme.dark))
+          }}
+        >
+          dark
+        </button>
+        <button
+          className='icon-btn'
+          onClick={() => {
+            dispatch(setTheme(Theme.light))
+          }}
+        >
+          light
+        </button>
         <button className='icon-btn' onClick={() => dispatch(openSearchbar())}>
           <svg
             className='w-6 h-6'
@@ -82,30 +93,12 @@ export function ChatListHeader() {
               </svg>
             )}
           </button>
-          <ul
-            className={`${
-              dropdown ? 'visible' : 'invisible'
-            } transition-[visibility] absolute top-full right-0 min-w-fit whitespace-nowrap w-32 max-h-60 mt-1 bg-light-bg-primary dark:bg-dark-fillOne py-1 rounded-md border dark:border-dark-separator text-sm dark:text-dark-text-primary shadow-lg`}
-          >
-            <li className='px-4 py-2 dark:hover:bg-dark-bg-secondary'>
-              <button
-                onClick={() => {
-                  setDropdown(false)
-                  dispatch(openCreateGroupbar())
-                }}
-              >
-                New group
-              </button>
-            </li>
-            <li className='px-4 py-2 dark:hover:bg-dark-bg-secondary'>
-              <button>Settings</button>
-            </li>
-            <li className='px-4 py-2 dark:hover:bg-dark-bg-secondary'>
-              <button onClick={logout}>Logout</button>
-            </li>
-          </ul>
+          <ChatListHeaderDropDownMenu
+            dropdown={dropdown}
+            setDropdown={setDropdown}
+          />
         </div>
       </div>
-    </HeaderWrapper>
+    </Header>
   )
 }

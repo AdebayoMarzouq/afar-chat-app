@@ -1,4 +1,4 @@
-import React, { Dispatch, memo, SetStateAction } from 'react'
+import React, { Dispatch, memo, SetStateAction, useEffect } from 'react'
 import { Avatar } from '../../common/Avatar'
 import { RoomType } from '../../../types/chat'
 import { motion } from 'framer-motion'
@@ -8,21 +8,10 @@ import { closeGroupMenu, openMainToggle } from '../../../redux/interactionSlice'
 import { AppDispatch, RootState } from '../../../redux/store'
 
 const transition = {
-  type: 'tween',
-  ease: 'easeIn',
-  duration: 0.2
-}
-
-const variants = {
-  initial: {
-    opacity: 0,
-    y: 80,
-  },
-  enter: {
-    opacity: 1,
-    y: 0,
-    transition,
-  },
+  type: 'spring',
+  mass: 0.8,
+  damping: 30,
+  stiffness: 300
 }
 
 export const ChatListItem = ({
@@ -61,28 +50,26 @@ export const ChatListItem = ({
   }
 
   return (
-    <motion.div
-      className={`[&:last-of-type>div]:border-b-0 cursor-pointer pl-4 xl:pl-4 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-dark-bg-secondary ${
+    <motion.li
+      className={`[&:last-of-type>div]:border-b-0 cursor-pointer pl-4 xl:pl-4 flex items-center gap-2 bg-light-bg-primary dark:bg-dark-bg-primary hover:bg-gray-100 dark:hover:bg-dark-bg-secondary ${
         selected === uuid && selectedClass
       }`}
       onClick={() => {
         openSelected(uuid)
       }}
-      initial='initial'
-      animate='enter'
-      variants={variants}
+      transition={transition}
       layout
     >
-      <div className='h-20 flex items-center justify-center shrink-0'>
+      <div className='flex items-center justify-center h-20 shrink-0'>
         <Avatar size={12} src={oppositeUser?.profile_image} />
       </div>
-      <div className='h-20 flex items-center gap-2 flex-grow border-b dark:border-dark-separator overflow-hidden pr-4'>
-        <div className='overflow-hidden w-full'>
+      <div className='flex items-center flex-grow h-20 gap-2 pr-4 overflow-hidden border-b dark:border-dark-separator'>
+        <div className='w-full overflow-hidden'>
           <div className='flex items-center gap-2'>
-            <p className='truncate font-semibold capitalize'>
+            <p className='font-semibold capitalize truncate'>
               {room_name || oppositeUser?.username}
             </p>
-            <span className='text-xs ml-auto dark:text-dark-main-primary'>12:24PM</span>
+            <span className='ml-auto text-xs dark:text-dark-main-primary'>12:24PM</span>
           </div>
           <div className='flex items-start gap-2'>
             <p className='h-8 break-words w-[calc(100%_-_48px)] text-xs text-light-text-primary dark:text-dark-text-secondary font-[Ubuntu] font-medium'>
@@ -94,6 +81,6 @@ export const ChatListItem = ({
           </div>
         </div>
       </div>
-    </motion.div>
+    </motion.li>
   )
 }

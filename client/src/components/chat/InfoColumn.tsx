@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion'
 import { useSelector } from 'react-redux'
-import { useWindowDimensions } from '../../../hooks'
-import { RootState } from '../../../redux/store'
-import { Spinner } from '../../miscellaneous/Spinner'
-import {ChatMenuBody} from './ChatMenuBody'
+import { useWindowDimensions } from '../../hooks'
+import { RootState } from '../../redux/store'
+import { Spinner } from '../miscellaneous/Spinner'
+import {ChatMenuBody} from './chatbody/ChatMenuBody'
 
 const variants = {
   initial: { scale: 0, originY: 0, originX: '100%' },
@@ -27,7 +27,7 @@ const variants = {
   },
 }
 
-export const ChatMenubar = () => {
+export const InfoColumn = () => {
   const { width } = useWindowDimensions()
   const { selected, chatDataLoading, chatDataCollection } = useSelector(
     (state: RootState) => state.chat

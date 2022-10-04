@@ -43,8 +43,8 @@ export const ChatBubbleWithoutArrow = ({
     <motion.div
       className={`bubble ${
         isSender
-          ? 'alt bg-light-bg-primary dark:bg-dark-bubbleOne-bg'
-          : 'bg-light-bg-secondary dark:bg-dark-bubbleTwo-bg'
+          ? 'alt bg-light-bubbleOne-bg dark:bg-dark-bubbleOne-bg'
+          : 'bg-light-bubbleTwo-bg dark:bg-dark-bubbleTwo-bg'
       } withoutArrow -mt-5`}
       initial='initial'
       animate='enter'
@@ -54,8 +54,22 @@ export const ChatBubbleWithoutArrow = ({
       <div className='txt'>
         {repliedMessageId || (true && <ChatBubbleReply isSender={isSender} />)}
         <div className='body'>
-          <p className='message'>{message_text}</p>
-          <span className='timestamp'>10:20 pm</span>
+          <p
+            className={` message ${
+              isSender
+                ? 'text-light-bubbleOne-text dark:text-dark-bubbleOne-text'
+                : 'text-light-bubbleTwo-text dark:text-dark-bubbleTwo-text'
+            }`}
+          >
+            {message_text}
+          </p>
+          <span
+            className={`timestamp ${
+              isSender ? 'text-[#d1d5db]' : 'text-[#9ca3af]'
+            }`}
+          >
+            10:20 pm
+          </span>
         </div>
       </div>
     </motion.div>

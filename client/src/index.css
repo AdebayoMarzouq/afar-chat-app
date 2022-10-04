@@ -11,30 +11,36 @@
     --toastify-font-family: 'Work Sans', sans-serif;
     --color-light-bg-primary: #ffffff;
     --color-light-bg-secondary: #f0f0f0;
-    --color-light-main-primary: #10b981;
+    --color-light-fillOne: #fefefe;
+    --color-light-separator: #f0f0f0;
+    --color-light-main-primary: #0284c7;
     --color-light-main-secondary: #eaf6f6;
     --color-light-text-primary: #5d5e7f;
     --color-light-text-secondary: #c2c3cc;
-    --color-light-bubble-bg: theme(colors.white);
-    --color-light-bubble-text: theme(colors.gray.900);
+    --color-light-bubbleOne-bg: #0284c7;
+    --color-light-bubbleOne-text: #ffffff;
+    --color-light-bubbleOne-replied: #0ea5e9;
+    --color-light-bubbleTwo-bg: #ffffff;
+    --color-light-bubbleTwo-text: #374151;
+    --color-light-bubbleTwo-replied: #f0f0f0;
   }
 
   .dark {
-    /* dark */
     --color-dark-bg-primary: #000000;
     --color-dark-bg-secondary: #1c1c1e;
     --color-dark-fillOne: #3a3a3c;
     --color-dark-separator: #54545865;
-    --color-dark-main-primary: #38bdf8;
+    --color-dark-main-primary: #4dceff;
     --color-dark-main-secondary: #eaf6f6;
     --color-dark-text-primary: #ffffff;
     --color-dark-text-secondary: #a3a3a3;
-    --color-dark-bubbleOne-bg: #0369a1;
+    --color-dark-bubbleOne-bg: #0082b3;
     --color-dark-bubbleOne-text: theme(colors.white);
-    --color-dark-bubbleOne-replied: #0284c780;
-    --color-dark-bubbleTwo-bg: #1c1c1e;
+    --color-dark-bubbleOne-replied: #006f99;
+    --color-dark-bubbleOne-repliedText: #006f99;
+    --color-dark-bubbleTwo-bg: #262626;
     --color-dark-bubbleTwo-text: theme(colors.white);
-    --color-dark-bubbleTwo-replied: #262626;
+    --color-dark-bubbleTwo-replied: #171717;
   }
   .plain-theme {
     --color-light-bg: theme(colors.white);
@@ -60,16 +66,8 @@
   }
 
   /* #root {
-    max-width: 1536px;
-    margin: 0 auto;
+    @apply ;
   } */
-
-  /* #root {
-    @apply h-screen w-screen;
-  } */
-  .sub-container {
-    @apply max-w-7xl mx-auto px-4 md:px-6;
-  }
 
   /* scrollbar */
   * {
@@ -151,10 +149,10 @@
   @apply flex flex-wrap gap-x-2;
 }
 .speech-wrapper .bubble .txt .message {
-  @apply text-sm font-[Ubuntu] m-0 max-w-full text-light-text-primary dark:text-dark-text-primary break-words;
+  @apply text-sm font-[Ubuntu] m-0 max-w-full break-words;
 }
 .speech-wrapper .bubble .txt .timestamp {
-  @apply text-[11px] self-end ml-auto uppercase text-[#999] dark:text-dark-text-secondary;
+  @apply text-[11px] self-end ml-auto uppercase;
 }
 
 .speech-wrapper .bubble .bubble-arrow {
@@ -169,10 +167,10 @@
   border-left: 12px solid transparent;
 }
 .speech-wrapper .bubble .bubble-arrow.sender-arrow::after {
-  @apply border-t-[12px] border-t-white dark:border-t-dark-bubbleOne-bg;
+  @apply border-t-[12px] border-t-light-bubbleOne-bg dark:border-t-dark-bubbleOne-bg;
 }
 .speech-wrapper .bubble .bubble-arrow.reciever-arrow::after {
-  @apply border-t-[12px] border-t-white dark:border-t-dark-bubbleTwo-bg;
+  @apply border-t-[12px] border-t-light-bubbleTwo-bg dark:border-t-dark-bubbleTwo-bg;
 }
 .speech-wrapper .bubble .bubble-arrow.alt::after {
   transform: rotate(180deg) scaleY(-1);
@@ -207,16 +205,16 @@
 }
 
 .dark .epr-search-container .epr-search {
-  background-color: var(--color-dark-fillOne)!important;
+  background-color: var(--color-dark-fillOne) !important;
   border: none !important;
 }
 
 .dark .epr-search-container .epr-search:focus {
   border: 1px solid !important;
-  border-color: var(--color-dark-bg-separator)!important;
+  border-color: var(--color-dark-bg-separator) !important;
 }
 aside.EmojiPickerReact.epr-main {
-  @apply rounded-none border-none bg-gray-200 dark:bg-dark-bg-secondary;
+  @apply rounded-none border-none bg-light-bg-primary dark:bg-dark-bg-secondary;
   max-height: 320px;
   width: 100% !important;
 }

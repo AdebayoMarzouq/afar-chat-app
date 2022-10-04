@@ -1,5 +1,5 @@
 export { CustomToast } from './miscellaneous/CustomToast'
-export {ChatUI} from './chat/chatbody/ChatUI'
-export { ChatList } from './chat/chatlist/ChatList'
-export {ChatMenubar} from './chat/chatbody/ChatMenubar'
+export {RightColumn} from './chat/RightColumn'
+export { LeftColumn } from './chat/LeftColumn'
+export { InfoColumn } from './chat/InfoColumn'
 export { Spinner } from './miscellaneous/Spinner'

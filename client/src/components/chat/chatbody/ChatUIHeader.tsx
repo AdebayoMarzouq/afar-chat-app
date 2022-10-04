@@ -1,12 +1,12 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Header from "../../common/Header";
 import { useWindowDimensions } from "../../../hooks";
 import { setSelected } from "../../../redux/chatSlice";
 import { closeMainToggle, openGroupMenu } from "../../../redux/interactionSlice";
 import { RootState } from '../../../redux/store'
 import { RoomType } from "../../../types/chat";
 import { Avatar } from "../../common/Avatar";
-import { HeaderWrapper } from '../../common/HeaderWrapper'
 
 export function ChatUIHeader({ }) {
   const { width } = useWindowDimensions()
@@ -28,7 +28,7 @@ export function ChatUIHeader({ }) {
   }
 
   return (
-    <HeaderWrapper>
+    <Header>
       {width < 768 && (
         <button
           className='icon-btn'
@@ -98,7 +98,7 @@ export function ChatUIHeader({ }) {
           </button>
         )}
       </div>
-    </HeaderWrapper>
+    </Header>
   )
 }
   

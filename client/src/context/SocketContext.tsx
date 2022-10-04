@@ -13,7 +13,7 @@ const SocketContext = createContext({} as SocketContextValuesTypes)
 const ENDPOINT = 'http://localhost:3001'
 
 export const SocketProvider = ({ children }: SocketContextPropsTypes) => {
-  const userToken = useSelector((state: RootState) => state.user.userToken)
+  const { userInfo, userToken, userSettings: {theme} } = useSelector((state: RootState) => state.user)
 
   const socketInit = useCallback(
     () => {
@@ -40,8 +40,23 @@ export const SocketProvider = ({ children }: SocketContextPropsTypes) => {
     return () => {
     }
   }, [userToken])
+
+  const setTheme = () => {
+    if (theme !== 'light') {
+      document.documentElement.className = theme
+    }
+  }
+
+  useEffect(() => {
+    if (theme !== 'light') {
+      document.documentElement.className = theme
+    } else {
+      document.documentElement.className = ''
+    }
+  }, [theme])
   
 
+  //** Prevent App access from here
   return (
     <SocketContext.Provider value={{ socket }}>
       {children}

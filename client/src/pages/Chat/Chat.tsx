@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { ChatList, ChatMenubar, ChatUI } from '../../components'
+import { InfoColumn, LeftColumn, RightColumn } from '../../components'
 import { useSocketContext } from '../../context/SocketContext'
 import { useWindowDimensions } from '../../hooks'
 import {
@@ -10,7 +10,7 @@ import {
   fetchRoomData,
   fetchUserChats,
   removeParticipantFromGroup,
-  updateChats,
+  updateChats
 } from '../../redux/chatSlice'
 import { AppDispatch, RootState } from '../../redux/store'
 import { MessageListItem, RoomType } from '../../types/chat'
@@ -26,15 +26,15 @@ export const Chat = () => {
   const chatDataCollectionRef = useRef(chatDataCollection)
 
   useEffect(() => {
-    dispatch(fetchUserChats())
-  }, [])
-
-  useEffect(() => {
     chatDataCollectionRef.current = chatDataCollection
   })
 
   useEffect(() => {
+    
     if (!userInfo || !socket) return
+    //* Fetches user Chats for first time after which the socket takes over
+    dispatch(fetchUserChats())
+
 
     socket.emit('joinRooms', {
       username: userInfo.username,
@@ -103,22 +103,21 @@ export const Chat = () => {
       )
     }
   }, [])
+  
+  if (width < 1280) {
+    return (
+      <div className='grid w-screen h-screen grid-cols-1 divide-x md:grid-cols-5 xl:grid-cols-12 dark:divide-dark-separator'>
+        <LeftColumn />
+        <RightColumn />
+      </div>
+    )
+  }
 
   return (
-    <div className='w-screen h-screen grid grid-cols-1 md:grid-cols-5 xl:grid-cols-12 divide-x dark:divide-dark-separator'>
-      {width >= 768 && (
-        <>
-          <ChatList />
-          <ChatUI />
-          {width >= 1280 && <ChatMenubar />}
-        </>
-      )}
-      {width < 768 && (
-        <>
-          <ChatUI />
-          <ChatList />
-        </>
-      )}
+    <div className='grid w-screen h-screen grid-cols-1 divide-x md:grid-cols-5 xl:grid-cols-12 dark:divide-dark-separator'>
+      <LeftColumn />
+      <RightColumn />
+      <InfoColumn />
     </div>
   )
 }

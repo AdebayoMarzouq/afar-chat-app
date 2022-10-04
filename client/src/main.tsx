@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
             <div className='text-center py-4'>
               <Spinner />
             </div>
-          }
+          } //* Edit Spinner later
           persistor={persistor}
         >
           <App />

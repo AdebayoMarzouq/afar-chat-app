@@ -11,6 +11,14 @@ import { ChatBubbleWithArrow } from './ChatBubbleWithArrow'
 import { ChatBubbleWithoutArrow } from './ChatBubbleWithoutArrow'
 import { MessageInput } from './MessageInput'
 
+const FullPageWrapper = ({ children }: { children: React.ReactNode | React.ReactNode[]}) => {
+  return (
+    <div className='flex-grow px-6 py-4 overflow-y-auto bg-gray-200 scroll-smooth speech-wrapper md:px-8 dark:bg-dark-bg-primary'>
+      {children}
+    </div>
+  )
+}
+
 export function ChatBody() {
   const bottomRef = useRef<HTMLDivElement>(null)
   const dispatch = useDispatch<AppDispatch>()
@@ -69,61 +77,79 @@ export function ChatBody() {
   //   if (!bottomRef || !bottomRef.current) return
   //   bottomRef.current.scrollIntoView()
   //   console.log('ran scollintoview')
-  // }, [new_message_entry])
+  // }, [])
+
+  if (!selected) {
+    return (
+      <FullPageWrapper>
+        <div className='pt-20 pb-4 text-center dark:text-dark-text-secondary'>
+          Click a message to chat
+        </div>
+      </FullPageWrapper>
+    )
+  }
+
+  if (chatDataLoading) {
+    return (
+      <FullPageWrapper>
+        <div className='py-4 text-center'>
+          <Spinner />
+        </div>
+      </FullPageWrapper>
+    )
+  }
+
+  if (chatDataError) {
+    return (
+      <FullPageWrapper>
+        <div className='text-center'>
+          An error occured while fetching messages
+        </div>
+      </FullPageWrapper>
+    )
+  }
+
+  const messages = chatDataCollection[selected].messages
   
   return (
-    <>
-      <AnimatePresence>
-        <div className='scroll-smooth speech-wrapper py-4 px-6 md:px-8 flex-grow bg-gray-200 dark:bg-dark-bg-primary overflow-y-auto'>
-          {!selected ? (
-            <div className='text-center dark:text-dark-text-secondary pb-4 pt-20'>
-              Click a message to chat
-            </div>
-          ) : (
-            <>
-              {chatDataLoading && (
-                <div className='text-center py-4'>
-                  <Spinner />
-                </div>
-              )}
-              {chatDataError && (
-                <div className='text-center'>
-                  An error occured while fetching messages
-                </div>
-              )}
-              {chatDataCollection &&
-                chatDataCollection[selected] &&
-                [...chatDataCollection[selected].messages].map((message) => {
-                  const {
-                    uuid: userId,
-                    Message: { uuid: messageId },
-                  } = message
-                  if (previousSender === userId) {
-                    previousSender = userId
-                    return (
-                      <ChatBubbleWithoutArrow
-                        key={messageId}
-                        isSender={userId === userInfo!.uuid}
-                        messageObj={message}
-                      />
-                    )
-                  } else {
-                    previousSender = userId
-                    return (
-                      <ChatBubbleWithArrow
-                        key={messageId}
-                        isSender={userId === userInfo!.uuid}
-                        messageObj={message}
-                        openClickedUserChat={openClickedUserChat}
-                      />
-                    )
-                  }
-                })}
-            </>
-          )}
-          <div ref={bottomRef}></div>
+    <FullPageWrapper>
+      {messages.length ? (
+        <AnimatePresence>
+          <ul className='border border-green-500'>
+            {messages.map((message) => {
+              const {
+                uuid: userId,
+                Message: { uuid: messageId },
+              } = message
+              if (previousSender === userId) {
+                previousSender = userId
+                return (
+                  <ChatBubbleWithoutArrow
+                    key={messageId}
+                    isSender={userId === userInfo!.uuid}
+                    messageObj={message}
+                  />
+                )
+              } else {
+                previousSender = userId
+                return (
+                  <ChatBubbleWithArrow
+                    key={messageId}
+                    isSender={userId === userInfo!.uuid}
+                    messageObj={message}
+                    openClickedUserChat={openClickedUserChat}
+                  />
+                )
+              }
+            })}
+            <div key='bottomRef' ref={bottomRef}></div>
+          </ul>
+        </AnimatePresence>
+      ) : (
+        <div className='text-center'>
+          There are no messages in this room yet
         </div>
-      </AnimatePresence>
-    </>
+      )}
+    </FullPageWrapper>
   )
 }

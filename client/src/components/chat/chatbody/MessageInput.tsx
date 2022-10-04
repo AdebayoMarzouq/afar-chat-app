@@ -6,22 +6,19 @@ import { useSocketContext } from '../../../context/SocketContext'
 import useAutosizeTextArea from '../../../hooks/useAutoSizeTextArea'
 import { RootState } from '../../../redux/store'
 
-const EmojiComponent =
-  ({
-    openEmoji,
-    setEmoji,
-  }: {
-    openEmoji: boolean
-    setEmoji: (emojiData: EmojiClickData, event: MouseEvent) => void
-  }) => {
-    return (
-      <EmojiPicker
-        onEmojiClick={setEmoji}
-        lazyLoadEmojis={true}
-        emojiStyle={EmojiStyle.NATIVE}
-      />
-    )
-  }
+const EmojiComponent = ({
+  setEmoji,
+}: {
+  setEmoji: (emojiData: EmojiClickData, event: MouseEvent) => void
+}) => {
+  return (
+    <EmojiPicker
+      onEmojiClick={setEmoji}
+      lazyLoadEmojis={true}
+      emojiStyle={EmojiStyle.NATIVE}
+    />
+  )
+}
 
 export const MessageInput = memo(() => {
   const { socket } = useSocketContext()
@@ -59,7 +56,7 @@ export const MessageInput = memo(() => {
   }
   
   const MemoEmoji = useMemo(
-    () => <EmojiComponent openEmoji={openEmoji} setEmoji={setEmoji} />,
+    () => <EmojiComponent setEmoji={setEmoji} />,
     []
   )
   
@@ -100,7 +97,7 @@ export const MessageInput = memo(() => {
         <label htmlFor='chat' className='sr-only'>
           Your message
         </label>
-        <div className='flex items-end py-2 px-3 bg-inherit'>
+        <div className='flex items-end px-3 py-2 bg-inherit'>
           <button type='button' className='icon-btn'>
             <svg
               className='w-6 h-6'
@@ -121,7 +118,7 @@ export const MessageInput = memo(() => {
 
           <button
             type='button'
-            className='icon-btn ml-2'
+            className='ml-2 icon-btn'
             onClick={() => setOpenEmoji((prev) => !prev)}
           >
             {openEmoji ? (

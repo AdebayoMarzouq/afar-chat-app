@@ -13,10 +13,10 @@ export const SearchListItem = ({openSelected, uuid, username, email, profile_ima
         }
       }}
     >
-      <div className='h-20 flex items-center justify-center'>
+      <div className='flex items-center justify-center h-20'>
         <Avatar size={12} src={profile_image} />
       </div>
-      <div className='h-20 flex items-center gap-2 flex-grow border-b dark:border-dark-separator'>
+      <div className='flex items-center flex-grow h-20 gap-2 border-b dark:border-dark-separator'>
         <div className='text-left'>
           <p className='font-semibold'>{username}</p>
           <p className='text-xs font-semibold'>
@@ -27,7 +27,7 @@ export const SearchListItem = ({openSelected, uuid, username, email, profile_ima
           </p>
         </div>
         {disabled && (
-          <div className='bg-light-main-primary dark:bg-dark-main-primary text-light-text-primary dark:text-dark-bg-primary px-1 py-0.5 rounded-xl ml-auto mr-4 text-xs'>Participant</div>
+          <div className='bg-light-main-primary dark:bg-dark-main-primary text-light-bg-primary dark:text-dark-bg-primary px-1 py-0.5 rounded-xl ml-auto mr-4 text-xs'>Participant</div>
         )}
       </div>
     </div>

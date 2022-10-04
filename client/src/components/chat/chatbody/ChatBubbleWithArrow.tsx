@@ -44,7 +44,9 @@ export const ChatBubbleWithArrow = ({
   return (
     <motion.div
       className={`bubble ${
-        isSender ? 'alt bg-light-bg-primary dark:bg-dark-bubbleOne-bg' : 'bg-light-bg-secondary dark:bg-dark-bubbleTwo-bg'
+        isSender
+          ? 'alt bg-light-bubbleOne-bg dark:bg-dark-bubbleOne-bg'
+          : 'bg-light-bubbleTwo-bg dark:bg-dark-bubbleTwo-bg'
       }`}
       initial='initial'
       animate='enter'
@@ -53,18 +55,37 @@ export const ChatBubbleWithArrow = ({
     >
       <div className='txt'>
         <p
-          className={`name ${isSender && 'alt'} cursor-pointer`}
+          className={`name ${isSender ? 'alt' : ''} cursor-pointer`}
           onClick={() => openClickedUserChat(sender_id)}
         >
           {username}
+          {/* <span>~My-T</span> */}
         </p>
-        {/* {repliedMessageId || true && <ChatBubbleReply />} */}
+        {repliedMessageId || (true && <ChatBubbleReply isSender={isSender} />)}
         <div className='body'>
-          <p className='message'>{message_text}</p>
-          <span className='timestamp'>10:20 pm</span>
+          <p
+            className={` message ${
+              isSender
+                ? 'text-light-bubbleOne-text dark:text-dark-bubbleOne-text'
+                : 'text-light-bubbleTwo-text dark:text-dark-bubbleTwo-text'
+            }`}
+          >
+            {message_text}
+          </p>
+          <span
+            className={`timestamp ${
+              isSender ? 'text-[#d1d5db]' : 'text-[#9ca3af]'
+            }`}
+          >
+            10:20 pm
+          </span>
         </div>
       </div>
-      <div className={`bubble-arrow ${isSender ? 'alt sender-arrow' : 'reciever-arrow'}`}></div>
+      <div
+        className={`bubble-arrow ${
+          isSender ? 'alt sender-arrow' : 'reciever-arrow'
+        }`}
+      ></div>
     </motion.div>
   )
 }
