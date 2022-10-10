@@ -28,10 +28,6 @@ const getUserRooms = async (user_id) => {
   })
 }
 
-const addParticipantToGroup = () => {
-  const {room_id, user_id} = req.body
-}
-
 module.exports = (io) => {
   io.use((socket, next) => {
     if (socket.handshake.auth && socket.handshake.auth.token) {
@@ -41,6 +37,7 @@ module.exports = (io) => {
         (err, decoded) => {
           if (err) {
             console.log('An error occurred while verifying JWT')
+            socket.emit('error', 'Authenticatioin error, please log out and try logging in')
             return next(new Error('Authentication error'))
           }
           socket.user = decoded
@@ -54,6 +51,7 @@ module.exports = (io) => {
   })
 
   io.on('connection', async (socket) => {
+    console.log(socket.user.email, ' client connected to socket.io server')
 
     socket.on('created_new_group', async (room_id) => {
       const sockets = await io.fetchSockets()
@@ -83,6 +81,18 @@ module.exports = (io) => {
       console.log('left.....')
       socket.leave(room_id)
       socket.to(room_id).emit('user_left_group', room_id, user_id)
+    })
+
+    socket.on('user_removed', async(room_id, user_id) => {
+      const roomSockets = await io.in(room_id).fetchSockets()
+      for (let userSocket of roomSockets) {
+        if (userSocket.user.user_id === user_id) { 
+          userSocket.leave(room_id)
+          userSocket.emit('you_have_been_removed_from_group', room_id)
+          io.in(room_id).emit('user_left_group', room_id, user_id)
+          break
+        }
+      }
     })
 
     socket.on('added_to_existing_group', async (room_id, users) => {
@@ -184,7 +194,7 @@ module.exports = (io) => {
     })
 
     socket.on('disconnect', () => {
-      console.log('A user disconnected from socket.io server')
+      console.log(socket.user.email, ' A user disconnected from socket.io server')
     })
   })
 }

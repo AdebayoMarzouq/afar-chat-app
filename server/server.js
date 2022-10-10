@@ -7,7 +7,7 @@ const cors = require('cors')
 const app = express()
 const httpServer = createServer(app)
 const io = new Server(httpServer, {
-  pingTimeout: 60000,
+  pingTimeout: 1000,
   cors: {
     origin: 'http://localhost:5173',
   }
@@ -21,7 +21,6 @@ const db = require('./models')
 const authRoutes = require('./routes/user')
 const usersRoutes = require('./routes/users')
 const roomRoutes = require('./routes/room')
-const messageRoutes = require('./routes/message')
 
 // middlewares
 const {
@@ -40,7 +39,6 @@ app.get('/', (req, res) => {
 app.use('/api/account', authRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/chat', roomRoutes)
-app.use('/api/message', messageRoutes)
 
 // Not Found and Error Middlewares
 app.use(notFoundMiddleware)

@@ -1,4 +1,4 @@
-const { CustomError } = require('../errors')
+const {CustomError} = require('../errors')
 const { StatusCodes } = require('http-status-codes')
 const db = require('../models')
 
@@ -11,11 +11,11 @@ const login_user = async (req, res) => {
   const { email, password } = req.body
   const user = await db.User.scope('withPassword').findOne({ where: { email } })
   if (!user) {
-    return res.send('This user does not exist')
+    throw new CustomError('This user does not exist', StatusCodes.BAD_REQUEST)
   }
-  const isValid = user.comparePasswords(password)
+  const isValid = await user.comparePasswords(password)
   if (!isValid) {
-    throw new CustomError('Wrong password', StatusCodes.UNAUTHORIZED)
+    throw new CustomError('Wrong password', StatusCodes.BAD_REQUEST)
   }
   const token = user.generateJWT()
   const userObj = {

@@ -182,9 +182,9 @@ export const chatSlice = createSlice({
     },
     removeGroup: (
       state,
-      action: PayloadAction<{ room_id: string; user_id: string }>
+      action: PayloadAction<string>
     ) => {
-      const { room_id, user_id } = action.payload
+      const room_id = action.payload
       const copy = { ...state.chatDataCollection }
       delete copy[room_id]
       return {

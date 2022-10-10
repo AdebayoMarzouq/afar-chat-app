@@ -5,20 +5,16 @@ import { ChatBubbleReply } from './ChatBubbleReply'
 
 const transition = {
   type: 'spring',
-  // damping: 20,
   bounce: 0,
 }
 
-const variants = {
-  initial: {
-    opacity: 0,
-    y: 300,
-  },
+let variants: {
+  initial: { y: number }
   enter: {
-    opacity: 1,
-    y: 0,
-    transition,
-  },
+    opacity: number
+    y: number
+    transition: { type: string; bounce: number }
+  }
 }
 
 export const ChatBubbleWithoutArrow = ({
@@ -38,9 +34,23 @@ export const ChatBubbleWithoutArrow = ({
 }: {
   isSender: boolean
   messageObj: MessageListItem
-}) => {
+  }) => {
+  
+  useEffect(() => {
+    variants = {
+      initial: {
+        y: 250,
+      },
+      enter: {
+        opacity: 1,
+        y: 0,
+        transition,
+      },
+    }
+  }, [])
+
   return (
-    <motion.div
+    <motion.li
       className={`bubble ${
         isSender
           ? 'alt bg-light-bubbleOne-bg dark:bg-dark-bubbleOne-bg'
@@ -72,6 +82,6 @@ export const ChatBubbleWithoutArrow = ({
           </span>
         </div>
       </div>
-    </motion.div>
+    </motion.li>
   )
 }

@@ -1,9 +1,12 @@
-import React, { createContext, useCallback, useContext, useEffect } from 'react'
+import React, { createContext, useContext, useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { io, Socket } from 'socket.io-client'
 import { RootState } from '../redux/store'
 
-type SocketContextPropsTypes = { children: React.ReactNode | React.ReactNode[] }
+type SocketContextPropsTypes = {
+  children: React.ReactNode | React.ReactNode[]
+}
+
 type SocketContextValuesTypes = {
   socket: Socket
 }
@@ -11,41 +14,29 @@ type SocketContextValuesTypes = {
 const SocketContext = createContext({} as SocketContextValuesTypes)
 
 const ENDPOINT = 'http://localhost:3001'
+const userData = localStorage.getItem('persist:user')
+let token = ''
+if (userData) {
+  const { userToken } = JSON.parse(userData)
+  token = userToken
+}
+const socket = io(ENDPOINT, {
+  reconnectionAttempts: 5,
+  transports: ['websocket', 'polling'],
+  auth: { token: JSON.parse(token) },
+})
+
+
 
 export const SocketProvider = ({ children }: SocketContextPropsTypes) => {
-  const { userInfo, userToken, userSettings: {theme} } = useSelector((state: RootState) => state.user)
+  const renderRef = useRef(1)
+  const { userSettings: { theme } } = useSelector((state: RootState) => state.user)
 
-  const socketInit = useCallback(
-    () => {
-      return io(ENDPOINT, { transports: ["websocket", "polling"], auth: { token: userToken } })
-    },
-    [userToken],
-  )
-
-  const socket = socketInit()
+  console.log('socketProvider rendered ', renderRef)
 
   useEffect(() => {
-    socket.on('connect', () => {
-      console.log(
-        'Socket Client connected  @ ',
-        new Date().getHours() - 12,
-        ':',
-        new Date().getMinutes()
-      )
-    })
-    
-    socket.on('disconnect', () => {
-      console.log('Socket Client disconnected')
-    })
-    return () => {
-    }
-  }, [userToken])
-
-  const setTheme = () => {
-    if (theme !== 'light') {
-      document.documentElement.className = theme
-    }
-  }
+    renderRef.current++
+  })
 
   useEffect(() => {
     if (theme !== 'light') {
@@ -54,9 +45,7 @@ export const SocketProvider = ({ children }: SocketContextPropsTypes) => {
       document.documentElement.className = ''
     }
   }, [theme])
-  
 
-  //** Prevent App access from here
   return (
     <SocketContext.Provider value={{ socket }}>
       {children}

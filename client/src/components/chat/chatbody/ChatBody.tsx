@@ -1,4 +1,4 @@
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 import React, { useEffect, useLayoutEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useSocketContext } from '../../../context/SocketContext'
@@ -109,13 +109,14 @@ export function ChatBody() {
     )
   }
 
+  const room = chatDataCollection[selected].room
   const messages = chatDataCollection[selected].messages
   
   return (
     <FullPageWrapper>
       {messages.length ? (
-        <AnimatePresence>
-          <ul className='border border-green-500'>
+        <LayoutGroup id='messages-id'>
+          <motion.ul layout className='border border-green-500'>
             {messages.map((message) => {
               const {
                 uuid: userId,
@@ -138,13 +139,14 @@ export function ChatBody() {
                     isSender={userId === userInfo!.uuid}
                     messageObj={message}
                     openClickedUserChat={openClickedUserChat}
+                    isGroup={room.is_group}
                   />
                 )
               }
             })}
             <div key='bottomRef' ref={bottomRef}></div>
-          </ul>
-        </AnimatePresence>
+          </motion.ul>
+        </LayoutGroup>
       ) : (
         <div className='text-center'>
           There are no messages in this room yet

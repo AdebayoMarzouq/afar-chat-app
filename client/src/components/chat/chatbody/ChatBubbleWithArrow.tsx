@@ -5,20 +5,16 @@ import { ChatBubbleReply } from './ChatBubbleReply'
 
 const transition = {
   type: 'spring',
-  // damping: 20,
-  bounce: 0.2,
+  bounce: 0,
 }
 
-const variants = {
-  initial: {
-    opacity: 0,
-    y: 300,
-  },
+let variants: {
+  initial: { y: number }
   enter: {
-    opacity: 1,
-    y: 0,
-    transition,
-  },
+    opacity: number
+    y: number
+    transition: { type: string; bounce: number }
+  }
 }
 
 export const ChatBubbleWithArrow = ({
@@ -35,14 +31,29 @@ export const ChatBubbleWithArrow = ({
       repliedMessageId,
     },
   },
+  isGroup,
   openClickedUserChat,
 }: {
   isSender: boolean
   messageObj: MessageListItem
+  isGroup: boolean
   openClickedUserChat: (uuid: string) => void
 }) => {
+  useEffect(() => {
+    variants = {
+      initial: {
+        y: 250,
+      },
+      enter: {
+        opacity: 1,
+        y: 0,
+        transition,
+      },
+    }
+  }, [])
+
   return (
-    <motion.div
+    <motion.li
       className={`bubble ${
         isSender
           ? 'alt bg-light-bubbleOne-bg dark:bg-dark-bubbleOne-bg'
@@ -55,7 +66,9 @@ export const ChatBubbleWithArrow = ({
     >
       <div className='txt'>
         <p
-          className={`name ${isSender ? 'alt' : ''} cursor-pointer`}
+          className={`name ${
+            !isSender ? 'alt' : 'hidden'
+          } ${!isGroup ? 'hidden' : ''} cursor-pointer`}
           onClick={() => openClickedUserChat(sender_id)}
         >
           {username}
@@ -86,6 +99,6 @@ export const ChatBubbleWithArrow = ({
           isSender ? 'alt sender-arrow' : 'reciever-arrow'
         }`}
       ></div>
-    </motion.div>
+    </motion.li>
   )
 }

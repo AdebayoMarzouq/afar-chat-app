@@ -23,11 +23,11 @@ export const useFetch = <T>({
     controllerRef.current.abort()
   }
 
-  const fetch = async (fetchUrl?: string) => {
+  const fetch = async (fetchUrl?: string, fetchPayload?: {}) => {
     setLoading(true)
     try {
       const response = await axios.request({
-        data: payload,
+        data: fetchPayload || payload,
         headers: { Authorization: 'Bearer ' + userToken },
         signal: controllerRef.current.signal,
         timeout: timeout || 1000,
@@ -39,7 +39,7 @@ export const useFetch = <T>({
           port: 3001,
         },
       })
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         setData(response.data)
       } else {
         setError('An error occurred: ' + response.status)
@@ -59,6 +59,8 @@ export const useFetch = <T>({
   useEffect(() => {
     if (!url) return
     fetch()
+
+    return (() => cancel())
   }, [url])
 
   return { cancel, fetch, data, error, loading }

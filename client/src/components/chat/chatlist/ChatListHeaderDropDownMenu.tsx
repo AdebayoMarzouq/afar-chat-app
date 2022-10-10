@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
+import { useSocketContext } from "../../../context/SocketContext";
 import { resetState } from "../../../redux/action";
 import { openCreateGroupbar } from "../../../redux/interactionSlice";
 
@@ -13,9 +14,11 @@ export function ChatListHeaderDropDownMenu({
   }) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const {socket} = useSocketContext()
 
   const logout = () => {
     dispatch(resetState())
+    socket.disconnect()
     navigate('/')
   }
 

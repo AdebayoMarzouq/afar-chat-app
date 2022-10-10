@@ -4,12 +4,11 @@ const { CustomError } = require('../errors')
 const { StatusCodes } = require('http-status-codes')
 
 const checkIfUserIsAuthenticated = async (req, res, next) => {
-  // check header
   const authHeader = req.headers.authorization
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     throw new CustomError(
       'Invalid authentication token',
-      StatusCodes.UNAUTHORIZED
+      StatusCodes.BAD_REQUEST
     )
   }
   try {
@@ -28,7 +27,7 @@ const checkIfUserIsAuthenticated = async (req, res, next) => {
   } catch (error) {
     throw new CustomError(
       'Authentication error, invalid token',
-      StatusCodes.UNAUTHORIZED
+      StatusCodes.BAD_REQUEST
     )
   }
 }

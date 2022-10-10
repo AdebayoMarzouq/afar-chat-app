@@ -5,9 +5,10 @@ const errorHandlerMiddleware = (error, req, res, next) => {
   if (error instanceof CustomError) {
     return res.status(error.statusCode).json({ message: error.message })
   }
-  // if ((error.name = 'SequelizeUniqueConstraintError')) {
-  //   return res.status(StatusCodes.BAD_REQUEST).json({ message: `${Object.keys(error.fields).join(', ')} already exists` })
-  // }
+  if ((error.name = 'SequelizeUniqueConstraintError')) {
+    // return res.status(StatusCodes.BAD_REQUEST).json({error: error})
+    return res.status(StatusCodes.BAD_REQUEST).json({ message: `${Object.keys(error.fields).join(', ')} already exists` })
+  }
   return res
     .status(StatusCodes.INTERNAL_SERVER_ERROR)
     .json({ message: error.message, error: error, ...error })

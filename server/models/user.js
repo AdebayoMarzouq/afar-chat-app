@@ -59,6 +59,13 @@ module.exports = (sequelize, DataTypes) => {
           notEmpty: true,
         },
       },
+      // displayname: {
+      //   type: DataTypes.STRING,
+      //   allowNull: false,
+      //   validate: {
+      //     notEmpty: true,
+      //   }
+      // },
       profile_image: {
         type: DataTypes.STRING,
         defaultValue:

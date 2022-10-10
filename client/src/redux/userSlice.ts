@@ -8,9 +8,17 @@ export enum Theme {
   dark = 'dark',
   plain = 'plain',
 }
+
+export enum Status {
+  online = 'online',
+  offline = 'offline',
+  reconnecting = 'reconnecting',
+  failed = 'failed'
+}
 export interface UserState {
   userToken: string | null
   userInfo: UserType | null
+  userStatus: Status
   userSettings: {
     theme: Theme
   }
@@ -19,6 +27,7 @@ export interface UserState {
 const initialState: UserState = {
   userToken: null,
   userInfo: null,
+  userStatus: Status.offline,
   userSettings: {
     theme: Theme.light,
   },
@@ -38,6 +47,9 @@ export const userSlice = createSlice({
     },
     setTheme: (state, action: PayloadAction<Theme>) => {
       state.userSettings.theme = action.payload
+    },
+    setStatus: (state, action: PayloadAction<Status>) => {
+      state.userStatus = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -46,6 +58,6 @@ export const userSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { addUserInfo, addUserToken, setTheme } = userSlice.actions
+export const { addUserInfo, addUserToken, setTheme, setStatus } = userSlice.actions
 
 export default userSlice.reducer

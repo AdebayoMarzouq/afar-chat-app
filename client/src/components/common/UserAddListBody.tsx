@@ -11,7 +11,7 @@ export function UserAddListBody({
   handleUserSelect,
   error,
 }: {
-  type: string
+  type?: string
   data: { status: number; users: UserType[] } | null
   loading: boolean
   error: string

@@ -1,4 +1,9 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useSocketContext } from '../../../context/SocketContext'
+import { setSelected, removeGroup } from '../../../redux/chatSlice'
+import { AppDispatch, RootState } from '../../../redux/store'
+import { request } from '../../../utilities/request'
 import { Avatar } from '../../common/Avatar'
 
 type ItemType = {
@@ -18,11 +23,55 @@ export const ChatMenuListItem = ({
   email,
   profile_image,
 }: ItemType) => {
+  const {socket} = useSocketContext()
+  const dispatch = useDispatch<AppDispatch>()
+  const { selected } = useSelector((state: RootState) => state.chat)
+  const { userInfo } = useSelector((state: RootState) => state.user)
+  const [submitStatus, setSubmitStatus] = useState({
+    loading: false,
+    error: false,
+  })
   const isCreator = creator === uuid
+
+  const removeUser = async (user_id: string) => {
+    if (userInfo?.uuid !== creator) {
+      return
+    }
+    const form_data = {
+      room_id: selected,
+      user_id,
+    }
+    setSubmitStatus((prev) => {
+      return { ...prev, loading: true }
+    })
+    try {
+      const response = await request({
+        url: '/api/chat/remove',
+        method: 'DELETE',
+        payload: form_data,
+      })
+      if (response.status === 200) {
+        // *Success toast
+        socket.emit('user_removed', form_data.room_id, user_id)
+      } else if (response.status === 401) {
+        // *Add to general display or alert error
+      }
+    } catch (error) {
+      console.log(error)
+      setSubmitStatus((prev) => {
+        return { ...prev, error: true }
+      })
+      //* pass toast here
+    } finally {
+      setSubmitStatus((prev) => {
+        return { ...prev, loading: false }
+      })
+    }
+  }
 
   return (
     <li
-      className='[&:last-of-type>div]:border-b-0 dark:border-dark-separator cursor-pointer pl-2 md:pl-4 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-dark-bg-secondary active:bg-gray-200 dark:active:bg-dark-bg-secondary'
+      className='[&:last-of-type>div]:border-b-0 dark:border-dark-separator pl-2 md:pl-4 flex items-center gap-2 dark:active:bg-dark-bg-secondary'
       onClick={() => {
         if (openSelected) {
           openSelected(uuid)
@@ -57,6 +106,12 @@ export const ChatMenuListItem = ({
               />
             </svg>
           </div>
+        )}
+        {creator === userInfo!.uuid && !isCreator && (
+          <button className='icon-btn ml-auto shrink-0 text-sm font-bold'
+          onClick={() => removeUser(uuid)}>
+            remove
+          </button>
         )}
       </div>
     </li>
