@@ -30,6 +30,7 @@ const getUserRooms = async (user_id) => {
 
 module.exports = (io) => {
   io.use((socket, next) => {
+    console.log(socket.handshake.auth.token)
     if (socket.handshake.auth && socket.handshake.auth.token) {
       jwt.verify(
         socket.handshake.auth.token,
